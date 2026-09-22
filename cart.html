@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Your Cart — GROSTO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --white: #FFFFFF;
+      --black: #000000;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+      --gray: #666666;
+      --border: #E3E6E4;
+      --red: #E53935;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      padding-bottom: 30px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header {
+      max-width: 1200px;
+      margin: auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: var(--green);
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .continue {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    /* MAIN */
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 35px 20px;
+    }
+
+    .title {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: var(--gray);
+      margin-bottom: 30px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 25px;
+      align-items: start;
+    }
+
+    /* CART */
+
+    .cart-box {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .cart-header {
+      padding: 18px 20px;
+      background: var(--light-green);
+      font-weight: 800;
+    }
+
+    .cart-item {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .item-name {
+      font-weight: 800;
+      font-size: 17px;
+      margin-bottom: 5px;
+    }
+
+    .item-price {
+      color: var(--green);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quantity button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    .quantity button:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .quantity span {
+      min-width: 25px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .item-total {
+      text-align: right;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .remove {
+      border: none;
+      background: transparent;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* SUMMARY */
+
+    .summary {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      position: sticky;
+      top: 100px;
+    }
+
+    .summary h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 13px;
+      color: #444;
+    }
+
+    .summary-row.total {
+      border-top: 1px solid var(--border);
+      padding-top: 17px;
+      margin-top: 17px;
+      color: #000;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .delivery-note {
+      margin: 18px 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--light-green);
+      color: #25613c;
+      font-size: 13px;
+    }
+
+    .checkout {
+      width: 100%;
+      border: none;
+      background: var(--green);
+      color: white;
+      padding: 15px;
+      border-radius: 11px;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .checkout:hover {
+      background: #178e48;
+    }
+
+    /* EMPTY */
+
+    .empty {
+      text-align: center;
+      padding: 70px 20px;
+      display: none;
+    }
+
+    .empty-icon {
+      font-size: 70px;
+      margin-bottom: 15px;
+    }
+
+    .empty h2 {
+      margin-bottom: 8px;
+    }
+
+    .empty p {
+      color: var(--gray);
+      margin-bottom: 22px;
+    }
+
+    .shop-btn {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 750px) {
+
+      .header {
+        padding: 12px 14px;
+      }
+
+      .logo {
+        font-size: 26px;
+      }
+
+      .continue {
+        font-size: 14px;
+      }
+
+      .container {
+        padding: 25px 14px;
+      }
+
+      .title {
+        font-size: 28px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        position: static;
+      }
+
+      .cart-item {
+        grid-template-columns: 65px 1fr;
+        gap: 12px;
+      }
+
+      .item-image {
+        width: 65px;
+        height: 65px;
+        font-size: 32px;
+      }
+
+      .item-controls {
+        grid-column: 2;
+      }
+
+      .item-right {
+        grid-column: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="header">
+
+      <a href="index.html" class="logo">
+        GROST<span>O</span>
+      </a>
+
+      <a href="shop.html" class="continue">
+        ← Continue Shopping
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main class="container">
+
+    <h1 class="title">
+      Your Cart 🛒
+    </h1>
+
+    <p class="subtitle">
+      Apni selected products check karein aur order ke liye checkout karein.
+    </p>
+
+
+    <!-- EMPTY CART -->
+
+    <div class="empty" id="emptyCart">
+
+      <div class="empty-icon">
+        🛒
+      </div>
+
+      <h2>
+        Aapka cart empty hai
+      </h2>
+
+      <p>
+        Shopping start karne ke liye products browse karein.
+      </p>
+
+      <a href="shop.html" class="shop-btn">
+        Start Shopping →
+      </a>
+
+    </div>
+
+
+    <!-- CART CONTENT -->
+
+    <div class="layout" id="cartContent">
+
+      <div class="cart-box">
+
+        <div class="cart-header">
+          Your Items
+        </div>
+
+        <div id="cartItems"></div>
+
+      </div>
+
+
+      <!-- SUMMARY -->
+
+      <aside class="summary">
+
+        <h2>
+          Order Summary
+        </h2>
+
+        <div class="summary-row">
+
+          <span>
+            Subtotal
+          </span>
+
+          <strong id="subtotal">
+            Rs. 0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-row">
+
+          <span>
+            Delivery
+          </span>
+
+          <strong id="delivery">
+            Rs. 0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-row total">
+
+          <span>
+            Total
+          </span>
+
+          <span id="total">
+            Rs. 0
+          </span>
+
+        </div>
+
+
+        <div class="delivery-note">
+          🚚 Delivery charges will be confirmed at checkout.
+        </div>
+
+
+        <button
+          class="checkout"
+          onclick="goToCheckout()"
+        >
+          Proceed to Checkout →
+        </button>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    let cart =
+      JSON.parse(
+        localStorage.getItem("grostoCart")
+      ) || [];
+
+
+    /* ================= PRODUCT EMOJIS ================= */
+
+    function getProductIcon(name) {
+
+      const icons = {
+
+        "Fresh Apples": "🍎",
+        "Fresh Milk": "🥛",
+        "Premium Rice": "🍚",
+        "Dishwashing Liquid": "🧴",
+        "Fresh Bananas": "🍌",
+        "Farm Fresh Eggs": "🥚",
+        "Premium Tea": "☕",
+        "Orange Juice": "🧃",
+        "Chocolate Biscuits": "🍪",
+        "Potato Chips": "🍟",
+        "Laundry Detergent": "🧺",
+        "Fresh Tomatoes": "🍅"
+
+      };
+
+      return icons[name] || "🛒";
+    }
+
+
+    /* ================= RENDER CART ================= */
+
+    function renderCart() {
+
+      const container =
+        document.getElementById("cartItems");
+
+      const content =
+        document.getElementById("cartContent");
+
+      const empty =
+        document.getElementById("emptyCart");
+
+
+      if (cart.length === 0) {
+
+        content.style.display = "none";
+
+        empty.style.display = "block";
+
+        return;
+      }
+
+
+      content.style.display = "grid";
+
+      empty.style.display = "none";
+
+
+      container.innerHTML = "";
+
+
+      let subtotal = 0;
+
+
+      cart.forEach((item, index) => {
+
+        const itemTotal =
+          item.price * item.quantity;
+
+        subtotal += itemTotal;
+
+
+        const div =
+          document.createElement("div");
+
+        div.className = "cart-item";
+
+
+        div.innerHTML = `
+
+          <div class="item-image">
+            ${getProductIcon(item.name)}
+          </div>
+
+          <div>
+
+            <div class="item-name">
+              ${item.name}
+            </div>
+
+            <div class="item-price">
+              Rs. ${item.price}
+            </div>
+
+            <div class="quantity">
+
+              <button
+                onclick="changeQuantity(${index}, -1)"
+              >
+                −
+              </button>
+
+              <span>
+                ${item.quantity}
+              </span>
+
+              <button
+                onclick="changeQuantity(${index}, 1)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="item-right">
+
+            <div class="item-total">
+              Rs. ${itemTotal}
+            </div>
+
+            <button
+              class="remove"
+              onclick="removeItem(${index})"
+            >
+              Remove
+            </button>
+
+          </div>
+
+        `;
+
+
+        container.appendChild(div);
+
+      });
+
+
+      const delivery = 0;
+
+      const total =
+        subtotal + delivery;
+
+
+      document.getElementById("subtotal")
+        .textContent = "Rs. " + subtotal;
+
+      document.getElementById("delivery")
+        .textContent = delivery === 0
+          ? "Free"
+          : "Rs. " + delivery;
+
+      document.getElementById("total")
+        .textContent = "Rs. " + total;
+
+    }
+
+
+    /* ================= QUANTITY ================= */
+
+    function changeQuantity(index, amount) {
+
+      cart[index].quantity += amount;
+
+
+      if (cart[index].quantity <= 0) {
+
+        cart.splice(index, 1);
+
+      }
+
+
+      saveCart();
+
+      renderCart();
+    }
+
+
+    /* ================= REMOVE ================= */
+
+    function removeItem(index) {
+
+      cart.splice(index, 1);
+
+      saveCart();
+
+      renderCart();
+
+    }
+
+
+    /* ================= SAVE ================= */
+
+    function saveCart() {
+
+      localStorage.setItem(
+        "grostoCart",
+        JSON.stringify(cart)
+      );
+
+    }
+
+
+    /* ================= CHECKOUT ================= */
+
+    function goToCheckout() {
+
+      if (cart.length === 0) {
+
+        alert("Aapka cart empty hai.");
+
+        return;
+
+      }
+
+      window.location.href =
+        "checkout.html";
+
+    }
+
+
+    /* ================= START ================= */
+
+    renderCart();
+
+  </script>
+
+</body>
+</html>
