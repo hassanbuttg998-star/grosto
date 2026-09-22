@@ -1384,7 +1384,8 @@
     }
 
 
-    /* ================= ADD TO CART ================= */
+
+        /* ================= ADD TO CART ================= */
 
     function addToCart(name, price) {
 
@@ -1413,7 +1414,8 @@
 
       updateCartCount();
 
-      alert(name + " cart mein add ho gaya! 🛒");
+      // Cart page open karein
+      window.location.href = "cart.html";
     }
 
 
@@ -1428,32 +1430,8 @@
         return;
       }
 
-      let message = "GROSTO CART\\n\\n";
-
-      let total = 0;
-
-      cart.forEach(item => {
-
-        const itemTotal =
-          item.price * item.quantity;
-
-        total += itemTotal;
-
-        message +=
-          item.name +
-          " × " +
-          item.quantity +
-          " = Rs. " +
-          itemTotal +
-          "\\n";
-
-      });
-
-      message +=
-        "\\nTotal: Rs. " +
-        total;
-
-      alert(message);
+      // Cart page open karein
+      window.location.href = "cart.html";
     }
 
 
