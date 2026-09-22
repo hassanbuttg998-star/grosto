@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Order Confirmed — GROSTO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --light-green: #E8F5EC;
+      --gray: #666;
+      --border: #E2E5E3;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8f7;
+      color: #000;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header {
+      max-width: 1100px;
+      margin: auto;
+      padding: 15px 20px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 45px auto;
+      padding: 0 15px;
+    }
+
+    .success-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .success-icon {
+      width: 75px;
+      height: 75px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: var(--light-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .message {
+      color: var(--gray);
+      margin-bottom: 25px;
+    }
+
+    .order-id {
+      background: var(--light-green);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 25px;
+    }
+
+    .order-id small {
+      display: block;
+      color: var(--gray);
+      margin-bottom: 5px;
+    }
+
+    .order-id strong {
+      color: var(--green);
+      font-size: 23px;
+    }
+
+    .details {
+      text-align: left;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .detail-row span:first-child {
+      color: var(--gray);
+    }
+
+    .items {
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .items h3 {
+      margin-bottom: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .total {
+      border-top: 2px solid var(--border);
+      margin-top: 10px;
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .button {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .primary {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .secondary {
+      border: 1px solid var(--border);
+      color: #000;
+      background: #fff;
+    }
+
+    @media (max-width: 550px) {
+
+      .container {
+        margin: 25px auto;
+      }
+
+      .success-box {
+        padding: 30px 18px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="header">
+
+    <a href="index.html" class="logo">
+      GROST<span>O</span>
+    </a>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+  <div class="success-box">
+
+    <div class="success-icon">
+      ✓
+    </div>
+
+    <h1>
+      Order Successfully Placed! 🎉
+    </h1>
+
+    <p class="message">
+      Thank you for shopping with GROSTO.
+      Aapka order receive ho gaya hai.
+    </p>
+
+
+    <div class="order-id">
+
+      <small>
+        Your Order ID
+      </small>
+
+      <strong id="orderNumber">
+        —
+      </strong>
+
+    </div>
+
+
+    <div class="details">
+
+      <div class="detail-row">
+
+        <span>
+          Customer
+        </span>
+
+        <strong id="customerName">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <span>
+          City
+        </span>
+
+        <strong id="city">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <span>
+          Payment
+        </span>
+
+        <strong id="payment">
+          —
+        </strong>
+
+      </div>
+
+
+      <div class="detail-row">
+
+        <span>
+          Status
+        </span>
+
+        <strong>
+          Pending
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="items">
+
+      <h3>
+        Order Items
+      </h3>
+
+      <div id="itemsList"></div>
+
+      <div class="total">
+
+        <span>
+          Total
+        </span>
+
+        <span id="total">
+          Rs. 0
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="buttons">
+
+      <a
+        href="shop.html"
+        class="button primary"
+      >
+        Continue Shopping
+      </a>
+
+      <a
+        href="index.html"
+        class="button secondary"
+      >
+        Home
+      </a>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<script>
+
+  const order =
+    JSON.parse(
+      localStorage.getItem("grostoLastOrder")
+    );
+
+
+  if (!order) {
+
+    document.querySelector(".success-box").innerHTML = `
+
+      <div class="success-icon">
+        🛒
+      </div>
+
+      <h1>
+        No Order Found
+      </h1>
+
+      <p class="message">
+        Humein recent order details nahi mili.
+      </p>
+
+      <a
+        href="shop.html"
+        class="button primary"
+        style="display:inline-block;"
+      >
+        Start Shopping
+      </a>
+
+    `;
+
+  } else {
+
+    document.getElementById("orderNumber")
+      .textContent = order.orderNumber;
+
+    document.getElementById("customerName")
+      .textContent = order.customer.name;
+
+    document.getElementById("city")
+      .textContent = order.customer.city;
+
+
+    const paymentNames = {
+
+      cod: "Cash on Delivery",
+
+      easypaisa: "EasyPaisa",
+
+      jazzcash: "JazzCash"
+
+    };
+
+
+    document.getElementById("payment")
+      .textContent =
+        paymentNames[order.payment] ||
+        order.payment;
+
+
+    const itemsList =
+      document.getElementById("itemsList");
+
+
+    order.items.forEach(item => {
+
+      const div =
+        document.createElement("div");
+
+      div.className = "item";
+
+      div.innerHTML = `
+
+        <span>
+          ${item.name} × ${item.quantity}
+        </span>
+
+        <strong>
+          Rs. ${item.price * item.quantity}
+        </strong>
+
+      `;
+
+      itemsList.appendChild(div);
+
+    });
+
+
+    document.getElementById("total")
+      .textContent =
+        "Rs. " + order.total;
+
+  }
+
+</script>
+
+</body>
+</html>
