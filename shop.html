@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Shop — GROSTO | Sub Kuch Milega</title>
+
+  <meta
+    name="description"
+    content="Shop groceries, fruits, vegetables, dairy, drinks, snacks and household essentials at GROSTO."
+  >
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --white: #FFFFFF;
+      --black: #000000;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+      --gray: #666666;
+      --border: #E3E6E4;
+      --red: #E53935;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: var(--black);
+      line-height: 1.5;
+      padding-bottom: 80px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* ================= HEADER ================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header {
+      max-width: 1200px;
+      margin: auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .search {
+      flex: 1;
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 13px 45px 13px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--light-gray);
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: var(--green);
+      background: #fff;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 19px;
+    }
+
+    .cart-button {
+      border: none;
+      background: var(--green);
+      color: white;
+      border-radius: 11px;
+      padding: 12px 16px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* ================= NAV ================= */
+
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px 12px;
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav a {
+      font-size: 14px;
+      font-weight: 700;
+      color: #444;
+      white-space: nowrap;
+    }
+
+    .nav a:hover {
+      color: var(--green);
+    }
+
+    /* ================= PAGE ================= */
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    .page-title {
+      margin-bottom: 8px;
+      font-size: 36px;
+    }
+
+    .page-subtitle {
+      color: var(--gray);
+      margin-bottom: 25px;
+    }
+
+    /* ================= CATEGORY FILTER ================= */
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 25px;
+      scrollbar-width: none;
+    }
+
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-btn {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 30px;
+      padding: 10px 17px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #444;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    /* ================= SHOP TOOLBAR ================= */
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 15px;
+    }
+
+    .result-count {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .sort-select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      outline: none;
+    }
+
+    /* ================= PRODUCTS ================= */
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .product {
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      overflow: hidden;
+      background: white;
+      position: relative;
+      transition: 0.2s;
+    }
+
+    .product:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-image {
+      height: 205px;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 85px;
+    }
+
+    .badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--yellow);
+      color: #000;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .out-stock {
+      background: #eee;
+      color: #555;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-category {
+      color: var(--gray);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .product-name {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .unit {
+      color: var(--gray);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price {
+      color: var(--green);
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .old-price {
+      display: block;
+      color: #999;
+      text-decoration: line-through;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    .add-btn {
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--green);
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .add-btn:hover {
+      background: #178e48;
+    }
+
+    .add-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* ================= EMPTY ================= */
+
+    .empty {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+    }
+
+    .empty-icon {
+      font-size: 55px;
+      margin-bottom: 10px;
+    }
+
+    /* ================= CART BAR ================= */
+
+    .cart-bar {
+      position: fixed;
+      bottom: 14px;
+      left: 20px;
+      right: 20px;
+      max-width: 600px;
+      margin: auto;
+      z-index: 999;
+      background: var(--green);
+      color: white;
+      border-radius: 14px;
+      padding: 15px 20px;
+      box-shadow: 0 7px 25px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+    }
+
+    .cart-bar button {
+      border: none;
+      background: var(--yellow);
+      color: #000;
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: 800;
+    }
+
+    /* ================= FOOTER ================= */
+
+    footer {
+      margin-top: 70px;
+      background: #111;
+      color: white;
+    }
+
+    .footer {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 30px;
+    }
+
+    .footer-logo {
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .footer-logo span {
+      color: var(--yellow);
+    }
+
+    .footer p,
+    .footer a {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .footer h3 {
+      margin-bottom: 12px;
+    }
+
+    .footer a {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .copyright {
+      text-align: center;
+      border-top: 1px solid #333;
+      padding: 17px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 950px) {
+      .products {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
+
+      .header {
+        flex-wrap: wrap;
+        padding: 11px 14px;
+      }
+
+      .logo {
+        font-size: 26px;
+      }
+
+      .search {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .cart-button {
+        padding: 10px 13px;
+      }
+
+      .nav {
+        padding: 0 14px 10px;
+        gap: 19px;
+      }
+
+      .container {
+        padding: 25px 14px;
+      }
+
+      .page-title {
+        font-size: 29px;
+      }
+
+      .products {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .product-image {
+        height: 155px;
+        font-size: 65px;
+      }
+
+      .product-info {
+        padding: 11px;
+      }
+
+      .product-name {
+        font-size: 14px;
+      }
+
+      .price {
+        font-size: 16px;
+      }
+
+      .add-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 21px;
+      }
+
+      .toolbar {
+        align-items: flex-start;
+      }
+
+      .sort-select {
+        font-size: 12px;
+      }
+
+      .footer {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer > div:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 420px) {
+
+      .products {
+        gap: 8px;
+      }
+
+      .product-image {
+        height: 140px;
+      }
+
+      .cart-bar {
+        left: 12px;
+        right: 12px;
+        bottom: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+
+  <header>
+
+    <div class="header">
+
+      <a href="index.html" class="logo">
+        GROST<span>O</span>
+      </a>
+
+      <div class="search">
+
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Aap kya dhoond rahe hain?"
+          oninput="searchProducts()"
+        >
+
+        <span class="search-icon">🔎</span>
+
+      </div>
+
+      <button class="cart-button" onclick="openCart()">
+        🛒 Cart <span id="topCartCount">0</span>
+      </button>
+
+    </div>
+
+    <nav class="nav">
+
+      <a href="index.html">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="shop.html">Shop</a>
+      <a href="#deals">Deals</a>
+      <a href="index.html#why-grosto">Why GROSTO</a>
+
+    </nav>
+
+  </header>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main>
+
+    <div class="container">
+
+      <h1 class="page-title">
+        Shop
+      </h1>
+
+      <p class="page-subtitle">
+        Apni daily shopping ki zaroorat ki cheezen yahan se order karein.
+      </p>
+
+
+      <!-- ================= CATEGORIES ================= -->
+
+      <div class="categories" id="categories">
+
+        <button
+          class="category-btn active"
+          onclick="filterCategory('All', this)"
+        >
+          All
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Fruits & Vegetables', this)"
+        >
+          🥬 Fruits & Vegetables
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Grocery', this)"
+        >
+          🛒 Grocery & Rashan
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Dairy', this)"
+        >
+          🥛 Dairy & Eggs
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Drinks', this)"
+        >
+          🥤 Drinks
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Snacks', this)"
+        >
+          🍪 Biscuits & Snacks
+        </button>
+
+        <button
+          class="category-btn"
+          onclick="filterCategory('Household', this)"
+        >
+          🧹 Household
+        </button>
+
+      </div>
+
+
+      <!-- ================= TOOLBAR ================= -->
+
+      <div class="toolbar">
+
+        <div class="result-count">
+          <span id="resultCount">12</span> products
+        </div>
+
+        <select
+          class="sort-select"
+          id="sortSelect"
+          onchange="sortProducts()"
+        >
+
+          <option value="default">
+            Sort: Recommended
+          </option>
+
+          <option value="low">
+            Price: Low to High
+          </option>
+
+          <option value="high">
+            Price: High to Low
+          </option>
+
+          <option value="name">
+            Name: A to Z
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ================= PRODUCTS ================= -->
+
+      <div class="products" id="products">
+
+
+        <!-- PRODUCT 1 -->
+
+        <div
+          class="product"
+          data-name="Fresh Apples"
+          data-category="Fruits & Vegetables"
+          data-price="450"
+        >
+
+          <span class="badge">
+            Fresh
+          </span>
+
+          <div class="product-image">
+            🍎
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Fruits & Vegetables
+            </div>
+
+            <div class="product-name">
+              Fresh Apples
+            </div>
+
+            <div class="unit">
+              1 kg
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 450
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Fresh Apples', 450)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 2 -->
+
+        <div
+          class="product"
+          data-name="Fresh Milk"
+          data-category="Dairy"
+          data-price="280"
+        >
+
+          <div class="product-image">
+            🥛
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Dairy
+            </div>
+
+            <div class="product-name">
+              Fresh Milk
+            </div>
+
+            <div class="unit">
+              1 Liter
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 280
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Fresh Milk', 280)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 3 -->
+
+        <div
+          class="product"
+          data-name="Premium Rice"
+          data-category="Grocery"
+          data-price="520"
+        >
+
+          <span class="badge">
+            Popular
+          </span>
+
+          <div class="product-image">
+            🍚
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Grocery
+            </div>
+
+            <div class="product-name">
+              Premium Rice
+            </div>
+
+            <div class="unit">
+              5 kg
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 520
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Premium Rice', 520)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 4 -->
+
+        <div
+          class="product"
+          data-name="Dishwashing Liquid"
+          data-category="Household"
+          data-price="350"
+        >
+
+          <div class="product-image">
+            🧴
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Household
+            </div>
+
+            <div class="product-name">
+              Dishwashing Liquid
+            </div>
+
+            <div class="unit">
+              500 ml
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 350
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Dishwashing Liquid', 350)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 5 -->
+
+        <div
+          class="product"
+          data-name="Fresh Bananas"
+          data-category="Fruits & Vegetables"
+          data-price="220"
+        >
+
+          <span class="badge">
+            Fresh
+          </span>
+
+          <div class="product-image">
+            🍌
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Fruits & Vegetables
+            </div>
+
+            <div class="product-name">
+              Fresh Bananas
+            </div>
+
+            <div class="unit">
+              1 dozen
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 220
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Fresh Bananas', 220)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 6 -->
+
+        <div
+          class="product"
+          data-name="Farm Fresh Eggs"
+          data-category="Dairy"
+          data-price="390"
+        >
+
+          <div class="product-image">
+            🥚
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Dairy
+            </div>
+
+            <div class="product-name">
+              Farm Fresh Eggs
+            </div>
+
+            <div class="unit">
+              12 pieces
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 390
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Farm Fresh Eggs', 390)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 7 -->
+
+        <div
+          class="product"
+          data-name="Premium Tea"
+          data-category="Grocery"
+          data-price="650"
+        >
+
+          <div class="product-image">
+            ☕
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Grocery
+            </div>
+
+            <div class="product-name">
+              Premium Tea
+            </div>
+
+            <div class="unit">
+              500 g
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 650
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Premium Tea', 650)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 8 -->
+
+        <div
+          class="product"
+          data-name="Orange Juice"
+          data-category="Drinks"
+          data-price="300"
+        >
+
+          <span class="badge">
+            Deal
+          </span>
+
+          <div class="product-image">
+            🧃
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Drinks
+            </div>
+
+            <div class="product-name">
+              Orange Juice
+            </div>
+
+            <div class="unit">
+              1 Liter
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 300
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Orange Juice', 300)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 9 -->
+
+        <div
+          class="product"
+          data-name="Chocolate Biscuits"
+          data-category="Snacks"
+          data-price="180"
+        >
+
+          <div class="product-image">
+            🍪
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Snacks
+            </div>
+
+            <div class="product-name">
+              Chocolate Biscuits
+            </div>
+
+            <div class="unit">
+              12 pack
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 180
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Chocolate Biscuits', 180)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 10 -->
+
+        <div
+          class="product"
+          data-name="Potato Chips"
+          data-category="Snacks"
+          data-price="100"
+        >
+
+          <div class="product-image">
+            🍟
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Snacks
+            </div>
+
+            <div class="product-name">
+              Potato Chips
+            </div>
+
+            <div class="unit">
+              100 g
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 100
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Potato Chips', 100)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 11 -->
+
+        <div
+          class="product"
+          data-name="Laundry Detergent"
+          data-category="Household"
+          data-price="780"
+        >
+
+          <div class="product-image">
+            🧺
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Household
+            </div>
+
+            <div class="product-name">
+              Laundry Detergent
+            </div>
+
+            <div class="unit">
+              1 kg
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 780
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Laundry Detergent', 780)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCT 12 -->
+
+        <div
+          class="product"
+          data-name="Fresh Tomatoes"
+          data-category="Fruits & Vegetables"
+          data-price="180"
+        >
+
+          <span class="badge">
+            Fresh
+          </span>
+
+          <div class="product-image">
+            🍅
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              Fruits & Vegetables
+            </div>
+
+            <div class="product-name">
+              Fresh Tomatoes
+            </div>
+
+            <div class="unit">
+              1 kg
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. 180
+              </div>
+
+              <button
+                class="add-btn"
+                onclick="addToCart('Fresh Tomatoes', 180)"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- EMPTY SEARCH -->
+
+      <div class="empty" id="empty">
+
+        <div class="empty-icon">
+          🔍
+        </div>
+
+        <h2>
+          Product nahi mila
+        </h2>
+
+        <p>
+          Search ko change karke dobara try karein.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- ================= CART BAR ================= -->
+
+  <div class="cart-bar">
+
+    <div>
+      🛒 Cart —
+      <span id="cartCount">0</span> Items
+    </div>
+
+    <button onclick="openCart()">
+      View Cart
+    </button>
+
+  </div>
+
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer>
+
+    <div class="footer">
+
+      <div>
+
+        <div class="footer-logo">
+          GROST<span>O</span>
+        </div>
+
+        <p>
+          GROSTO — Sub Kuch Milega.
+          Your everyday online store for groceries,
+          household essentials and more.
+        </p>
+
+      </div>
+
+      <div>
+
+        <h3>Shop</h3>
+
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="#categories">Categories</a>
+
+      </div>
+
+      <div>
+
+        <h3>Help</h3>
+
+        <a href="#">Delivery</a>
+        <a href="#">Payment</a>
+        <a href="#">Contact</a>
+
+      </div>
+
+    </div>
+
+    <div class="copyright">
+      © 2026 GROSTO. All rights reserved.
+    </div>
+
+  </footer>
+
+
+  <!-- ================= JAVASCRIPT ================= -->
+
+  <script>
+
+    let cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+    let currentCategory = "All";
+
+
+    /* ================= UPDATE CART ================= */
+
+    function updateCartCount() {
+
+      const count = cart.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
+
+      document.getElementById("topCartCount").textContent = count;
+
+      document.getElementById("cartCount").textContent = count;
+    }
+
+
+    /* ================= ADD TO CART ================= */
+
+    function addToCart(name, price) {
+
+      const existing = cart.find(
+        item => item.name === name
+      );
+
+      if (existing) {
+
+        existing.quantity++;
+
+      } else {
+
+        cart.push({
+          name: name,
+          price: price,
+          quantity: 1
+        });
+
+      }
+
+      localStorage.setItem(
+        "grostoCart",
+        JSON.stringify(cart)
+      );
+
+      updateCartCount();
+
+      alert(name + " cart mein add ho gaya! 🛒");
+    }
+
+
+    /* ================= OPEN CART ================= */
+
+    function openCart() {
+
+      if (cart.length === 0) {
+
+        alert("Aapka cart abhi empty hai.");
+
+        return;
+      }
+
+      let message = "GROSTO CART\\n\\n";
+
+      let total = 0;
+
+      cart.forEach(item => {
+
+        const itemTotal =
+          item.price * item.quantity;
+
+        total += itemTotal;
+
+        message +=
+          item.name +
+          " × " +
+          item.quantity +
+          " = Rs. " +
+          itemTotal +
+          "\\n";
+
+      });
+
+      message +=
+        "\\nTotal: Rs. " +
+        total;
+
+      alert(message);
+    }
+
+
+    /* ================= SEARCH ================= */
+
+    function searchProducts() {
+
+      const query =
+        document
+          .getElementById("searchInput")
+          .value
+          .toLowerCase()
+          .trim();
+
+      const products =
+        document.querySelectorAll(".product");
+
+      let visible = 0;
+
+      products.forEach(product => {
+
+        const name =
+          product.dataset.name.toLowerCase();
+
+        const category =
+          product.dataset.category.toLowerCase();
+
+        const matchesSearch =
+          name.includes(query) ||
+          category.includes(query);
+
+        const matchesCategory =
+          currentCategory === "All" ||
+          product.dataset.category === currentCategory;
+
+        if (matchesSearch && matchesCategory) {
+
+          product.style.display = "";
+
+          visible++;
+
+        } else {
+
+          product.style.display = "none";
+
+        }
+
+      });
+
+      document.getElementById("resultCount").textContent =
+        visible;
+
+      document.getElementById("empty").style.display =
+        visible === 0 ? "block" : "none";
+    }
+
+
+    /* ================= CATEGORY FILTER ================= */
+
+    function filterCategory(category, button) {
+
+      currentCategory = category;
+
+      document
+        .querySelectorAll(".category-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+      button.classList.add("active");
+
+      searchProducts();
+    }
+
+
+    /* ================= SORT ================= */
+
+    function sortProducts() {
+
+      const value =
+        document.getElementById("sortSelect").value;
+
+      const container =
+        document.getElementById("products");
+
+      const products =
+        Array.from(
+          document.querySelectorAll(".product")
+        );
+
+      if (value === "low") {
+
+        products.sort(
+          (a, b) =>
+            Number(a.dataset.price) -
+            Number(b.dataset.price)
+        );
+
+      } else if (value === "high") {
+
+        products.sort(
+          (a, b) =>
+            Number(b.dataset.price) -
+            Number(a.dataset.price)
+        );
+
+      } else if (value === "name") {
+
+        products.sort(
+          (a, b) =>
+            a.dataset.name.localeCompare(
+              b.dataset.name
+            )
+        );
+
+      }
+
+      products.forEach(product => {
+        container.appendChild(product);
+      });
+
+      searchProducts();
+    }
+
+
+    /* ================= START ================= */
+
+    updateCartCount();
+
+  </script>
+
+</body>
+</html>
