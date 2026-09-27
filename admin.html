@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Panel — GROSTO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --light-gray: #F7F8F7;
+      --border: #E2E5E3;
+      --red: #E53935;
+      --light-green: #E8F5EC;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--light-gray);
+      color: #000;
+      min-height: 100vh;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* ================= TOP BAR ================= */
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .logo small {
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 13px;
+      margin-left: 8px;
+    }
+
+    .logout-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ================= LAYOUT ================= */
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      border: none;
+      background: none;
+      padding: 12px 6px;
+      font-weight: 800;
+      color: var(--gray);
+      border-bottom: 3px solid transparent;
+      margin-right: 18px;
+    }
+
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* ================= CARD ================= */
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .card-header h2 {
+      font-size: 18px;
+    }
+
+    .btn {
+      border: none;
+      background: var(--green);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 9px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      background: #178e48;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: #000;
+    }
+
+    .btn-small {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 7px;
+    }
+
+    .btn-danger {
+      background: var(--red);
+    }
+
+    .btn-danger:hover {
+      background: #c62828;
+    }
+
+    /* ================= TABLE ================= */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--gray);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-active {
+      background: var(--light-green);
+      color: #178e48;
+    }
+
+    .status-inactive {
+      background: #eee;
+      color: #777;
+    }
+
+    .stock-editable, .price-editable {
+      width: 80px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    select.status-select {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    /* ================= FORM (Add/Edit product) ================= */
+
+    .form-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .form-overlay.show {
+      display: flex;
+    }
+
+    .form-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .form-box h3 {
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-field {
+      margin-bottom: 12px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .form-actions .btn,
+    .form-actions .btn-secondary {
+      flex: 1;
+    }
+
+    /* ================= SETTINGS FORM ================= */
+
+    .settings-form .form-field {
+      margin-bottom: 16px;
+    }
+
+    .settings-form label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .settings-form input {
+      width: 100%;
+      max-width: 420px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    .hint {
+      color: var(--gray);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .save-msg {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .empty-msg {
+      color: var(--gray);
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .order-details-row td {
+      background: var(--light-gray);
+      white-space: normal;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= TOP BAR ================= -->
+
+  <div class="topbar">
+    <div class="logo">GROST<span>O</span><small>Admin Panel</small></div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+
+
+  <div class="wrap">
+
+    <!-- ================= TABS ================= -->
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tabBtnProducts" onclick="switchTab('products')">Products</button>
+      <button class="tab-btn" id="tabBtnOrders" onclick="switchTab('orders')">Orders</button>
+      <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">Settings</button>
+    </div>
+
+
+    <!-- ================= PRODUCTS PANEL ================= -->
+
+    <div class="panel active" id="panelProducts">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Products</h2>
+          <button class="btn" onclick="openProductForm()">+ Add Product</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr><td colspan="7" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= ORDERS PANEL ================= -->
+
+    <div class="panel" id="panelOrders">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Orders</h2>
+          <button class="btn btn-secondary" onclick="loadOrders()">↻ Refresh</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>City</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr><td colspan="9" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= SETTINGS PANEL ================= -->
+
+    <div class="panel" id="panelSettings">
+
+      <div class="card settings-form">
+
+        <div class="card-header">
+          <h2>Store Settings</h2>
+        </div>
+
+        <div class="form-field">
+          <label>WhatsApp Number (order dispatch)</label>
+          <input type="text" id="set_whatsapp_number" placeholder="923001234567">
+          <div class="hint">Country code ke saath, bina + ya spaces ke. Jaise: 923001234567</div>
+        </div>
+
+        <div class="form-field">
+          <label>EasyPaisa Account Title</label>
+          <input type="text" id="set_easypaisa_title" placeholder="GROSTO Store">
+        </div>
+
+        <div class="form-field">
+          <label>EasyPaisa Account Number</label>
+          <input type="text" id="set_easypaisa_number" placeholder="03XXXXXXXXX">
+        </div>
+
+        <div class="form-field">
+          <label>JazzCash Account Title</label>
+          <input type="text" id="set_jazzcash_title" placeholder="GROSTO Store">
+        </div>
+
+        <div class="form-field">
+          <label>JazzCash Account Number</label>
+          <input type="text" id="set_jazzcash_number" placeholder="03XXXXXXXXX">
+        </div>
+
+        <div class="form-field">
+          <label>Homepage Discount Banner Text</label>
+          <input type="text" id="set_discount_banner" placeholder="10% OFF on your first order!">
+        </div>
+
+        <div class="form-field">
+          <label>Store Address</label>
+          <input type="text" id="set_store_address" placeholder="Shop address">
+        </div>
+
+        <div class="form-field">
+          <label>Google Maps Link (optional)</label>
+          <input type="text" id="set_store_map_link" placeholder="https://maps.google.com/...">
+        </div>
+
+        <button class="btn" onclick="saveSettings()">Save Settings</button>
+
+        <div class="save-msg" id="settingsSaveMsg">✓ Settings saved.</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= ADD / EDIT PRODUCT FORM ================= -->
+
+  <div class="form-overlay" id="productFormOverlay">
+
+    <div class="form-box">
+
+      <h3 id="productFormTitle">Add Product</h3>
+
+      <input type="hidden" id="p_id">
+
+      <div class="form-grid">
+
+        <div class="form-field full">
+          <label>Name (English)</label>
+          <input type="text" id="p_name" placeholder="Fresh Apples">
+        </div>
+
+        <div class="form-field full">
+          <label>Name (Urdu) — optional</label>
+          <input type="text" id="p_name_urdu" placeholder="تازہ سیب">
+        </div>
+
+        <div class="form-field">
+          <label>Category</label>
+          <select id="p_category">
+            <option>Fruits & Vegetables</option>
+            <option>Grocery</option>
+            <option>Dairy</option>
+            <option>Drinks</option>
+            <option>Snacks</option>
+            <option>Household</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label>Emoji Icon</label>
+          <input type="text" id="p_emoji" placeholder="🍎">
+        </div>
+
+        <div class="form-field">
+          <label>Price (Rs.)</label>
+          <input type="number" id="p_price" placeholder="450">
+        </div>
+
+        <div class="form-field">
+          <label>Old Price (optional)</label>
+          <input type="number" id="p_old_price" placeholder="500">
+        </div>
+
+        <div class="form-field">
+          <label>Unit</label>
+          <input type="text" id="p_unit" placeholder="1 kg">
+        </div>
+
+        <div class="form-field">
+          <label>Badge (optional)</label>
+          <input type="text" id="p_badge" placeholder="Fresh / Popular / Deal">
+        </div>
+
+        <div class="form-field">
+          <label>Stock (quantity)</label>
+          <input type="number" id="p_stock" placeholder="50">
+        </div>
+
+        <div class="form-field">
+          <label>Active (visible in store)</label>
+          <select id="p_is_active">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary btn" onclick="closeProductForm()">Cancel</button>
+        <button class="btn" onclick="saveProduct()">Save Product</button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= SUPABASE ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
+  <script>
+
+    /* ================= AUTH GUARD ================= */
+
+    async function checkAuth() {
+
+      const { data } = await grostoDB.auth.getSession();
+
+      if (!data.session) {
+        window.location.href = "admin-login.html";
+        return false;
+      }
+
+      return true;
+    }
+
+    async function doLogout() {
+
+      await grostoDB.auth.signOut();
+
+      window.location.href = "admin-login.html";
+    }
+
+
+    /* ================= TABS ================= */
+
+    function switchTab(tab) {
+
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+      document.getElementById("panel" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
+      document.getElementById("tabBtn" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
+
+      if (tab === "orders") loadOrders();
+      if (tab === "settings") loadSettings();
+    }
+
+
+    /* ================= PRODUCTS ================= */
+
+    async function loadProducts() {
+
+      const { data, error } = await grostoDB
+        .from("products")
+        .select("*")
+        .order("id");
+
+      const tbody = document.getElementById("productsTableBody");
+
+      if (error) {
+
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">Load nahi ho saka.</td></tr>`;
+
+        console.error(error);
+
+        return;
+      }
+
+      if (data.length === 0) {
+
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">Koi product nahi. "+ Add Product" se shuru karein.</td></tr>`;
+
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      data.forEach(p => {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td style="font-size:22px;">${p.emoji}</td>
+          <td>${p.name}</td>
+          <td>${p.category}</td>
+          <td>
+            <input
+              type="number"
+              class="price-editable"
+              value="${p.price}"
+              onchange="quickUpdate(${p.id}, 'price', this.value)"
+            >
+          </td>
+          <td>
+            <input
+              type="number"
+              class="stock-editable"
+              value="${p.stock}"
+              onchange="quickUpdate(${p.id}, 'stock', this.value)"
+            >
+          </td>
+          <td>
+            <span class="status-pill ${p.is_active ? 'status-active' : 'status-inactive'}">
+              ${p.is_active ? "Active" : "Hidden"}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-secondary btn-small" onclick='editProduct(${JSON.stringify(p)})'>Edit</button>
+            <button class="btn btn-danger btn-small" onclick="deleteProduct(${p.id})">Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+
+      });
+
+    }
+
+
+    async function quickUpdate(id, field, value) {
+
+      const update = {};
+
+      update[field] = Number(value);
+
+      const { error } = await grostoDB.from("products").update(update).eq("id", id);
+
+      if (error) {
+
+        alert("Update nahi ho saka.");
+
+        console.error(error);
+      }
+
+    }
+
+
+    function openProductForm() {
+
+      document.getElementById("productFormTitle").textContent = "Add Product";
+
+      document.getElementById("p_id").value = "";
+      document.getElementById("p_name").value = "";
+      document.getElementById("p_name_urdu").value = "";
+      document.getElementById("p_category").value = "Fruits & Vegetables";
+      document.getElementById("p_emoji").value = "🛒";
+      document.getElementById("p_price").value = "";
+      document.getElementById("p_old_price").value = "";
+      document.getElementById("p_unit").value = "";
+      document.getElementById("p_badge").value = "";
+      document.getElementById("p_stock").value = "0";
+      document.getElementById("p_is_active").value = "true";
+
+      document.getElementById("productFormOverlay").classList.add("show");
+    }
+
+    function editProduct(p) {
+
+      document.getElementById("productFormTitle").textContent = "Edit Product";
+
+      document.getElementById("p_id").value = p.id;
+      document.getElementById("p_name").value = p.name;
+      document.getElementById("p_name_urdu").value = p.name_urdu || "";
+      document.getElementById("p_category").value = p.category;
+      document.getElementById("p_emoji").value = p.emoji;
+      document.getElementById("p_price").value = p.price;
+      document.getElementById("p_old_price").value = p.old_price || "";
+      document.getElementById("p_unit").value = p.unit;
+      document.getElementById("p_badge").value = p.badge || "";
+      document.getElementById("p_stock").value = p.stock;
+      document.getElementById("p_is_active").value = String(p.is_active);
+
+      document.getElementById("productFormOverlay").classList.add("show");
+    }
+
+    function closeProductForm() {
+      document.getElementById("productFormOverlay").classList.remove("show");
+    }
+
+    async function saveProduct() {
+
+      const id = document.getElementById("p_id").value;
+
+      const payload = {
+        name: document.getElementById("p_name").value.trim(),
+        name_urdu: document.getElementById("p_name_urdu").value.trim() || null,
+        category: document.getElementById("p_category").value,
+        emoji: document.getElementById("p_emoji").value.trim() || "🛒",
+        price: Number(document.getElementById("p_price").value) || 0,
+        old_price: document.getElementById("p_old_price").value ? Number(document.getElementById("p_old_price").value) : null,
+        unit: document.getElementById("p_unit").value.trim() || "1 unit",
+        badge: document.getElementById("p_badge").value.trim() || null,
+        stock: Number(document.getElementById("p_stock").value) || 0,
+        is_active: document.getElementById("p_is_active").value === "true"
+      };
+
+      if (!payload.name) {
+        alert("Product ka naam zaroori hai.");
+        return;
+      }
+
+      let error;
+
+      if (id) {
+
+        ({ error } = await grostoDB.from("products").update(payload).eq("id", id));
+
+      } else {
+
+        ({ error } = await grostoDB.from("products").insert(payload));
+      }
+
+      if (error) {
+
+        alert("Save nahi ho saka.");
+
+        console.error(error);
+
+        return;
+      }
+
+      closeProductForm();
+
+      loadProducts();
+    }
+
+    async function deleteProduct(id) {
+
+      if (!confirm("Kya aap is product ko delete karna chahte hain?")) return;
+
+      const { error } = await grostoDB.from("products").delete().eq("id", id);
+
+      if (error) {
+
+        alert("Delete nahi ho saka.");
+
+        console.error(error);
+
+        return;
+      }
+
+      loadProducts();
+    }
+
+
+    /* ================= ORDERS ================= */
+
+    async function loadOrders() {
+
+      const { data, error } = await grostoDB
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      const tbody = document.getElementById("ordersTableBody");
+
+      if (error) {
+
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">Load nahi ho saka.</td></tr>`;
+
+        console.error(error);
+
+        return;
+      }
+
+      if (data.length === 0) {
+
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">Abhi tak koi order nahi aaya.</td></tr>`;
+
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      data.forEach(o => {
+
+        const date = new Date(o.created_at).toLocaleString();
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${o.order_number}</td>
+          <td>${o.customer_name}</td>
+          <td>${o.phone}</td>
+          <td>${o.city}</td>
+          <td>Rs. ${o.total}</td>
+          <td>${o.payment_method.toUpperCase()}</td>
+          <td>
+            <select class="status-select" onchange="updateOrderStatus(${o.id}, this.value)">
+              ${["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"].map(s =>
+                `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`
+              ).join("")}
+            </select>
+          </td>
+          <td>${date}</td>
+          <td>
+            <button class="btn btn-secondary btn-small" onclick="toggleOrderDetails(this, ${o.id})">View</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+
+        const detailTr = document.createElement("tr");
+
+        detailTr.className = "order-details-row";
+
+        detailTr.style.display = "none";
+
+        detailTr.id = "orderDetails" + o.id;
+
+        const itemsHtml = o.items.map(i => `${i.name} × ${i.quantity} = Rs. ${i.price * i.quantity}`).join("<br>");
+
+        detailTr.innerHTML = `
+          <td colspan="9">
+            <strong>Address:</strong> ${o.address}<br>
+            ${o.instructions ? `<strong>Instructions:</strong> ${o.instructions}<br>` : ""}
+            ${o.payment_tid ? `<strong>Payment TID:</strong> ${o.payment_tid}<br>` : ""}
+            <br>
+            <strong>Items:</strong><br>
+            ${itemsHtml}
+          </td>
+        `;
+
+        tbody.appendChild(detailTr);
+
+      });
+
+    }
+
+    function toggleOrderDetails(btn, id) {
+
+      const row = document.getElementById("orderDetails" + id);
+
+      const isHidden = row.style.display === "none";
+
+      row.style.display = isHidden ? "table-row" : "none";
+
+      btn.textContent = isHidden ? "Hide" : "View";
+    }
+
+    async function updateOrderStatus(id, status) {
+
+      const { error } = await grostoDB.from("orders").update({ status }).eq("id", id);
+
+      if (error) {
+
+        alert("Status update nahi ho saka.");
+
+        console.error(error);
+      }
+
+    }
+
+
+    /* ================= SETTINGS ================= */
+
+    async function loadSettings() {
+
+      const settings = await getGrostoSettings();
+
+      document.getElementById("set_whatsapp_number").value = settings.whatsapp_number || "";
+      document.getElementById("set_easypaisa_title").value = settings.easypaisa_title || "";
+      document.getElementById("set_easypaisa_number").value = settings.easypaisa_number || "";
+      document.getElementById("set_jazzcash_title").value = settings.jazzcash_title || "";
+      document.getElementById("set_jazzcash_number").value = settings.jazzcash_number || "";
+      document.getElementById("set_discount_banner").value = settings.discount_banner || "";
+      document.getElementById("set_store_address").value = settings.store_address || "";
+      document.getElementById("set_store_map_link").value = settings.store_map_link || "";
+
+    }
+
+    async function saveSettings() {
+
+      const rows = [
+        { key: "whatsapp_number", value: document.getElementById("set_whatsapp_number").value.trim() },
+        { key: "easypaisa_title", value: document.getElementById("set_easypaisa_title").value.trim() },
+        { key: "easypaisa_number", value: document.getElementById("set_easypaisa_number").value.trim() },
+        { key: "jazzcash_title", value: document.getElementById("set_jazzcash_title").value.trim() },
+        { key: "jazzcash_number", value: document.getElementById("set_jazzcash_number").value.trim() },
+        { key: "discount_banner", value: document.getElementById("set_discount_banner").value.trim() },
+        { key: "store_address", value: document.getElementById("set_store_address").value.trim() },
+        { key: "store_map_link", value: document.getElementById("set_store_map_link").value.trim() }
+      ];
+
+      const { error } = await grostoDB.from("settings").upsert(rows);
+
+      const msg = document.getElementById("settingsSaveMsg");
+
+      if (error) {
+
+        alert("Settings save nahi ho saki.");
+
+        console.error(error);
+
+        return;
+      }
+
+      msg.style.display = "block";
+
+      setTimeout(() => msg.style.display = "none", 2500);
+
+    }
+
+
+    /* ================= START ================= */
+
+    async function init() {
+
+      const ok = await checkAuth();
+
+      if (!ok) return;
+
+      loadProducts();
+    }
+
+    init();
+
+  </script>
+
+</body>
+</html>
