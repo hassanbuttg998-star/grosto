@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Order Confirmed — GROSTO</title>
+  <title>Order Confirmed â€” GROSTO</title>
 
   <style>
     * {
@@ -175,6 +175,11 @@
       background: #fff;
     }
 
+    .whatsapp-btn {
+      background: #25D366;
+      color: #fff;
+    }
+
     @media (max-width: 550px) {
 
       .container {
@@ -216,11 +221,11 @@
   <div class="success-box">
 
     <div class="success-icon">
-      ✓
+      âœ“
     </div>
 
     <h1>
-      Order Successfully Placed! 🎉
+      Order Successfully Placed! ðŸŽ‰
     </h1>
 
     <p class="message">
@@ -236,7 +241,7 @@
       </small>
 
       <strong id="orderNumber">
-        —
+        â€”
       </strong>
 
     </div>
@@ -251,7 +256,7 @@
         </span>
 
         <strong id="customerName">
-          —
+          â€”
         </strong>
 
       </div>
@@ -264,7 +269,7 @@
         </span>
 
         <strong id="city">
-          —
+          â€”
         </strong>
 
       </div>
@@ -277,7 +282,7 @@
         </span>
 
         <strong id="payment">
-          —
+          â€”
         </strong>
 
       </div>
@@ -321,6 +326,19 @@
     </div>
 
 
+    <div class="buttons" id="whatsappRow" style="display:none; margin-bottom: 10px;">
+
+      <a
+        href="#"
+        id="whatsappBtn"
+        class="button whatsapp-btn"
+        target="_blank"
+      >
+        ðŸ’¬ Order WhatsApp Par Confirm Karein
+      </a>
+
+    </div>
+
     <div class="buttons">
 
       <a
@@ -344,6 +362,9 @@
 </main>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+
 <script>
 
   const order =
@@ -357,7 +378,7 @@
     document.querySelector(".success-box").innerHTML = `
 
       <div class="success-icon">
-        🛒
+        ðŸ›’
       </div>
 
       <h1>
@@ -421,7 +442,7 @@
       div.innerHTML = `
 
         <span>
-          ${item.name} × ${item.quantity}
+          ${item.name} Ã— ${item.quantity}
         </span>
 
         <strong>
@@ -438,6 +459,32 @@
     document.getElementById("total")
       .textContent =
         "Rs. " + order.total;
+
+
+    // Show a WhatsApp confirm button as a fallback,
+    // in case the automatic WhatsApp tab was blocked by the browser.
+    getGrostoSettings().then(settings => {
+
+      const whatsappNumber =
+        (settings.whatsapp_number || "").replace(/\D/g, "");
+
+      if (!whatsappNumber) return;
+
+      let msg = `Order Confirm â€” GROSTO\n`;
+      msg += `Order #: ${order.orderNumber}\n`;
+      msg += `Name: ${order.customer.name}\n`;
+      msg += `Total: Rs. ${order.total}`;
+
+      const link =
+        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
+
+      const btn = document.getElementById("whatsappBtn");
+
+      btn.href = link;
+
+      document.getElementById("whatsappRow").style.display = "flex";
+
+    });
 
   }
 
