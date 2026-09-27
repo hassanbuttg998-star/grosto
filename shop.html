@@ -249,6 +249,7 @@
       align-items: center;
       justify-content: center;
       font-size: 85px;
+      position: relative;
     }
 
     .badge {
@@ -268,6 +269,18 @@
       color: #555;
     }
 
+    .stock-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: #444;
+    }
+
     .product-info {
       padding: 15px;
     }
@@ -281,6 +294,12 @@
     .product-name {
       font-size: 17px;
       font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .product-name-urdu {
+      font-size: 13px;
+      color: var(--gray);
       margin-bottom: 4px;
     }
 
@@ -343,6 +362,14 @@
     .empty-icon {
       font-size: 55px;
       margin-bottom: 10px;
+    }
+
+    /* ================= LOADING ================= */
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
     }
 
     /* ================= CART BAR ================= */
@@ -651,7 +678,7 @@
       <div class="toolbar">
 
         <div class="result-count">
-          <span id="resultCount">12</span> products
+          <span id="resultCount">0</span> products
         </div>
 
         <select
@@ -681,595 +708,16 @@
       </div>
 
 
-      <!-- ================= PRODUCTS ================= -->
+      <!-- ================= LOADING ================= -->
 
-      <div class="products" id="products">
-
-
-        <!-- PRODUCT 1 -->
-
-        <div
-          class="product"
-          data-name="Fresh Apples"
-          data-category="Fruits & Vegetables"
-          data-price="450"
-        >
-
-          <span class="badge">
-            Fresh
-          </span>
-
-          <div class="product-image">
-            🍎
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Fruits & Vegetables
-            </div>
-
-            <div class="product-name">
-              Fresh Apples
-            </div>
-
-            <div class="unit">
-              1 kg
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 450
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Apples', 450)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 2 -->
-
-        <div
-          class="product"
-          data-name="Fresh Milk"
-          data-category="Dairy"
-          data-price="280"
-        >
-
-          <div class="product-image">
-            🥛
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Dairy
-            </div>
-
-            <div class="product-name">
-              Fresh Milk
-            </div>
-
-            <div class="unit">
-              1 Liter
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 280
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Milk', 280)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 3 -->
-
-        <div
-          class="product"
-          data-name="Premium Rice"
-          data-category="Grocery"
-          data-price="520"
-        >
-
-          <span class="badge">
-            Popular
-          </span>
-
-          <div class="product-image">
-            🍚
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Grocery
-            </div>
-
-            <div class="product-name">
-              Premium Rice
-            </div>
-
-            <div class="unit">
-              5 kg
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 520
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Premium Rice', 520)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 4 -->
-
-        <div
-          class="product"
-          data-name="Dishwashing Liquid"
-          data-category="Household"
-          data-price="350"
-        >
-
-          <div class="product-image">
-            🧴
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Household
-            </div>
-
-            <div class="product-name">
-              Dishwashing Liquid
-            </div>
-
-            <div class="unit">
-              500 ml
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 350
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Dishwashing Liquid', 350)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 5 -->
-
-        <div
-          class="product"
-          data-name="Fresh Bananas"
-          data-category="Fruits & Vegetables"
-          data-price="220"
-        >
-
-          <span class="badge">
-            Fresh
-          </span>
-
-          <div class="product-image">
-            🍌
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Fruits & Vegetables
-            </div>
-
-            <div class="product-name">
-              Fresh Bananas
-            </div>
-
-            <div class="unit">
-              1 dozen
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 220
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Bananas', 220)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 6 -->
-
-        <div
-          class="product"
-          data-name="Farm Fresh Eggs"
-          data-category="Dairy"
-          data-price="390"
-        >
-
-          <div class="product-image">
-            🥚
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Dairy
-            </div>
-
-            <div class="product-name">
-              Farm Fresh Eggs
-            </div>
-
-            <div class="unit">
-              12 pieces
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 390
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Farm Fresh Eggs', 390)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 7 -->
-
-        <div
-          class="product"
-          data-name="Premium Tea"
-          data-category="Grocery"
-          data-price="650"
-        >
-
-          <div class="product-image">
-            ☕
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Grocery
-            </div>
-
-            <div class="product-name">
-              Premium Tea
-            </div>
-
-            <div class="unit">
-              500 g
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 650
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Premium Tea', 650)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 8 -->
-
-        <div
-          class="product"
-          data-name="Orange Juice"
-          data-category="Drinks"
-          data-price="300"
-        >
-
-          <span class="badge">
-            Deal
-          </span>
-
-          <div class="product-image">
-            🧃
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Drinks
-            </div>
-
-            <div class="product-name">
-              Orange Juice
-            </div>
-
-            <div class="unit">
-              1 Liter
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 300
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Orange Juice', 300)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 9 -->
-
-        <div
-          class="product"
-          data-name="Chocolate Biscuits"
-          data-category="Snacks"
-          data-price="180"
-        >
-
-          <div class="product-image">
-            🍪
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Snacks
-            </div>
-
-            <div class="product-name">
-              Chocolate Biscuits
-            </div>
-
-            <div class="unit">
-              12 pack
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 180
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Chocolate Biscuits', 180)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 10 -->
-
-        <div
-          class="product"
-          data-name="Potato Chips"
-          data-category="Snacks"
-          data-price="100"
-        >
-
-          <div class="product-image">
-            🍟
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Snacks
-            </div>
-
-            <div class="product-name">
-              Potato Chips
-            </div>
-
-            <div class="unit">
-              100 g
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 100
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Potato Chips', 100)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 11 -->
-
-        <div
-          class="product"
-          data-name="Laundry Detergent"
-          data-category="Household"
-          data-price="780"
-        >
-
-          <div class="product-image">
-            🧺
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Household
-            </div>
-
-            <div class="product-name">
-              Laundry Detergent
-            </div>
-
-            <div class="unit">
-              1 kg
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 780
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Laundry Detergent', 780)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PRODUCT 12 -->
-
-        <div
-          class="product"
-          data-name="Fresh Tomatoes"
-          data-category="Fruits & Vegetables"
-          data-price="180"
-        >
-
-          <span class="badge">
-            Fresh
-          </span>
-
-          <div class="product-image">
-            🍅
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Fruits & Vegetables
-            </div>
-
-            <div class="product-name">
-              Fresh Tomatoes
-            </div>
-
-            <div class="unit">
-              1 kg
-            </div>
-
-            <div class="price-row">
-
-              <div class="price">
-                Rs. 180
-              </div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Tomatoes', 180)"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="loading" id="loading">
+        Products load ho rahe hain...
       </div>
+
+
+      <!-- ================= PRODUCTS (JS se fill hoga) ================= -->
+
+      <div class="products" id="products" style="display:none;"></div>
 
 
       <!-- EMPTY SEARCH -->
@@ -1360,6 +808,12 @@
   </footer>
 
 
+  <!-- ================= SUPABASE ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
+
   <!-- ================= JAVASCRIPT ================= -->
 
   <script>
@@ -1367,6 +821,8 @@
     let cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
 
     let currentCategory = "All";
+
+    let allProducts = [];
 
 
     /* ================= UPDATE CART ================= */
@@ -1384,14 +840,132 @@
     }
 
 
+    /* ================= LOAD PRODUCTS FROM DATABASE ================= */
 
-        /* ================= ADD TO CART ================= */
+    async function loadProducts() {
 
-    function addToCart(name, price) {
+      const { data, error } = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .order("id");
+
+      document.getElementById("loading").style.display = "none";
+
+      if (error) {
+
+        document.getElementById("loading").style.display = "block";
+
+        document.getElementById("loading").textContent =
+          "Products load nahi ho sake — dobara try karein.";
+
+        console.error(error);
+
+        return;
+      }
+
+      allProducts = data;
+
+      renderProducts(allProducts);
+    }
+
+
+    /* ================= RENDER PRODUCTS ================= */
+
+    function renderProducts(list) {
+
+      const container = document.getElementById("products");
+
+      container.style.display = "grid";
+
+      container.innerHTML = "";
+
+      list.forEach(p => {
+
+        const outOfStock = p.stock <= 0;
+
+        const div = document.createElement("div");
+
+        div.className = "product";
+        div.dataset.id = p.id;
+        div.dataset.name = p.name;
+        div.dataset.category = p.category;
+        div.dataset.price = p.price;
+        div.dataset.stock = p.stock;
+
+        div.innerHTML = `
+
+          ${p.badge && !outOfStock ? `<span class="badge">${p.badge}</span>` : ""}
+          ${outOfStock ? `<span class="badge out-stock">Out of Stock</span>` : ""}
+
+          <div class="product-image">
+            ${p.emoji}
+            ${outOfStock ? `<div class="stock-overlay">Khatam Ho Gaya</div>` : ""}
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              ${p.category}
+            </div>
+
+            <div class="product-name">
+              ${p.name}
+            </div>
+
+            ${p.name_urdu ? `<div class="product-name-urdu">${p.name_urdu}</div>` : ""}
+
+            <div class="unit">
+              ${p.unit}
+            </div>
+
+            <div class="price-row">
+
+              <div class="price">
+                Rs. ${p.price}
+                ${p.old_price ? `<span class="old-price">Rs. ${p.old_price}</span>` : ""}
+              </div>
+
+              <button
+                class="add-btn"
+                ${outOfStock ? "disabled" : ""}
+                onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock})"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+        container.appendChild(div);
+
+      });
+
+      document.getElementById("resultCount").textContent = list.length;
+
+      searchProducts();
+    }
+
+
+    /* ================= ADD TO CART ================= */
+
+    function addToCart(id, name, price, stock) {
 
       const existing = cart.find(
-        item => item.name === name
+        item => item.id === id
       );
+
+      const currentQty = existing ? existing.quantity : 0;
+
+      if (currentQty + 1 > stock) {
+
+        alert("Maazrat, is waqt sirf " + stock + " pieces stock mein hain.");
+
+        return;
+      }
 
       if (existing) {
 
@@ -1400,6 +974,7 @@
       } else {
 
         cart.push({
+          id: id,
           name: name,
           price: price,
           quantity: 1
@@ -1558,6 +1133,7 @@
     /* ================= START ================= */
 
     updateCartCount();
+    loadProducts();
 
   </script>
 
