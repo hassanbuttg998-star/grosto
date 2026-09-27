@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Login — GROSTO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --border: #E2E5E3;
+      --red: #E53935;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #F7F8F7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--gray);
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #D8DCDA;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      font: inherit;
+    }
+
+    input:focus {
+      border-color: var(--green);
+    }
+
+    .login-btn {
+      width: 100%;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      margin-top: 8px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .login-btn:hover {
+      background: #178e48;
+    }
+
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .error {
+      background: #FDECEC;
+      color: var(--red);
+      padding: 11px;
+      border-radius: 9px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--gray);
+      font-size: 13px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <div class="logo">GROST<span>O</span></div>
+    <div class="subtitle">Admin Panel Login</div>
+
+    <div class="error" id="errorBox"></div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="admin@example.com" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">
+      Login
+    </button>
+
+    <a href="index.html" class="back">← Back to Store</a>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
+  <script>
+
+    async function checkExistingSession() {
+
+      const { data } = await grostoDB.auth.getSession();
+
+      if (data.session) {
+        window.location.href = "admin.html";
+      }
+    }
+
+    async function doLogin() {
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const errorBox = document.getElementById("errorBox");
+      const btn = document.getElementById("loginBtn");
+
+      errorBox.style.display = "none";
+
+      if (!email || !password) {
+        errorBox.textContent = "Email aur password dono zaroori hain.";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
+      const { error } = await grostoDB.auth.signInWithPassword({ email, password });
+
+      btn.disabled = false;
+      btn.textContent = "Login";
+
+      if (error) {
+        errorBox.textContent = "Login fail ho gaya — email ya password ghalat hai.";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      window.location.href = "admin.html";
+    }
+
+    document.getElementById("password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+
+    checkExistingSession();
+
+  </script>
+
+</body>
+</html>
