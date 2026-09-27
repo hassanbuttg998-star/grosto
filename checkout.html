@@ -154,6 +154,30 @@
       font-size: 13px;
     }
 
+    .payment-details {
+      display: none;
+      background: var(--light);
+      border-radius: 12px;
+      padding: 16px;
+      margin: -4px 0 12px;
+      font-size: 14px;
+    }
+
+    .payment-details.show {
+      display: block;
+    }
+
+    .payment-details .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .payment-details .row:last-child {
+      border-bottom: none;
+    }
+
     .summary {
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -204,6 +228,11 @@
 
     .place-order:hover {
       background: #178e48;
+    }
+
+    .place-order:disabled {
+      background: #ccc;
+      cursor: not-allowed;
     }
 
     .secure {
@@ -397,6 +426,7 @@
             name="payment"
             value="cod"
             checked
+            onchange="updatePaymentView()"
           >
 
           <div>
@@ -420,21 +450,36 @@
             type="radio"
             name="payment"
             value="easypaisa"
+            onchange="updatePaymentView()"
           >
 
-          <div>
+          <div style="flex:1;">
 
             <div class="payment-title">
               EasyPaisa
             </div>
 
             <div class="payment-description">
-              EasyPaisa payment option — details order confirmation par.
+              Neeche diye gaye account par payment bhejein.
             </div>
 
           </div>
 
         </label>
+
+        <div class="payment-details" id="easypaisaDetails">
+
+          <div class="row">
+            <span>Account Title</span>
+            <strong id="epTitle">—</strong>
+          </div>
+
+          <div class="row">
+            <span>Account Number</span>
+            <strong id="epNumber">—</strong>
+          </div>
+
+        </div>
 
 
         <label class="payment-option">
@@ -443,21 +488,51 @@
             type="radio"
             name="payment"
             value="jazzcash"
+            onchange="updatePaymentView()"
           >
 
-          <div>
+          <div style="flex:1;">
 
             <div class="payment-title">
               JazzCash
             </div>
 
             <div class="payment-description">
-              JazzCash payment option — details order confirmation par.
+              Neeche diye gaye account par payment bhejein.
             </div>
 
           </div>
 
         </label>
+
+        <div class="payment-details" id="jazzcashDetails">
+
+          <div class="row">
+            <span>Account Title</span>
+            <strong id="jcTitle">—</strong>
+          </div>
+
+          <div class="row">
+            <span>Account Number</span>
+            <strong id="jcNumber">—</strong>
+          </div>
+
+        </div>
+
+
+        <div class="field" id="tidField" style="display:none; margin-top: 5px;">
+
+          <label>
+            Transaction ID (TID) <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="paymentTid"
+            placeholder="Payment karne ke baad TID yahan likhein"
+          >
+
+        </div>
 
       </div>
 
@@ -514,6 +589,7 @@
 
       <button
         class="place-order"
+        id="placeOrderBtn"
         onclick="placeOrder()"
       >
         Place Order →
@@ -531,12 +607,19 @@
 </main>
 
 
+<!-- ================= SUPABASE ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-client.js"></script>
+
 <script>
 
   let cart =
     JSON.parse(
       localStorage.getItem("grostoCart")
     ) || [];
+
+  let grostoSettings = {};
 
 
   function renderSummary() {
@@ -588,7 +671,83 @@
   }
 
 
-  function placeOrder() {
+  /* ================= SHOW PAYMENT DETAILS BASED ON SELECTION ================= */
+
+  function updatePaymentView() {
+
+    const payment =
+      document.querySelector('input[name="payment"]:checked').value;
+
+    document.getElementById("easypaisaDetails")
+      .classList.toggle("show", payment === "easypaisa");
+
+    document.getElementById("jazzcashDetails")
+      .classList.toggle("show", payment === "jazzcash");
+
+    document.getElementById("tidField").style.display =
+      (payment === "easypaisa" || payment === "jazzcash") ? "block" : "none";
+
+  }
+
+
+  /* ================= LOAD PAYMENT + WHATSAPP SETTINGS ================= */
+
+  async function loadSettings() {
+
+    grostoSettings = await getGrostoSettings();
+
+    document.getElementById("epTitle").textContent =
+      grostoSettings.easypaisa_title || "Not set yet";
+
+    document.getElementById("epNumber").textContent =
+      grostoSettings.easypaisa_number || "Not set yet";
+
+    document.getElementById("jcTitle").textContent =
+      grostoSettings.jazzcash_title || "Not set yet";
+
+    document.getElementById("jcNumber").textContent =
+      grostoSettings.jazzcash_number || "Not set yet";
+
+  }
+
+
+  /* ================= BUILD WHATSAPP MESSAGE ================= */
+
+  function buildWhatsAppMessage(order) {
+
+    let msg = `*Naya Order — GROSTO*%0A`;
+    msg += `Order #: ${order.orderNumber}%0A%0A`;
+    msg += `*Customer:* ${order.customer.name}%0A`;
+    msg += `*Phone:* ${order.customer.phone}%0A`;
+    msg += `*City:* ${order.customer.city}%0A`;
+    msg += `*Address:* ${order.customer.address}%0A`;
+
+    if (order.customer.instructions) {
+      msg += `*Instructions:* ${order.customer.instructions}%0A`;
+    }
+
+    msg += `%0A*Items:*%0A`;
+
+    order.items.forEach(item => {
+      msg += `- ${item.name} x${item.quantity} = Rs. ${item.price * item.quantity}%0A`;
+    });
+
+    msg += `%0A*Total: Rs. ${order.total}*%0A`;
+    msg += `*Payment:* ${order.payment.toUpperCase()}`;
+
+    if (order.paymentTid) {
+      msg += ` (TID: ${order.paymentTid})`;
+    }
+
+    return encodeURIComponent(
+      decodeURIComponent(msg.replace(/%0A/g, "\n"))
+    );
+  }
+
+
+  /* ================= PLACE ORDER ================= */
+
+  async function placeOrder() {
 
     if (cart.length === 0) {
 
@@ -633,11 +792,26 @@
         'input[name="payment"]:checked'
       ).value;
 
+    const paymentTid =
+      document.getElementById("paymentTid").value.trim();
+
+    if ((payment === "easypaisa" || payment === "jazzcash") && !paymentTid) {
+
+      alert("Please payment ka Transaction ID (TID) enter karein.");
+
+      return;
+    }
+
 
     const orderNumber =
       "GR" +
       Date.now().toString().slice(-8);
 
+    const total = cart.reduce(
+      (sum, item) =>
+        sum + (item.price * item.quantity),
+      0
+    );
 
     const order = {
 
@@ -652,14 +826,11 @@
       },
 
       payment: payment,
+      paymentTid: paymentTid || null,
 
       items: cart,
 
-      total: cart.reduce(
-        (sum, item) =>
-          sum + (item.price * item.quantity),
-        0
-      ),
+      total: total,
 
       status: "Pending",
 
@@ -669,22 +840,101 @@
     };
 
 
+    const placeBtn = document.getElementById("placeOrderBtn");
+
+    placeBtn.disabled = true;
+
+    placeBtn.textContent = "Order place ho raha hai...";
+
+
+    // 1. Save order to database
+    const { error: orderError } = await grostoDB.from("orders").insert({
+      order_number: orderNumber,
+      customer_name: name,
+      phone: phone,
+      city: city,
+      address: address,
+      instructions: instructions || null,
+      payment_method: payment,
+      payment_tid: paymentTid || null,
+      items: cart,
+      total: total,
+      status: "Pending"
+    });
+
+    if (orderError) {
+
+      console.error(orderError);
+
+      alert("Order save nahi ho saka. Dobara try karein.");
+
+      placeBtn.disabled = false;
+
+      placeBtn.textContent = "Place Order →";
+
+      return;
+    }
+
+
+    // 2. Reduce stock for each item (best-effort)
+    for (const item of cart) {
+
+      if (!item.id) continue;
+
+      const { data: productRow } = await grostoDB
+        .from("products")
+        .select("stock")
+        .eq("id", item.id)
+        .single();
+
+      if (productRow) {
+
+        const newStock = Math.max(0, productRow.stock - item.quantity);
+
+        await grostoDB
+          .from("products")
+          .update({ stock: newStock })
+          .eq("id", item.id);
+      }
+    }
+
+
+    // 3. Save locally for order-success page
     localStorage.setItem(
       "grostoLastOrder",
       JSON.stringify(order)
     );
 
-
     localStorage.removeItem("grostoCart");
 
 
+    // 4. Open WhatsApp with order details
+    const whatsappNumber =
+      (grostoSettings.whatsapp_number || "").replace(/\D/g, "");
+
+    if (whatsappNumber) {
+
+      const waMessage = buildWhatsAppMessage(order);
+
+      window.open(
+        `https://wa.me/${whatsappNumber}?text=${waMessage}`,
+        "_blank"
+      );
+    }
+
+
+    // 5. Redirect to success page
     window.location.href =
       "order-success.html";
 
   }
 
 
+  /* ================= START ================= */
+
   renderSummary();
+  loadSettings();
+  updatePaymentView();
 
 </script>
 
