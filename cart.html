@@ -154,6 +154,13 @@
       margin-bottom: 10px;
     }
 
+    .stock-warning {
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
     .quantity {
       display: flex;
       align-items: center;
@@ -172,6 +179,11 @@
     .quantity button:hover {
       border-color: var(--green);
       color: var(--green);
+    }
+
+    .quantity button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .quantity span {
@@ -475,6 +487,11 @@
   </main>
 
 
+  <!-- ================= SUPABASE ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
   <script>
 
     let cart =
@@ -482,8 +499,10 @@
         localStorage.getItem("grostoCart")
       ) || [];
 
+    let stockMap = {};
 
-    /* ================= PRODUCT EMOJIS ================= */
+
+    /* ================= PRODUCT EMOJIS (fallback for old cart items) ================= */
 
     function getProductIcon(name) {
 
@@ -505,6 +524,35 @@
       };
 
       return icons[name] || "🛒";
+    }
+
+
+    /* ================= LOAD LIVE STOCK ================= */
+
+    async function loadStock() {
+
+      if (cart.length === 0) return;
+
+      const ids = cart.map(item => item.id).filter(id => id !== undefined);
+
+      if (ids.length === 0) return;
+
+      const { data, error } = await grostoDB
+        .from("products")
+        .select("id, stock, emoji")
+        .in("id", ids);
+
+      if (error) {
+
+        console.error(error);
+
+        return;
+      }
+
+      data.forEach(p => {
+        stockMap[p.id] = p;
+      });
+
     }
 
 
@@ -550,6 +598,14 @@
 
         subtotal += itemTotal;
 
+        const stockInfo = stockMap[item.id];
+
+        const maxStock = stockInfo ? stockInfo.stock : null;
+
+        const icon = stockInfo ? stockInfo.emoji : getProductIcon(item.name);
+
+        const atMax = maxStock !== null && item.quantity >= maxStock;
+
 
         const div =
           document.createElement("div");
@@ -560,7 +616,7 @@
         div.innerHTML = `
 
           <div class="item-image">
-            ${getProductIcon(item.name)}
+            ${icon}
           </div>
 
           <div>
@@ -587,11 +643,14 @@
 
               <button
                 onclick="changeQuantity(${index}, 1)"
+                ${atMax ? "disabled" : ""}
               >
                 +
               </button>
 
             </div>
+
+            ${atMax ? `<div class="stock-warning">Sirf ${maxStock} pieces available hain</div>` : ""}
 
           </div>
 
@@ -641,6 +700,15 @@
     /* ================= QUANTITY ================= */
 
     function changeQuantity(index, amount) {
+
+      const stockInfo = stockMap[cart[index].id];
+
+      if (amount > 0 && stockInfo && cart[index].quantity + amount > stockInfo.stock) {
+
+        alert("Maazrat, is waqt sirf " + stockInfo.stock + " pieces stock mein hain.");
+
+        return;
+      }
 
       cart[index].quantity += amount;
 
@@ -703,7 +771,15 @@
 
     /* ================= START ================= */
 
-    renderCart();
+    async function init() {
+
+      await loadStock();
+
+      renderCart();
+
+    }
+
+    init();
 
   </script>
 
