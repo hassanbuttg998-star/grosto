@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>GROSTO â€” Sub Kuch Milega</title>
+  <title>GROSTO &#8212; Sub Kuch Milega</title>
   <meta
     name="description"
-    content="GROSTO â€” Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door."
+    content="GROSTO &#8212; Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door."
   >
 
   <style>
@@ -65,11 +65,30 @@
       padding: 14px 20px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 14px;
+      position: relative;
+    }
+
+    .menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--white);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .menu-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
     }
 
     .logo {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 900;
       letter-spacing: -1.5px;
       color: var(--green);
@@ -109,43 +128,120 @@
     }
 
     .cart-btn {
+      position: relative;
       border: none;
       background: var(--green);
       color: var(--white);
-      padding: 12px 16px;
-      border-radius: 11px;
-      font-weight: 700;
-      white-space: nowrap;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 19px;
+      flex-shrink: 0;
     }
 
     .cart-btn:hover {
       background: #178e48;
     }
 
-    /* ================= NAV ================= */
-
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      padding: 0 20px 12px;
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--yellow);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
       display: flex;
-      gap: 22px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
     }
 
-    .nav::-webkit-scrollbar {
+    /* ================= CART FAB (small floating button) ================= */
+
+    .cart-fab {
       display: none;
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 999;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 24px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      border: none;
     }
 
-    .nav a {
-      color: #444;
+    .cart-fab .cart-badge {
+      top: -4px;
+      right: -4px;
+    }
+
+    /* ================= TOAST ================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%) translateY(20px);
+      background: #111;
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 30px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
       white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
 
-    .nav a:hover {
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ================= DROPDOWN MENU ================= */
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 12px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 1001;
+    }
+
+    .mobile-menu.show {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .mobile-menu a:hover {
+      background: var(--light-green);
       color: var(--green);
     }
 
@@ -168,7 +264,7 @@
     }
 
     .hero::after {
-      content: "ðŸ›’";
+      content: "\1f6d2 ";
       position: absolute;
       right: 45px;
       bottom: -25px;
@@ -516,12 +612,6 @@
       font-size: 13px;
     }
 
-    /* ================= MOBILE CART ================= */
-
-    .mobile-cart {
-      display: none;
-    }
-
     /* ================= RESPONSIVE ================= */
 
     @media (max-width: 900px) {
@@ -682,24 +772,16 @@
         grid-column: 1 / -1;
       }
 
-      .mobile-cart {
-        display: block;
-        position: fixed;
-        bottom: 12px;
-        left: 12px;
-        right: 12px;
-        z-index: 999;
+      .menu-btn {
+        display: flex;
       }
 
-      .mobile-cart button {
-        width: 100%;
-        border: none;
-        background: var(--green);
-        color: var(--white);
-        padding: 14px;
-        border-radius: 12px;
-        font-weight: 800;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.18);
+      .nav {
+        display: none;
+      }
+
+      .cart-fab {
+        display: flex;
       }
     }
   </style>
@@ -713,6 +795,10 @@
 
     <div class="header-inner">
 
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        &#9776;
+      </button>
+
       <a href="index.html" class="logo">
         GROST<span>O</span>
       </a>
@@ -725,12 +811,20 @@
           aria-label="Search products"
           onkeydown="if(event.key==='Enter') goToSearch()"
         >
-        <span class="search-icon">ðŸ”Ž</span>
+        <span class="search-icon">&#128270;</span>
       </div>
 
       <button class="cart-btn" onclick="openCart()">
-        ðŸ›’ Cart <span id="cartCount">0</span>
+        &#128722;
+        <span class="cart-badge" id="cartBadge">0</span>
       </button>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
+        <a href="shop.html">Shop</a>
+        <a href="#deals" onclick="closeMobileMenu()">Deals</a>
+        <a href="#why-grosto" onclick="closeMobileMenu()">Why GROSTO</a>
+      </div>
 
     </div>
 
@@ -762,11 +856,11 @@
 
         <p>
           Groceries, household essentials aur rozmarra ki zaroorat ki
-          cheezen â€” sab ek jagah.
+          cheezen &#8212; sab ek jagah.
         </p>
 
         <a href="shop.html" class="hero-btn">
-          Shop Now â†’
+          Shop Now &#8594;
         </a>
 
       </div>
@@ -780,38 +874,38 @@
 
       <div class="section-header">
         <h2 class="section-title">Shop by Category</h2>
-        <a href="shop.html" class="view-all">View All â†’</a>
+        <a href="shop.html" class="view-all">View All &#8594;</a>
       </div>
 
       <div class="categories">
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸ¥¬</div>
+          <div class="category-icon">&#129388;</div>
           <div class="category-name">Fruits & Vegetables</div>
         </a>
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸ›’</div>
+          <div class="category-icon">&#128722;</div>
           <div class="category-name">Grocery & Rashan</div>
         </a>
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸ¥›</div>
+          <div class="category-icon">&#129371;</div>
           <div class="category-name">Dairy & Eggs</div>
         </a>
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸ¥¤</div>
+          <div class="category-icon">&#129380;</div>
           <div class="category-name">Drinks</div>
         </a>
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸª</div>
+          <div class="category-icon">&#127850;</div>
           <div class="category-name">Biscuits & Snacks</div>
         </a>
 
         <a href="shop.html" class="category">
-          <div class="category-icon">ðŸ§¹</div>
+          <div class="category-icon">&#129529;</div>
           <div class="category-name">Household</div>
         </a>
 
@@ -826,7 +920,7 @@
 
       <div class="section-header">
         <h2 class="section-title">Popular Products</h2>
-        <a href="shop.html" class="view-all">View All â†’</a>
+        <a href="shop.html" class="view-all">View All &#8594;</a>
       </div>
 
       <div class="loading-text" id="homeLoading">
@@ -845,7 +939,7 @@
       <div class="deal">
 
         <div>
-          <h2 id="dealHeading">Fresh Deals Every Day ðŸ”¥</h2>
+          <h2 id="dealHeading">Fresh Deals Every Day &#128293;</h2>
 
           <p id="dealText">
             Apni daily shopping par great deals discover karein.
@@ -872,7 +966,7 @@
       <div class="why-grid">
 
         <div class="why-card">
-          <div class="why-icon">ðŸ›ï¸</div>
+          <div class="why-icon">&#128717;&#65039;</div>
           <h3>Sub Kuch Ek Jagah</h3>
           <p>
             Everyday shopping ki zaroorat ki cheezen ek hi store mein.
@@ -880,7 +974,7 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">ðŸšš</div>
+          <div class="why-icon">&#128666;</div>
           <h3>Easy Delivery</h3>
           <p>
             Ghar baithe apni shopping order karein.
@@ -888,7 +982,7 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">ðŸ’°</div>
+          <div class="why-icon">&#128176;</div>
           <h3>Great Value</h3>
           <p>
             Daily-use products par competitive prices.
@@ -896,7 +990,7 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">âš¡</div>
+          <div class="why-icon">&#9889;</div>
           <h3>Quick Ordering</h3>
           <p>
             Simple shopping experience ke saath fast checkout.
@@ -915,14 +1009,14 @@
       <div class="visit-box">
 
         <div>
-          <h2>ðŸ“ Visit Our Store</h2>
+          <h2>&#128205; Visit Our Store</h2>
           <p id="storeAddress">
             Address load ho raha hai...
           </p>
         </div>
 
         <a href="#" id="storeMapLink" class="visit-btn" target="_blank" style="display:none;">
-          Get Directions â†’
+          Get Directions &#8594;
         </a>
 
       </div>
@@ -945,7 +1039,7 @@
         </div>
 
         <p class="footer-about">
-          GROSTO â€” Sub Kuch Milega.
+          GROSTO &#8212; Sub Kuch Milega.
           Your everyday online store for groceries,
           household essentials and more.
         </p>
@@ -988,19 +1082,22 @@
     </div>
 
     <div class="copyright">
-      Â© 2026 GROSTO. All rights reserved.
+      &#169; 2026 GROSTO. All rights reserved.
     </div>
 
   </footer>
 
 
-  <!-- ================= MOBILE CART ================= -->
+  <!-- ================= CART FAB ================= -->
 
-  <div class="mobile-cart">
-    <button onclick="openCart()">
-      ðŸ›’ View Cart â€” <span id="mobileCartCount">0</span> Items
-    </button>
-  </div>
+  <button class="cart-fab" id="cartFab" onclick="openCart()">
+    &#128722;
+    <span class="cart-badge" id="fabBadge">0</span>
+  </button>
+
+  <!-- ================= TOAST ================= -->
+
+  <div class="toast" id="toast"></div>
 
 
   <!-- ================= SUPABASE ================= -->
@@ -1025,8 +1122,49 @@
         0
       );
 
-      document.getElementById("cartCount").textContent = count;
-      document.getElementById("mobileCartCount").textContent = count;
+      document.getElementById("cartBadge").textContent = count;
+      document.getElementById("fabBadge").textContent = count;
+    }
+
+
+    /* ================= MOBILE MENU ================= */
+
+    function toggleMobileMenu() {
+      document.getElementById("mobileMenu").classList.toggle("show");
+    }
+
+    function closeMobileMenu() {
+      document.getElementById("mobileMenu").classList.remove("show");
+    }
+
+    document.addEventListener("click", function (e) {
+
+      const menu = document.getElementById("mobileMenu");
+      const btn = document.querySelector(".menu-btn");
+
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+
+
+    /* ================= TOAST ================= */
+
+    let toastTimer;
+
+    function showToast(message) {
+
+      const toast = document.getElementById("toast");
+
+      toast.textContent = message;
+
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
     }
 
 
@@ -1079,7 +1217,7 @@
 
       updateCartCount();
 
-      window.location.href = "cart.html";
+      showToast(name + " cart mein add ho gaya!");
     }
 
 
@@ -1163,7 +1301,7 @@
       if (settings.discount_banner) {
 
         document.getElementById("dealHeading").textContent =
-          settings.discount_banner + " ðŸ”¥";
+          settings.discount_banner + " \u{1f525}";
       }
 
       document.getElementById("storeAddress").textContent =
