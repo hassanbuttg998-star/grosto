@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>GROSTO — Sub Kuch Milega</title>
+  <title>GROSTO â€” Sub Kuch Milega</title>
   <meta
     name="description"
-    content="GROSTO — Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door."
+    content="GROSTO â€” Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door."
   >
 
   <style>
@@ -168,7 +168,7 @@
     }
 
     .hero::after {
-      content: "🛒";
+      content: "ðŸ›’";
       position: absolute;
       right: 45px;
       bottom: -25px;
@@ -356,6 +356,16 @@
       background: #178e48;
     }
 
+    .add-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .loading-text {
+      color: var(--gray);
+      padding: 20px 0;
+    }
+
     /* ================= DEAL BANNER ================= */
 
     .deal {
@@ -414,6 +424,38 @@
     .why-card p {
       color: var(--gray);
       font-size: 14px;
+    }
+
+    /* ================= VISIT US (TRUST) ================= */
+
+    .visit-box {
+      background: var(--light-gray);
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .visit-box h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .visit-box p {
+      color: var(--gray);
+      max-width: 500px;
+    }
+
+    .visit-btn {
+      background: var(--green);
+      color: var(--white);
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     /* ================= FOOTER ================= */
@@ -625,6 +667,12 @@
         font-size: 12px;
       }
 
+      .visit-box {
+        padding: 22px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
       .footer-inner {
         grid-template-columns: 1fr 1fr;
         gap: 25px;
@@ -665,28 +713,30 @@
 
     <div class="header-inner">
 
-      <a href="#" class="logo">
+      <a href="index.html" class="logo">
         GROST<span>O</span>
       </a>
 
       <div class="search-box">
         <input
           type="search"
+          id="homeSearch"
           placeholder="Aap kya dhoond rahe hain?"
           aria-label="Search products"
+          onkeydown="if(event.key==='Enter') goToSearch()"
         >
-        <span class="search-icon">🔎</span>
+        <span class="search-icon">ðŸ”Ž</span>
       </div>
 
-      <button class="cart-btn">
-        🛒 Cart <span id="cartCount">0</span>
+      <button class="cart-btn" onclick="openCart()">
+        ðŸ›’ Cart <span id="cartCount">0</span>
       </button>
 
     </div>
 
     <nav class="nav">
       <a href="#categories">Categories</a>
-      <a href="#products">Shop</a>
+      <a href="shop.html">Shop</a>
       <a href="#deals">Deals</a>
       <a href="#why-grosto">Why GROSTO</a>
     </nav>
@@ -712,11 +762,11 @@
 
         <p>
           Groceries, household essentials aur rozmarra ki zaroorat ki
-          cheezen — sab ek jagah.
+          cheezen â€” sab ek jagah.
         </p>
 
-        <a href="#products" class="hero-btn">
-          Shop Now →
+        <a href="shop.html" class="hero-btn">
+          Shop Now â†’
         </a>
 
       </div>
@@ -730,40 +780,40 @@
 
       <div class="section-header">
         <h2 class="section-title">Shop by Category</h2>
-        <a href="#" class="view-all">View All →</a>
+        <a href="shop.html" class="view-all">View All â†’</a>
       </div>
 
       <div class="categories">
 
-        <div class="category">
-          <div class="category-icon">🥬</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸ¥¬</div>
           <div class="category-name">Fruits & Vegetables</div>
-        </div>
+        </a>
 
-        <div class="category">
-          <div class="category-icon">🛒</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸ›’</div>
           <div class="category-name">Grocery & Rashan</div>
-        </div>
+        </a>
 
-        <div class="category">
-          <div class="category-icon">🥛</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸ¥›</div>
           <div class="category-name">Dairy & Eggs</div>
-        </div>
+        </a>
 
-        <div class="category">
-          <div class="category-icon">🥤</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸ¥¤</div>
           <div class="category-name">Drinks</div>
-        </div>
+        </a>
 
-        <div class="category">
-          <div class="category-icon">🍪</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸª</div>
           <div class="category-name">Biscuits & Snacks</div>
-        </div>
+        </a>
 
-        <div class="category">
-          <div class="category-icon">🧹</div>
+        <a href="shop.html" class="category">
+          <div class="category-icon">ðŸ§¹</div>
           <div class="category-name">Household</div>
-        </div>
+        </a>
 
       </div>
 
@@ -776,131 +826,14 @@
 
       <div class="section-header">
         <h2 class="section-title">Popular Products</h2>
-        <a href="#" class="view-all">View All →</a>
+        <a href="shop.html" class="view-all">View All â†’</a>
       </div>
 
-      <div class="products">
-
-        <div class="product">
-
-          <div class="product-image">🍎</div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Fruits
-            </div>
-
-            <div class="product-name">
-              Fresh Apples
-            </div>
-
-            <div class="product-bottom">
-              <div class="price">Rs. 450</div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Apples')"
-              >
-                +
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="product">
-
-          <div class="product-image">🥛</div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Dairy
-            </div>
-
-            <div class="product-name">
-              Fresh Milk
-            </div>
-
-            <div class="product-bottom">
-              <div class="price">Rs. 280</div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Fresh Milk')"
-              >
-                +
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="product">
-
-          <div class="product-image">🍚</div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Grocery
-            </div>
-
-            <div class="product-name">
-              Premium Rice
-            </div>
-
-            <div class="product-bottom">
-              <div class="price">Rs. 520</div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Premium Rice')"
-              >
-                +
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="product">
-
-          <div class="product-image">🧴</div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              Household
-            </div>
-
-            <div class="product-name">
-              Dishwashing Liquid
-            </div>
-
-            <div class="product-bottom">
-              <div class="price">Rs. 350</div>
-
-              <button
-                class="add-btn"
-                onclick="addToCart('Dishwashing Liquid')"
-              >
-                +
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="loading-text" id="homeLoading">
+        Products load ho rahe hain...
       </div>
+
+      <div class="products" id="homeProducts"></div>
 
     </section>
 
@@ -912,14 +845,14 @@
       <div class="deal">
 
         <div>
-          <h2>Fresh Deals Every Day 🔥</h2>
+          <h2 id="dealHeading">Fresh Deals Every Day ðŸ”¥</h2>
 
-          <p>
+          <p id="dealText">
             Apni daily shopping par great deals discover karein.
           </p>
         </div>
 
-        <a href="#products" class="deal-btn">
+        <a href="shop.html" class="deal-btn">
           Explore Deals
         </a>
 
@@ -939,7 +872,7 @@
       <div class="why-grid">
 
         <div class="why-card">
-          <div class="why-icon">🛍️</div>
+          <div class="why-icon">ðŸ›ï¸</div>
           <h3>Sub Kuch Ek Jagah</h3>
           <p>
             Everyday shopping ki zaroorat ki cheezen ek hi store mein.
@@ -947,7 +880,7 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">🚚</div>
+          <div class="why-icon">ðŸšš</div>
           <h3>Easy Delivery</h3>
           <p>
             Ghar baithe apni shopping order karein.
@@ -955,7 +888,7 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">💰</div>
+          <div class="why-icon">ðŸ’°</div>
           <h3>Great Value</h3>
           <p>
             Daily-use products par competitive prices.
@@ -963,12 +896,34 @@
         </div>
 
         <div class="why-card">
-          <div class="why-icon">⚡</div>
+          <div class="why-icon">âš¡</div>
           <h3>Quick Ordering</h3>
           <p>
             Simple shopping experience ke saath fast checkout.
           </p>
         </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= VISIT US / TRUST ================= -->
+
+    <section class="section" id="visit-us">
+
+      <div class="visit-box">
+
+        <div>
+          <h2>ðŸ“ Visit Our Store</h2>
+          <p id="storeAddress">
+            Address load ho raha hai...
+          </p>
+        </div>
+
+        <a href="#" id="storeMapLink" class="visit-btn" target="_blank" style="display:none;">
+          Get Directions â†’
+        </a>
 
       </div>
 
@@ -990,7 +945,7 @@
         </div>
 
         <p class="footer-about">
-          GROSTO — Sub Kuch Milega.
+          GROSTO â€” Sub Kuch Milega.
           Your everyday online store for groceries,
           household essentials and more.
         </p>
@@ -1002,7 +957,7 @@
 
         <h3>Shop</h3>
 
-        <a href="#products">All Products</a>
+        <a href="shop.html">All Products</a>
         <a href="#categories">Categories</a>
         <a href="#deals">Deals</a>
 
@@ -1033,7 +988,7 @@
     </div>
 
     <div class="copyright">
-      © 2026 GROSTO. All rights reserved.
+      Â© 2026 GROSTO. All rights reserved.
     </div>
 
   </footer>
@@ -1042,38 +997,195 @@
   <!-- ================= MOBILE CART ================= -->
 
   <div class="mobile-cart">
-    <button onclick="showCart()">
-      🛒 View Cart — <span id="mobileCartCount">0</span> Items
+    <button onclick="openCart()">
+      ðŸ›’ View Cart â€” <span id="mobileCartCount">0</span> Items
     </button>
   </div>
+
+
+  <!-- ================= SUPABASE ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
 
 
   <!-- ================= JAVASCRIPT ================= -->
 
   <script>
 
-    let cartCount = 0;
+    let cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
 
-    function addToCart(productName) {
 
-      cartCount++;
+    /* ================= CART COUNT ================= */
 
-      document.getElementById("cartCount").textContent = cartCount;
+    function updateCartCount() {
 
-      document.getElementById("mobileCartCount").textContent = cartCount;
+      const count = cart.reduce(
+        (total, item) => total + item.quantity,
+        0
+      );
 
-      alert(productName + " cart mein add ho gaya!");
+      document.getElementById("cartCount").textContent = count;
+      document.getElementById("mobileCartCount").textContent = count;
     }
 
-    function showCart() {
 
-      if (cartCount === 0) {
-        alert("Your cart is empty.");
+    function openCart() {
+
+      if (cart.length === 0) {
+        alert("Aapka cart abhi empty hai.");
+        return;
+      }
+
+      window.location.href = "cart.html";
+    }
+
+
+    function goToSearch() {
+
+      const query = document.getElementById("homeSearch").value.trim();
+
+      window.location.href =
+        "shop.html" + (query ? "?q=" + encodeURIComponent(query) : "");
+    }
+
+
+    /* ================= ADD TO CART (from homepage) ================= */
+
+    function addToCart(id, name, price, stock) {
+
+      const existing = cart.find(item => item.id === id);
+
+      const currentQty = existing ? existing.quantity : 0;
+
+      if (currentQty + 1 > stock) {
+
+        alert("Maazrat, is waqt sirf " + stock + " pieces stock mein hain.");
+
+        return;
+      }
+
+      if (existing) {
+
+        existing.quantity++;
+
       } else {
-        alert("Cart mein " + cartCount + " item(s) hain.");
+
+        cart.push({ id: id, name: name, price: price, quantity: 1 });
+
+      }
+
+      localStorage.setItem("grostoCart", JSON.stringify(cart));
+
+      updateCartCount();
+
+      window.location.href = "cart.html";
+    }
+
+
+    /* ================= LOAD FEATURED PRODUCTS ================= */
+
+    async function loadFeaturedProducts() {
+
+      const { data, error } = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .order("id")
+        .limit(4);
+
+      document.getElementById("homeLoading").style.display = "none";
+
+      if (error) {
+
+        console.error(error);
+
+        return;
+      }
+
+      const container = document.getElementById("homeProducts");
+
+      container.innerHTML = "";
+
+      data.forEach(p => {
+
+        const outOfStock = p.stock <= 0;
+
+        const div = document.createElement("div");
+
+        div.className = "product";
+
+        div.innerHTML = `
+
+          <div class="product-image">
+            ${p.emoji}
+          </div>
+
+          <div class="product-info">
+
+            <div class="product-category">
+              ${p.category}
+            </div>
+
+            <div class="product-name">
+              ${p.name}
+            </div>
+
+            <div class="product-bottom">
+              <div class="price">Rs. ${p.price}</div>
+
+              <button
+                class="add-btn"
+                ${outOfStock ? "disabled" : ""}
+                onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock})"
+              >
+                +
+              </button>
+            </div>
+
+          </div>
+
+        `;
+
+        container.appendChild(div);
+
+      });
+
+    }
+
+
+    /* ================= LOAD SETTINGS (banner + store address) ================= */
+
+    async function loadHomeSettings() {
+
+      const settings = await getGrostoSettings();
+
+      if (settings.discount_banner) {
+
+        document.getElementById("dealHeading").textContent =
+          settings.discount_banner + " ðŸ”¥";
+      }
+
+      document.getElementById("storeAddress").textContent =
+        settings.store_address || "Address update ho rahi hai.";
+
+      if (settings.store_map_link) {
+
+        const mapBtn = document.getElementById("storeMapLink");
+
+        mapBtn.href = settings.store_map_link;
+
+        mapBtn.style.display = "inline-block";
       }
 
     }
+
+
+    /* ================= START ================= */
+
+    updateCartCount();
+    loadFeaturedProducts();
+    loadHomeSettings();
 
   </script>
 
