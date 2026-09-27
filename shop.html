@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Shop — GROSTO | Sub Kuch Milega</title>
+  <title>Shop &#8212; GROSTO | Sub Kuch Milega</title>
 
   <meta
     name="description"
@@ -69,6 +69,54 @@
       display: flex;
       align-items: center;
       gap: 18px;
+      position: relative;
+    }
+
+    .menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    /* ================= DROPDOWN MENU ================= */
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 1001;
+    }
+
+    .mobile-menu.show {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .mobile-menu a:hover {
+      background: var(--light-green);
+      color: var(--green);
     }
 
     .logo {
@@ -111,13 +159,83 @@
     }
 
     .cart-button {
+      position: relative;
       border: none;
       background: var(--green);
       color: white;
-      border-radius: 11px;
-      padding: 12px 16px;
-      font-weight: 800;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--yellow);
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+    }
+
+    /* ================= CART FAB ================= */
+
+    .cart-fab {
+      display: none;
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 999;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      font-size: 24px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      border: none;
+    }
+
+    .cart-fab .cart-badge {
+      top: -4px;
+      right: -4px;
+    }
+
+    /* ================= TOAST ================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%) translateY(20px);
+      background: #111;
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
       white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* ================= NAV ================= */
@@ -372,36 +490,6 @@
       color: var(--gray);
     }
 
-    /* ================= CART BAR ================= */
-
-    .cart-bar {
-      position: fixed;
-      bottom: 14px;
-      left: 20px;
-      right: 20px;
-      max-width: 600px;
-      margin: auto;
-      z-index: 999;
-      background: var(--green);
-      color: white;
-      border-radius: 14px;
-      padding: 15px 20px;
-      box-shadow: 0 7px 25px rgba(0,0,0,0.2);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 800;
-    }
-
-    .cart-bar button {
-      border: none;
-      background: var(--yellow);
-      color: #000;
-      padding: 8px 15px;
-      border-radius: 8px;
-      font-weight: 800;
-    }
-
     /* ================= FOOTER ================= */
 
     footer {
@@ -537,6 +625,18 @@
       .footer > div:first-child {
         grid-column: 1 / -1;
       }
+
+      .menu-btn {
+        display: flex;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .cart-fab {
+        display: flex;
+      }
     }
 
     @media (max-width: 420px) {
@@ -549,10 +649,9 @@
         height: 140px;
       }
 
-      .cart-bar {
-        left: 12px;
+      .cart-fab {
         right: 12px;
-        bottom: 10px;
+        bottom: 12px;
       }
     }
   </style>
@@ -565,6 +664,10 @@
   <header>
 
     <div class="header">
+
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        &#9776;
+      </button>
 
       <a href="index.html" class="logo">
         GROST<span>O</span>
@@ -579,13 +682,22 @@
           oninput="searchProducts()"
         >
 
-        <span class="search-icon">🔎</span>
+        <span class="search-icon">&#128270;</span>
 
       </div>
 
       <button class="cart-button" onclick="openCart()">
-        🛒 Cart <span id="topCartCount">0</span>
+        &#128722;
+        <span class="cart-badge" id="topCartCount">0</span>
       </button>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html">Home</a>
+        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
+        <a href="shop.html">Shop</a>
+        <a href="index.html#deals">Deals</a>
+        <a href="index.html#why-grosto">Why GROSTO</a>
+      </div>
 
     </div>
 
@@ -632,42 +744,42 @@
           class="category-btn"
           onclick="filterCategory('Fruits & Vegetables', this)"
         >
-          🥬 Fruits & Vegetables
+          &#129388; Fruits & Vegetables
         </button>
 
         <button
           class="category-btn"
           onclick="filterCategory('Grocery', this)"
         >
-          🛒 Grocery & Rashan
+          &#128722; Grocery & Rashan
         </button>
 
         <button
           class="category-btn"
           onclick="filterCategory('Dairy', this)"
         >
-          🥛 Dairy & Eggs
+          &#129371; Dairy & Eggs
         </button>
 
         <button
           class="category-btn"
           onclick="filterCategory('Drinks', this)"
         >
-          🥤 Drinks
+          &#129380; Drinks
         </button>
 
         <button
           class="category-btn"
           onclick="filterCategory('Snacks', this)"
         >
-          🍪 Biscuits & Snacks
+          &#127850; Biscuits & Snacks
         </button>
 
         <button
           class="category-btn"
           onclick="filterCategory('Household', this)"
         >
-          🧹 Household
+          &#129529; Household
         </button>
 
       </div>
@@ -725,7 +837,7 @@
       <div class="empty" id="empty">
 
         <div class="empty-icon">
-          🔍
+          &#128269;
         </div>
 
         <h2>
@@ -743,20 +855,16 @@
   </main>
 
 
-  <!-- ================= CART BAR ================= -->
+  <!-- ================= CART FAB ================= -->
 
-  <div class="cart-bar">
+  <button class="cart-fab" id="cartFab" onclick="openCart()">
+    &#128722;
+    <span class="cart-badge" id="cartCount">0</span>
+  </button>
 
-    <div>
-      🛒 Cart —
-      <span id="cartCount">0</span> Items
-    </div>
+  <!-- ================= TOAST ================= -->
 
-    <button onclick="openCart()">
-      View Cart
-    </button>
-
-  </div>
+  <div class="toast" id="toast"></div>
 
 
   <!-- ================= FOOTER ================= -->
@@ -772,7 +880,7 @@
         </div>
 
         <p>
-          GROSTO — Sub Kuch Milega.
+          GROSTO &#8212; Sub Kuch Milega.
           Your everyday online store for groceries,
           household essentials and more.
         </p>
@@ -802,7 +910,7 @@
     </div>
 
     <div class="copyright">
-      © 2026 GROSTO. All rights reserved.
+      &#169; 2026 GROSTO. All rights reserved.
     </div>
 
   </footer>
@@ -840,6 +948,47 @@
     }
 
 
+    /* ================= MOBILE MENU ================= */
+
+    function toggleMobileMenu() {
+      document.getElementById("mobileMenu").classList.toggle("show");
+    }
+
+    function closeMobileMenu() {
+      document.getElementById("mobileMenu").classList.remove("show");
+    }
+
+    document.addEventListener("click", function (e) {
+
+      const menu = document.getElementById("mobileMenu");
+      const btn = document.querySelector(".menu-btn");
+
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+
+
+    /* ================= TOAST ================= */
+
+    let toastTimer;
+
+    function showToast(message) {
+
+      const toast = document.getElementById("toast");
+
+      toast.textContent = message;
+
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
+
+
     /* ================= LOAD PRODUCTS FROM DATABASE ================= */
 
     async function loadProducts() {
@@ -857,7 +1006,7 @@
         document.getElementById("loading").style.display = "block";
 
         document.getElementById("loading").textContent =
-          "Products load nahi ho sake — dobara try karein.";
+          "Products load nahi ho sake \u2014 dobara try karein.";
 
         console.error(error);
 
@@ -989,8 +1138,7 @@
 
       updateCartCount();
 
-      // Cart page open karein
-      window.location.href = "cart.html";
+      showToast(name + " cart mein add ho gaya!");
     }
 
 
