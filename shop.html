@@ -74,6 +74,7 @@
 
     .menu-btn {
       display: none;
+      margin-left: auto;
       align-items: center;
       justify-content: center;
       border: 1px solid var(--border);
@@ -91,7 +92,7 @@
       display: none;
       position: absolute;
       top: 100%;
-      left: 12px;
+      right: 12px;
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -190,7 +191,7 @@
     /* ================= CART FAB ================= */
 
     .cart-fab {
-      display: none;
+      display: flex;
       position: fixed;
       bottom: 18px;
       right: 18px;
@@ -368,6 +369,17 @@
       justify-content: center;
       font-size: 85px;
       position: relative;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product {
+      cursor: pointer;
     }
 
     .badge {
@@ -665,10 +677,6 @@
 
     <div class="header">
 
-      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
-        &#9776;
-      </button>
-
       <a href="index.html" class="logo">
         GROST<span>O</span>
       </a>
@@ -686,17 +694,17 @@
 
       </div>
 
-      <button class="cart-button" onclick="openCart()">
-        &#128722;
-        <span class="cart-badge" id="topCartCount">0</span>
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        &#9776;
       </button>
 
       <div class="mobile-menu" id="mobileMenu">
         <a href="index.html">Home</a>
-        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
         <a href="shop.html">Shop</a>
+        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
         <a href="index.html#deals">Deals</a>
         <a href="index.html#why-grosto">Why GROSTO</a>
+        <a href="cart.html">My Cart</a>
       </div>
 
     </div>
@@ -920,6 +928,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
 
 
   <!-- ================= JAVASCRIPT ================= -->
@@ -932,6 +941,26 @@
 
     let allProducts = [];
 
+    const esc = window.groEsc;
+
+    function productThumb(p) {
+
+      const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      if (imgs.length) {
+        return '<img src="' + esc(imgs[0]) + '" alt="' + esc(p.name) + '" loading="lazy">';
+      }
+
+      return esc(p.emoji || "");
+    }
+
+    function addToCartById(id) {
+
+      const p = allProducts.find(x => x.id === id);
+
+      if (p) addToCart(p.id, p.name, p.price, p.stock);
+    }
+
 
     /* ================= UPDATE CART ================= */
 
@@ -941,8 +970,6 @@
         (total, item) => total + item.quantity,
         0
       );
-
-      document.getElementById("topCartCount").textContent = count;
 
       document.getElementById("cartCount").textContent = count;
     }
@@ -1036,6 +1063,7 @@
         const div = document.createElement("div");
 
         div.className = "product";
+        div.onclick = () => { window.location.href = "product.html?id=" + p.id; };
         div.dataset.id = p.id;
         div.dataset.name = p.name;
         div.dataset.category = p.category;
@@ -1044,11 +1072,11 @@
 
         div.innerHTML = `
 
-          ${p.badge && !outOfStock ? `<span class="badge">${p.badge}</span>` : ""}
+          ${p.badge && !outOfStock ? `<span class="badge">${esc(p.badge)}</span>` : ""}
           ${outOfStock ? `<span class="badge out-stock">Out of Stock</span>` : ""}
 
           <div class="product-image">
-            ${p.emoji}
+            ${productThumb(p)}
             ${outOfStock ? `<div class="stock-overlay">Khatam Ho Gaya</div>` : ""}
           </div>
 
@@ -1059,10 +1087,10 @@
             </div>
 
             <div class="product-name">
-              ${p.name}
+              ${esc(p.name)}
             </div>
 
-            ${p.name_urdu ? `<div class="product-name-urdu">${p.name_urdu}</div>` : ""}
+            ${p.name_urdu ? `<div class="product-name-urdu">${esc(p.name_urdu)}</div>` : ""}
 
             <div class="unit">
               ${p.unit}
@@ -1078,7 +1106,7 @@
               <button
                 class="add-btn"
                 ${outOfStock ? "disabled" : ""}
-                onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock})"
+                onclick="event.stopPropagation(); addToCartById(${p.id})"
               >
                 +
               </button>
@@ -1280,8 +1308,37 @@
 
     /* ================= START ================= */
 
+    // ?q=search text  and  ?cat=Category  (from homepage / product page)
+    (function readUrlFilters() {
+
+      const params = new URLSearchParams(window.location.search);
+
+      const qParam = params.get("q");
+
+      if (qParam) document.getElementById("searchInput").value = qParam;
+
+      const catParam = params.get("cat");
+
+      if (catParam) {
+
+        const btn = Array.from(document.querySelectorAll(".category-btn"))
+          .find(b => (b.getAttribute("onclick") || "").includes("'" + catParam + "'"));
+
+        if (btn) {
+
+          currentCategory = catParam;
+
+          document.querySelectorAll(".category-btn").forEach(b => b.classList.remove("active"));
+
+          btn.classList.add("active");
+        }
+      }
+    })();
+
     updateCartCount();
     loadProducts();
+    initSearchSuggest("searchInput");
+    initWhatsAppFloat();
 
   </script>
 
