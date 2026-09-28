@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Admin Panel — GROSTO</title>
+  <title>Admin Panel &#8212; GROSTO</title>
 
   <style>
     * {
@@ -290,6 +290,82 @@
       border-radius: 8px;
     }
 
+    .form-field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .row-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .img-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .img-tile {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--light-gray);
+    }
+
+    .img-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .img-x {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .img-main,
+    .img-mk {
+      position: absolute;
+      left: 3px;
+      bottom: 3px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .img-main { background: var(--green); color: #fff; }
+    .img-mk { background: rgba(255,255,255,0.9); color: #000; }
+
+    .upload-status {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
     .form-actions {
       display: flex;
       gap: 10px;
@@ -419,7 +495,7 @@
 
         <div class="card-header">
           <h2>Orders</h2>
-          <button class="btn btn-secondary" onclick="loadOrders()">↻ Refresh</button>
+          <button class="btn btn-secondary" onclick="loadOrders()">&#8635; Refresh</button>
         </div>
 
         <div class="table-wrap">
@@ -501,7 +577,7 @@
 
         <button class="btn" onclick="saveSettings()">Save Settings</button>
 
-        <div class="save-msg" id="settingsSaveMsg">✓ Settings saved.</div>
+        <div class="save-msg" id="settingsSaveMsg">&#10003; Settings saved.</div>
 
       </div>
 
@@ -528,8 +604,8 @@
         </div>
 
         <div class="form-field full">
-          <label>Name (Urdu) — optional</label>
-          <input type="text" id="p_name_urdu" placeholder="تازہ سیب">
+          <label>Name (Urdu) &#8212; optional</label>
+          <input type="text" id="p_name_urdu" placeholder="&#1578;&#1575;&#1586;&#1729; &#1587;&#1740;&#1576;">
         </div>
 
         <div class="form-field">
@@ -546,7 +622,7 @@
 
         <div class="form-field">
           <label>Emoji Icon</label>
-          <input type="text" id="p_emoji" placeholder="🍎">
+          <input type="text" id="p_emoji" placeholder="&#127822;">
         </div>
 
         <div class="form-field">
@@ -580,6 +656,19 @@
             <option value="true">Yes</option>
             <option value="false">No</option>
           </select>
+        </div>
+
+        <div class="form-field full">
+          <label>Description (product ki details)</label>
+          <textarea id="p_description" placeholder="Jaise: Fresh Pakistani apples, 1 kg pack. Taaza aur meethay."></textarea>
+        </div>
+
+        <div class="form-field full">
+          <label>Product Photos (pehli photo Main hogi)</label>
+          <div class="img-grid" id="imgGrid"></div>
+          <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImageFiles(this)">
+          <div class="upload-status" id="uploadStatus"></div>
+          <div class="hint">Phone se seedha photo le sakte hain ya gallery se chunein. Photos khud chhoti (compress) ho kar upload hongi.</div>
         </div>
 
       </div>
@@ -640,6 +729,155 @@
 
     /* ================= PRODUCTS ================= */
 
+    let productsCache = {};
+
+    let formImages = [];
+
+    function adminEsc(str) {
+      return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+
+    function rowThumb(p) {
+
+      const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      if (imgs.length) {
+        return '<img class="row-thumb" src="' + encodeURI(imgs[0]) + '" alt="">';
+      }
+
+      return '<span style="font-size:22px;">' + adminEsc(p.emoji) + '</span>';
+    }
+
+
+    /* ================= PHOTO UPLOAD ================= */
+
+    function compressImage(file, maxSize, quality) {
+
+      return new Promise(function (resolve, reject) {
+
+        const img = new Image();
+
+        const url = URL.createObjectURL(file);
+
+        img.onload = function () {
+
+          let w = img.width;
+          let h = img.height;
+
+          const scale = Math.min(1, maxSize / Math.max(w, h));
+
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+
+          const canvas = document.createElement("canvas");
+
+          canvas.width = w;
+          canvas.height = h;
+
+          const ctx = canvas.getContext("2d");
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+
+          canvas.toBlob(function (blob) {
+
+            URL.revokeObjectURL(url);
+
+            if (blob) resolve(blob);
+            else reject(new Error("Photo compress nahi ho saki"));
+
+          }, "image/jpeg", quality);
+        };
+
+        img.onerror = function () {
+          URL.revokeObjectURL(url);
+          reject(new Error("Photo read nahi ho saki"));
+        };
+
+        img.src = url;
+      });
+    }
+
+    async function handleImageFiles(input) {
+
+      const files = Array.from(input.files || []);
+
+      if (!files.length) return;
+
+      const status = document.getElementById("uploadStatus");
+
+      for (let i = 0; i < files.length; i++) {
+
+        status.textContent = "Upload ho raha hai " + (i + 1) + "/" + files.length + "...";
+
+        try {
+
+          const blob = await compressImage(files[i], 1200, 0.82);
+
+          const path = "p" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+
+          const up = await grostoDB.storage
+            .from("product-images")
+            .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+
+          if (up.error) throw up.error;
+
+          const pub = grostoDB.storage.from("product-images").getPublicUrl(path);
+
+          formImages.push(pub.data.publicUrl);
+
+          renderImageGrid();
+
+        } catch (err) {
+
+          console.error(err);
+
+          alert("Photo upload fail: " + (err.message || err) + "\n\n(Agar 'bucket not found' aaye to migration_images.sql Supabase mein run karein.)");
+        }
+      }
+
+      status.textContent = "";
+
+      input.value = "";
+    }
+
+    function renderImageGrid() {
+
+      const grid = document.getElementById("imgGrid");
+
+      if (!formImages.length) {
+        grid.innerHTML = '<div class="hint">Abhi koi photo nahi. Neeche se add karein.</div>';
+        return;
+      }
+
+      grid.innerHTML = formImages.map(function (u, i) {
+
+        return '<div class="img-tile">' +
+          '<img src="' + encodeURI(u) + '" alt="">' +
+          (i === 0
+            ? '<span class="img-main">Main</span>'
+            : '<button type="button" class="img-mk" onclick="makeMainImage(' + i + ')">Main</button>') +
+          '<button type="button" class="img-x" onclick="removeImage(' + i + ')">&times;</button>' +
+        '</div>';
+
+      }).join("");
+    }
+
+    function removeImage(i) {
+      formImages.splice(i, 1);
+      renderImageGrid();
+    }
+
+    function makeMainImage(i) {
+      const moved = formImages.splice(i, 1)[0];
+      formImages.unshift(moved);
+      renderImageGrid();
+    }
+
+
     async function loadProducts() {
 
       const { data, error } = await grostoDB
@@ -667,13 +905,17 @@
 
       tbody.innerHTML = "";
 
+      productsCache = {};
+
       data.forEach(p => {
+
+        productsCache[p.id] = p;
 
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-          <td style="font-size:22px;">${p.emoji}</td>
-          <td>${p.name}</td>
+          <td>${rowThumb(p)}</td>
+          <td>${adminEsc(p.name)}</td>
           <td>${p.category}</td>
           <td>
             <input
@@ -697,7 +939,7 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-secondary btn-small" onclick='editProduct(${JSON.stringify(p)})'>Edit</button>
+            <button class="btn btn-secondary btn-small" onclick="editProduct(${p.id})">Edit</button>
             <button class="btn btn-danger btn-small" onclick="deleteProduct(${p.id})">Delete</button>
           </td>
         `;
@@ -735,18 +977,27 @@
       document.getElementById("p_name").value = "";
       document.getElementById("p_name_urdu").value = "";
       document.getElementById("p_category").value = "Fruits & Vegetables";
-      document.getElementById("p_emoji").value = "🛒";
+      document.getElementById("p_emoji").value = "\u{1f6d2}";
       document.getElementById("p_price").value = "";
       document.getElementById("p_old_price").value = "";
       document.getElementById("p_unit").value = "";
       document.getElementById("p_badge").value = "";
       document.getElementById("p_stock").value = "0";
       document.getElementById("p_is_active").value = "true";
+      document.getElementById("p_description").value = "";
+
+      formImages = [];
+
+      renderImageGrid();
 
       document.getElementById("productFormOverlay").classList.add("show");
     }
 
-    function editProduct(p) {
+    function editProduct(id) {
+
+      const p = productsCache[id];
+
+      if (!p) return;
 
       document.getElementById("productFormTitle").textContent = "Edit Product";
 
@@ -761,6 +1012,11 @@
       document.getElementById("p_badge").value = p.badge || "";
       document.getElementById("p_stock").value = p.stock;
       document.getElementById("p_is_active").value = String(p.is_active);
+      document.getElementById("p_description").value = p.description || "";
+
+      formImages = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      renderImageGrid();
 
       document.getElementById("productFormOverlay").classList.add("show");
     }
@@ -777,13 +1033,15 @@
         name: document.getElementById("p_name").value.trim(),
         name_urdu: document.getElementById("p_name_urdu").value.trim() || null,
         category: document.getElementById("p_category").value,
-        emoji: document.getElementById("p_emoji").value.trim() || "🛒",
+        emoji: document.getElementById("p_emoji").value.trim() || "\u{1f6d2}",
         price: Number(document.getElementById("p_price").value) || 0,
         old_price: document.getElementById("p_old_price").value ? Number(document.getElementById("p_old_price").value) : null,
         unit: document.getElementById("p_unit").value.trim() || "1 unit",
         badge: document.getElementById("p_badge").value.trim() || null,
         stock: Number(document.getElementById("p_stock").value) || 0,
-        is_active: document.getElementById("p_is_active").value === "true"
+        is_active: document.getElementById("p_is_active").value === "true",
+        description: document.getElementById("p_description").value.trim() || null,
+        images: formImages
       };
 
       if (!payload.name) {
@@ -804,7 +1062,7 @@
 
       if (error) {
 
-        alert("Save nahi ho saka.");
+        alert("Save nahi ho saka: " + error.message + "\n\n(Agar 'images' ya 'description' column ka error hai to migration_images.sql Supabase mein run karein.)");
 
         console.error(error);
 
@@ -900,7 +1158,7 @@
 
         detailTr.id = "orderDetails" + o.id;
 
-        const itemsHtml = o.items.map(i => `${i.name} × ${i.quantity} = Rs. ${i.price * i.quantity}`).join("<br>");
+        const itemsHtml = o.items.map(i => `${i.name} \u00d7 ${i.quantity} = Rs. ${i.price * i.quantity}`).join("<br>");
 
         detailTr.innerHTML = `
           <td colspan="9">
