@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Product - GROSTO</title>
+  <meta name="description" id="metaDesc" content="GROSTO - Sub Kuch Milega.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --white: #FFFFFF;
+      --black: #000000;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+      --gray: #666666;
+      --border: #E3E6E4;
+      --red: #E53935;
+      --orange: #F57C00;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.5;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font: inherit; cursor: pointer; }
+    input { font: inherit; }
+
+    /* ================= HEADER ================= */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .logo span { color: var(--yellow); }
+
+    .search-box { flex: 1; position: relative; }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px 45px 13px 16px;
+      outline: none;
+      background: var(--light-gray);
+    }
+
+    .search-box input:focus {
+      border-color: var(--green);
+      background: var(--white);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .menu-btn {
+      display: none;
+      margin-left: auto;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--white);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 12px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 8px;
+      min-width: 200px;
+      z-index: 1001;
+    }
+
+    .mobile-menu.show { display: block; }
+
+    .mobile-menu a {
+      display: block;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .mobile-menu a:hover {
+      background: var(--light-green);
+      color: var(--green);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px 12px;
+      display: flex;
+      gap: 22px;
+    }
+
+    .nav a {
+      color: #444;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav a:hover { color: var(--green); }
+
+    /* ================= PAGE ================= */
+
+    .wrap {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px 20px 50px;
+    }
+
+    .crumbs {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .crumbs a:hover { color: var(--green); }
+
+    .crumbs .current {
+      color: #000;
+      font-weight: 700;
+    }
+
+    .pv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* ================= GALLERY ================= */
+
+    .gallery { position: relative; }
+
+    .slides {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .slides::-webkit-scrollbar { display: none; }
+
+    .slide {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+
+    .emoji-slide {
+      font-size: 150px;
+      background: var(--light-gray);
+    }
+
+    .disc-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      z-index: 2;
+      display: none;
+    }
+
+    .g-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.92);
+      font-size: 20px;
+      z-index: 2;
+      display: none;
+    }
+
+    .g-arrow.prev { left: 10px; }
+    .g-arrow.next { right: 10px; }
+
+    .dots {
+      display: none;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #CFD4D1;
+      transition: 0.2s;
+    }
+
+    .dot.active {
+      background: var(--green);
+      width: 22px;
+      border-radius: 5px;
+    }
+
+    .thumbs {
+      display: none;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .thumb {
+      width: 68px;
+      height: 68px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: #fff;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .thumb.active { border-color: var(--green); }
+
+    /* ================= INFO ================= */
+
+    .p-cat {
+      color: var(--green);
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .p-name {
+      font-size: 32px;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .p-urdu {
+      color: var(--gray);
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .p-unit {
+      color: var(--gray);
+      margin-bottom: 14px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .p-price {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .p-old {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 18px;
+    }
+
+    .p-save {
+      background: var(--light-green);
+      color: #178e48;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 9px;
+      border-radius: 6px;
+    }
+
+    .p-stock {
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .p-stock.in { color: var(--green); }
+    .p-stock.low { color: var(--orange); }
+    .p-stock.out { color: var(--red); }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .qty-row label { font-weight: 800; }
+
+    .qty {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      overflow: hidden;
+    }
+
+    .qty button {
+      width: 42px;
+      height: 42px;
+      border: none;
+      background: var(--light-gray);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .qty button:hover { background: var(--light-green); color: var(--green); }
+
+    .qty span {
+      min-width: 46px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .btn-add,
+    .btn-buy {
+      flex: 1;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .btn-add {
+      background: var(--light-green);
+      color: #178e48;
+      border: 2px solid var(--green);
+    }
+
+    .btn-buy {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-buy:hover { background: #178e48; }
+
+    .btn-add:disabled,
+    .btn-buy:disabled {
+      background: #e5e5e5;
+      border-color: #e5e5e5;
+      color: #999;
+      cursor: not-allowed;
+    }
+
+    .wa-order {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #25D366;
+      color: #fff;
+      font-weight: 800;
+      padding: 13px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .share-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .perks {
+      display: grid;
+      gap: 10px;
+      background: var(--light-gray);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 22px;
+      font-size: 14px;
+    }
+
+    .perk { display: flex; gap: 10px; align-items: center; }
+
+    .perk b { color: var(--green); }
+
+    .desc h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .desc p {
+      color: #444;
+      white-space: pre-line;
+    }
+
+    /* ================= SECTIONS ================= */
+
+    .sec {
+      margin-top: 50px;
+    }
+
+    .sec h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .h-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scrollbar-width: thin;
+    }
+
+    .mini {
+      flex: 0 0 180px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      display: block;
+    }
+
+    .mini:hover {
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    }
+
+    .mini-img {
+      height: 150px;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      overflow: hidden;
+    }
+
+    .mini-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .mini-body { padding: 12px; }
+
+    .mini-name { font-weight: 800; font-size: 14px; }
+    .mini-unit { color: var(--gray); font-size: 12px; margin-bottom: 8px; }
+
+    .mini-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-price { color: var(--green); font-weight: 900; }
+
+    .mini-add {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .mini-out { color: var(--red); font-size: 11px; font-weight: 800; }
+
+    /* ================= SKELETON / NOT FOUND ================= */
+
+    .sk {
+      background: linear-gradient(90deg, #eee 25%, #f6f6f6 37%, #eee 63%);
+      background-size: 400% 100%;
+      animation: shimmer 1.3s infinite;
+      border-radius: 14px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
+
+    .sk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .sk-img { aspect-ratio: 1 / 1; }
+    .sk-line { height: 22px; margin-bottom: 14px; }
+
+    .not-found {
+      display: none;
+      text-align: center;
+      padding: 70px 20px;
+    }
+
+    .not-found .big { font-size: 70px; margin-bottom: 10px; }
+    .not-found p { color: var(--gray); margin: 8px 0 22px; }
+
+    .not-found a {
+      display: inline-block;
+      background: var(--green);
+      color: #fff;
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    /* ================= LIGHTBOX ================= */
+
+    .lb {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lb.show { display: flex; }
+
+    .lb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .lb-x {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      font-size: 26px;
+    }
+
+    /* ================= FAB / TOAST / STICKY ================= */
+
+    .cart-fab {
+      display: flex;
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      z-index: 999;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 24px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      border: none;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--yellow);
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 100px;
+      transform: translateX(-50%) translateY(20px);
+      background: #111;
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .sticky-bar { display: none; }
+
+    footer {
+      background: #111;
+      color: #bbb;
+      text-align: center;
+      padding: 22px;
+      font-size: 13px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (min-width: 701px) {
+      .g-arrow { display: block; }
+      .thumbs { display: flex; }
+    }
+
+    @media (max-width: 700px) {
+
+      .header-inner {
+        padding: 11px 14px;
+        flex-wrap: wrap;
+      }
+
+      .logo { font-size: 25px; }
+
+      .search-box { order: 3; flex-basis: 100%; }
+
+      .menu-btn { display: flex; }
+
+      .nav { display: none; }
+
+      .wrap { padding: 14px 14px 110px; }
+
+      .pv, .sk-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .slides { border-radius: 16px; }
+
+      .dots { display: flex; }
+
+      .p-name { font-size: 25px; }
+
+      .p-price { font-size: 29px; }
+
+      .actions { display: none; }
+
+      .sec h2 { font-size: 20px; }
+
+      .mini { flex-basis: 155px; }
+
+      .mini-img { height: 125px; }
+
+      .sticky-bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 990;
+        background: #fff;
+        border-top: 1px solid var(--border);
+        padding: 10px 14px;
+        box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
+      }
+
+      .sticky-price { font-size: 20px; font-weight: 900; color: var(--green); white-space: nowrap; }
+
+      .sticky-bar .btn-buy { padding: 13px; }
+
+      .cart-fab { bottom: 90px; }
+
+      body .wa-float { bottom: 90px; }
+
+      .toast { bottom: 150px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= HEADER ================= -->
+
+  <header>
+
+    <div class="header-inner">
+
+      <a href="index.html" class="logo">GROST<span>O</span></a>
+
+      <div class="search-box">
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Aap kya dhoond rahe hain?"
+          aria-label="Search products"
+          onkeydown="if(event.key==='Enter') goToSearch()"
+        >
+        <span class="search-icon">&#128270;</span>
+      </div>
+
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">&#9776;</button>
+
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="index.html#deals">Deals</a>
+        <a href="index.html#why-grosto">Why GROSTO</a>
+      </div>
+
+    </div>
+
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="index.html#deals">Deals</a>
+      <a href="index.html#why-grosto">Why GROSTO</a>
+    </nav>
+
+  </header>
+
+
+  <main class="wrap">
+
+    <!-- LOADING SKELETON -->
+
+    <div id="skeleton">
+      <div class="sk-grid">
+        <div class="sk sk-img"></div>
+        <div>
+          <div class="sk sk-line" style="width:40%"></div>
+          <div class="sk sk-line" style="width:85%;height:34px"></div>
+          <div class="sk sk-line" style="width:30%"></div>
+          <div class="sk sk-line" style="width:50%;height:38px"></div>
+          <div class="sk sk-line" style="width:100%;height:52px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOT FOUND -->
+
+    <div class="not-found" id="notFound">
+      <div class="big">&#128533;</div>
+      <h2>Product nahi mila</h2>
+      <p>Ye product ab available nahi hai ya link ghalat hai.</p>
+      <a href="shop.html">Shop par wapas jayein</a>
+    </div>
+
+    <!-- PRODUCT -->
+
+    <div id="productView" style="display:none;">
+
+      <div class="crumbs" id="crumbs"></div>
+
+      <div class="pv">
+
+        <div class="gallery">
+
+          <div class="disc-badge" id="discBadge"></div>
+
+          <button class="g-arrow prev" id="gPrev" aria-label="Previous">&#8249;</button>
+          <button class="g-arrow next" id="gNext" aria-label="Next">&#8250;</button>
+
+          <div class="slides" id="slides"></div>
+
+          <div class="dots" id="dots"></div>
+
+          <div class="thumbs" id="thumbs"></div>
+
+        </div>
+
+        <div class="info">
+
+          <div class="p-cat" id="pCategory"></div>
+
+          <h1 class="p-name" id="pName"></h1>
+
+          <div class="p-urdu" id="pUrdu"></div>
+
+          <div class="p-unit" id="pUnit"></div>
+
+          <div class="price-row">
+            <span class="p-price" id="pPrice"></span>
+            <span class="p-old" id="pOld"></span>
+            <span class="p-save" id="pSave" style="display:none;"></span>
+          </div>
+
+          <div class="p-stock" id="pStock"></div>
+
+          <div class="qty-row">
+            <label>Quantity</label>
+            <div class="qty">
+              <button type="button" onclick="changeQty(-1)" aria-label="Decrease">-</button>
+              <span id="qtyVal">1</span>
+              <button type="button" onclick="changeQty(1)" aria-label="Increase">+</button>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-add" id="addBtn" onclick="handleAdd()">Add to Cart</button>
+            <button class="btn-buy" id="buyBtn" onclick="handleBuy()">Buy Now</button>
+          </div>
+
+          <a class="wa-order" id="waOrder" href="#" target="_blank" rel="noopener">
+            &#128172; Is product ko WhatsApp par order karein
+          </a>
+
+          <button class="share-btn" onclick="shareProduct()">Share</button>
+
+          <div class="perks">
+            <div class="perk"><b>&#10003;</b> Cash on Delivery available</div>
+            <div class="perk"><b>&#10003;</b> Order ki confirmation WhatsApp par</div>
+            <div class="perk"><b>&#10003;</b> Ghar tak delivery</div>
+          </div>
+
+          <div class="desc" id="descBox">
+            <h3>Product Details</h3>
+            <p id="pDesc"></p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <section class="sec" id="relatedSec" style="display:none;">
+        <h2>Aap ko ye bhi pasand aa sakta hai</h2>
+        <div class="h-scroll" id="related"></div>
+      </section>
+
+      <section class="sec" id="recentSec" style="display:none;">
+        <h2>Aap ne abhi dekha</h2>
+        <div class="h-scroll" id="recent"></div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <footer>&#169; 2026 GROSTO. All rights reserved.</footer>
+
+
+  <!-- STICKY MOBILE BAR -->
+
+  <div class="sticky-bar" id="stickyBar" style="display:none;">
+    <div class="sticky-price" id="stickyPrice"></div>
+    <button class="btn-add" id="stickyAdd" onclick="handleAdd()" style="flex:1;padding:13px;">Add to Cart</button>
+    <button class="btn-buy" id="stickyBuy" onclick="handleBuy()" style="flex:1;">Buy Now</button>
+  </div>
+
+  <!-- CART FAB -->
+
+  <button class="cart-fab" onclick="openCart()" aria-label="Cart">
+    &#128722;
+    <span class="cart-badge" id="fabBadge">0</span>
+  </button>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- LIGHTBOX -->
+
+  <div class="lb" id="lb" onclick="closeLightbox()">
+    <button class="lb-x" aria-label="Close">&times;</button>
+    <img id="lbImg" src="" alt="">
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
+
+  <script>
+
+    var esc = window.groEsc;
+
+    var cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+    var product = null;
+
+    var qty = 1;
+
+    var productId = Number(new URLSearchParams(window.location.search).get("id"));
+
+    var productMap = {};
+
+
+    /* ================= BASIC UI ================= */
+
+    function updateCartCount() {
+
+      cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+      var count = cart.reduce(function (t, i) { return t + i.quantity; }, 0);
+
+      document.getElementById("fabBadge").textContent = count;
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById("mobileMenu").classList.toggle("show");
+    }
+
+    document.addEventListener("click", function (e) {
+
+      var menu = document.getElementById("mobileMenu");
+      var btn = document.querySelector(".menu-btn");
+
+      if (!menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+
+    var toastTimer;
+
+    function showToast(message) {
+
+      var toast = document.getElementById("toast");
+
+      toast.textContent = message;
+
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+
+      toastTimer = setTimeout(function () {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function openCart() {
+
+      updateCartCount();
+
+      if (cart.length === 0) {
+        showToast("Aapka cart abhi empty hai.");
+        return;
+      }
+
+      window.location.href = "cart.html";
+    }
+
+    function goToSearch() {
+
+      var q = document.getElementById("searchInput").value.trim();
+
+      window.location.href = "shop.html" + (q ? "?q=" + encodeURIComponent(q) : "");
+    }
+
+    function thumb(p) {
+
+      var imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      if (imgs.length) {
+        return '<img src="' + esc(imgs[0]) + '" alt="" loading="lazy">';
+      }
+
+      return esc(p.emoji || "");
+    }
+
+
+    /* ================= CART LOGIC ================= */
+
+    // returns "ok", "max" (already max in cart) or "out"
+    function addToCartData(p, amount) {
+
+      if (p.stock <= 0) return "out";
+
+      cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+      var existing = cart.find(function (i) { return i.id === p.id; });
+
+      var current = existing ? existing.quantity : 0;
+
+      if (current + amount > p.stock) return "max";
+
+      if (existing) {
+        existing.quantity += amount;
+      } else {
+        cart.push({ id: p.id, name: p.name, price: p.price, quantity: amount });
+      }
+
+      localStorage.setItem("grostoCart", JSON.stringify(cart));
+
+      updateCartCount();
+
+      return "ok";
+    }
+
+    function handleAdd() {
+
+      var result = addToCartData(product, qty);
+
+      if (result === "ok") {
+        showToast(product.name + " cart mein add ho gaya!");
+      } else if (result === "max") {
+        showToast("Is waqt sirf " + product.stock + " pieces available hain.");
+      }
+    }
+
+    function handleBuy() {
+
+      var result = addToCartData(product, qty);
+
+      if (result === "ok" || result === "max") {
+        window.location.href = "cart.html";
+      }
+    }
+
+    function changeQty(delta) {
+
+      var max = Math.max(1, product.stock);
+
+      var next = qty + delta;
+
+      if (next > max) {
+        showToast("Sirf " + product.stock + " pieces available hain.");
+        return;
+      }
+
+      if (next < 1) return;
+
+      qty = next;
+
+      document.getElementById("qtyVal").textContent = qty;
+
+      updateWhatsAppLink();
+    }
+
+
+    /* ================= RENDER PRODUCT ================= */
+
+    function showNotFound() {
+      document.getElementById("skeleton").style.display = "none";
+      document.getElementById("notFound").style.display = "block";
+    }
+
+    var slideCount = 0;
+
+    function renderProduct() {
+
+      document.getElementById("skeleton").style.display = "none";
+      document.getElementById("productView").style.display = "block";
+
+      var p = product;
+
+      document.title = p.name + " - GROSTO";
+
+      document.getElementById("metaDesc").setAttribute(
+        "content",
+        p.name + " - Rs. " + p.price + " - GROSTO se order karein."
+      );
+
+      document.getElementById("crumbs").innerHTML =
+        '<a href="index.html">Home</a> <span>&#8250;</span> ' +
+        '<a href="shop.html">Shop</a> <span>&#8250;</span> ' +
+        '<a href="shop.html?cat=' + encodeURIComponent(p.category) + '">' + esc(p.category) + '</a> <span>&#8250;</span> ' +
+        '<span class="current">' + esc(p.name) + '</span>';
+
+      document.getElementById("pCategory").textContent = p.category;
+      document.getElementById("pName").textContent = p.name;
+      document.getElementById("pUrdu").textContent = p.name_urdu || "";
+      document.getElementById("pUnit").textContent = p.unit;
+      document.getElementById("pPrice").textContent = "Rs. " + p.price;
+
+      if (p.old_price && Number(p.old_price) > Number(p.price)) {
+
+        var pct = Math.round((p.old_price - p.price) / p.old_price * 100);
+
+        document.getElementById("pOld").textContent = "Rs. " + p.old_price;
+
+        var save = document.getElementById("pSave");
+        save.textContent = pct + "% OFF";
+        save.style.display = "inline-block";
+
+        var badge = document.getElementById("discBadge");
+        badge.textContent = pct + "% OFF";
+        badge.style.display = "block";
+      }
+
+      var stockEl = document.getElementById("pStock");
+
+      if (p.stock <= 0) {
+        stockEl.textContent = "Out of Stock - Khatam Ho Gaya";
+        stockEl.className = "p-stock out";
+      } else if (p.stock <= 5) {
+        stockEl.textContent = "Sirf " + p.stock + " bache hain - jaldi karein!";
+        stockEl.className = "p-stock low";
+      } else {
+        stockEl.textContent = "In Stock";
+        stockEl.className = "p-stock in";
+      }
+
+      var out = p.stock <= 0;
+
+      ["addBtn", "buyBtn", "stickyAdd", "stickyBuy"].forEach(function (id) {
+        document.getElementById(id).disabled = out;
+      });
+
+      document.getElementById("stickyPrice").textContent = "Rs. " + p.price;
+      document.getElementById("stickyBar").style.display = "";
+
+      if (p.description && p.description.trim()) {
+        document.getElementById("pDesc").textContent = p.description;
+      } else {
+        document.getElementById("descBox").style.display = "none";
+      }
+
+      renderGallery();
+    }
+
+
+    /* ================= GALLERY (swipe) ================= */
+
+    function renderGallery() {
+
+      var imgs = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+
+      var slides = document.getElementById("slides");
+
+      slideCount = imgs.length;
+
+      if (!imgs.length) {
+
+        slides.innerHTML = '<div class="slide emoji-slide">' + esc(product.emoji || "") + '</div>';
+
+        document.getElementById("gPrev").style.display = "none";
+        document.getElementById("gNext").style.display = "none";
+
+        return;
+      }
+
+      slides.innerHTML = imgs.map(function (u, i) {
+        return '<div class="slide"><img src="' + esc(u) + '" alt="' + esc(product.name) +
+          '" data-i="' + i + '"' + (i === 0 ? "" : ' loading="lazy"') + '></div>';
+      }).join("");
+
+      slides.addEventListener("click", function (e) {
+
+        var img = e.target.closest("img");
+
+        if (img) openLightbox(img.getAttribute("src"));
+      });
+
+      if (imgs.length > 1) {
+
+        document.getElementById("dots").innerHTML = imgs.map(function (u, i) {
+          return '<span class="dot' + (i === 0 ? " active" : "") + '"></span>';
+        }).join("");
+
+        document.getElementById("thumbs").innerHTML = imgs.map(function (u, i) {
+          return '<button class="thumb' + (i === 0 ? " active" : "") + '" data-i="' + i + '"><img src="' + esc(u) + '" alt=""></button>';
+        }).join("");
+
+        document.getElementById("thumbs").addEventListener("click", function (e) {
+
+          var b = e.target.closest(".thumb");
+
+          if (b) goToSlide(Number(b.getAttribute("data-i")));
+        });
+
+        slides.addEventListener("scroll", function () {
+
+          var idx = Math.round(slides.scrollLeft / slides.clientWidth);
+
+          setActive(idx);
+        });
+
+        document.getElementById("gPrev").onclick = function () { goToSlide(currentIndex() - 1); };
+        document.getElementById("gNext").onclick = function () { goToSlide(currentIndex() + 1); };
+
+      } else {
+
+        document.getElementById("gPrev").style.display = "none";
+        document.getElementById("gNext").style.display = "none";
+      }
+    }
+
+    function currentIndex() {
+
+      var slides = document.getElementById("slides");
+
+      return Math.round(slides.scrollLeft / slides.clientWidth);
+    }
+
+    function goToSlide(i) {
+
+      if (i < 0 || i >= slideCount) return;
+
+      var slides = document.getElementById("slides");
+
+      slides.scrollTo({ left: i * slides.clientWidth, behavior: "smooth" });
+    }
+
+    function setActive(idx) {
+
+      document.querySelectorAll(".dot").forEach(function (d, i) {
+        d.classList.toggle("active", i === idx);
+      });
+
+      document.querySelectorAll(".thumb").forEach(function (t, i) {
+        t.classList.toggle("active", i === idx);
+      });
+    }
+
+    function openLightbox(src) {
+      document.getElementById("lbImg").src = src;
+      document.getElementById("lb").classList.add("show");
+    }
+
+    function closeLightbox() {
+      document.getElementById("lb").classList.remove("show");
+    }
+
+
+    /* ================= SHARE ================= */
+
+    function shareProduct() {
+
+      var url = window.location.href;
+
+      if (navigator.share) {
+
+        navigator.share({ title: product.name + " - GROSTO", text: product.name + " - Rs. " + product.price, url: url }).catch(function () {});
+
+      } else if (navigator.clipboard) {
+
+        navigator.clipboard.writeText(url).then(function () {
+          showToast("Link copy ho gaya!");
+        });
+
+      } else {
+
+        showToast(url);
+      }
+    }
+
+
+    /* ================= WHATSAPP ORDER ================= */
+
+    var waNumber = "";
+
+    function updateWhatsAppLink() {
+
+      if (!waNumber || !product) return;
+
+      var msg = "Assalam o Alaikum, mujhe ye product order karna hai:\n" +
+        product.name + " (" + product.unit + ") x" + qty + "\n" +
+        "Price: Rs. " + (product.price * qty) + "\n" +
+        window.location.href;
+
+      var a = document.getElementById("waOrder");
+
+      a.href = "https://wa.me/" + waNumber + "?text=" + encodeURIComponent(msg);
+    }
+
+    function loadWhatsAppOrder() {
+
+      getGrostoSettings().then(function (s) {
+
+        var n = (s.whatsapp_number || "").replace(/\D/g, "");
+
+        if (!/^\d{11,15}$/.test(n)) return;
+
+        waNumber = n;
+
+        document.getElementById("waOrder").style.display = "flex";
+
+        updateWhatsAppLink();
+      });
+    }
+
+
+    /* ================= RELATED + RECENT ================= */
+
+    function miniCard(p) {
+
+      productMap[p.id] = p;
+
+      var out = p.stock <= 0;
+
+      return '<a class="mini" href="product.html?id=' + p.id + '">' +
+        '<div class="mini-img">' + thumb(p) + '</div>' +
+        '<div class="mini-body">' +
+          '<div class="mini-name">' + esc(p.name) + '</div>' +
+          '<div class="mini-unit">' + esc(p.unit) + '</div>' +
+          '<div class="mini-row">' +
+            '<span class="mini-price">Rs. ' + p.price + '</span>' +
+            (out ? '<span class="mini-out">Out of stock</span>'
+                 : '<button class="mini-add" data-id="' + p.id + '" aria-label="Add">+</button>') +
+          '</div>' +
+        '</div>' +
+      '</a>';
+    }
+
+    function bindMiniAdd(containerId) {
+
+      document.getElementById(containerId).addEventListener("click", function (e) {
+
+        var btn = e.target.closest(".mini-add");
+
+        if (!btn) return;
+
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        var p = productMap[btn.getAttribute("data-id")];
+
+        var result = addToCartData(p, 1);
+
+        if (result === "ok") showToast(p.name + " cart mein add ho gaya!");
+        else if (result === "max") showToast("Is waqt sirf " + p.stock + " pieces available hain.");
+      });
+    }
+
+    async function loadRelated() {
+
+      var { data } = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .eq("category", product.category)
+        .neq("id", product.id)
+        .order("id")
+        .limit(8);
+
+      var list = data || [];
+
+      if (list.length < 4) {
+
+        var ids = [product.id].concat(list.map(function (p) { return p.id; }));
+
+        var more = await grostoDB
+          .from("products")
+          .select("*")
+          .eq("is_active", true)
+          .not("id", "in", "(" + ids.join(",") + ")")
+          .order("id")
+          .limit(8 - list.length);
+
+        list = list.concat(more.data || []);
+      }
+
+      if (!list.length) return;
+
+      document.getElementById("related").innerHTML = list.map(miniCard).join("");
+
+      document.getElementById("relatedSec").style.display = "block";
+
+      bindMiniAdd("related");
+    }
+
+    async function loadRecent() {
+
+      var recent = [];
+
+      try { recent = JSON.parse(localStorage.getItem("grostoRecent")) || []; } catch (e) {}
+
+      var others = recent.filter(function (id) { return id !== product.id; }).slice(0, 8);
+
+      // save current as most recent
+      var updated = [product.id].concat(recent.filter(function (id) { return id !== product.id; })).slice(0, 12);
+
+      localStorage.setItem("grostoRecent", JSON.stringify(updated));
+
+      if (!others.length) return;
+
+      var { data } = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .in("id", others);
+
+      if (!data || !data.length) return;
+
+      data.sort(function (a, b) { return others.indexOf(a.id) - others.indexOf(b.id); });
+
+      document.getElementById("recent").innerHTML = data.map(miniCard).join("");
+
+      document.getElementById("recentSec").style.display = "block";
+
+      bindMiniAdd("recent");
+    }
+
+
+    /* ================= START ================= */
+
+    async function init() {
+
+      updateCartCount();
+
+      initSearchSuggest("searchInput");
+
+      initWhatsAppFloat();
+
+      if (!productId) {
+        showNotFound();
+        return;
+      }
+
+      var res = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("id", productId)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (res.error || !res.data) {
+        showNotFound();
+        return;
+      }
+
+      product = res.data;
+
+      renderProduct();
+
+      loadWhatsAppOrder();
+
+      loadRelated();
+
+      loadRecent();
+    }
+
+    init();
+
+  </script>
+
+</body>
+</html>
