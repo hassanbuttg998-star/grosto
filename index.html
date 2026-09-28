@@ -71,6 +71,7 @@
 
     .menu-btn {
       display: none;
+      margin-left: auto;
       align-items: center;
       justify-content: center;
       border: 1px solid var(--border);
@@ -163,7 +164,7 @@
     /* ================= CART FAB (small floating button) ================= */
 
     .cart-fab {
-      display: none;
+      display: flex;
       position: fixed;
       bottom: 18px;
       right: 18px;
@@ -217,7 +218,7 @@
       display: none;
       position: absolute;
       top: 100%;
-      left: 12px;
+      right: 12px;
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -406,6 +407,17 @@
       align-items: center;
       justify-content: center;
       font-size: 80px;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product {
+      cursor: pointer;
     }
 
     .product-info {
@@ -795,10 +807,6 @@
 
     <div class="header-inner">
 
-      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
-        &#9776;
-      </button>
-
       <a href="index.html" class="logo">
         GROST<span>O</span>
       </a>
@@ -814,16 +822,17 @@
         <span class="search-icon">&#128270;</span>
       </div>
 
-      <button class="cart-btn" onclick="openCart()">
-        &#128722;
-        <span class="cart-badge" id="cartBadge">0</span>
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        &#9776;
       </button>
 
       <div class="mobile-menu" id="mobileMenu">
-        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
+        <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
+        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
         <a href="#deals" onclick="closeMobileMenu()">Deals</a>
         <a href="#why-grosto" onclick="closeMobileMenu()">Why GROSTO</a>
+        <a href="cart.html">My Cart</a>
       </div>
 
     </div>
@@ -879,32 +888,32 @@
 
       <div class="categories">
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Fruits%20%26%20Vegetables" class="category">
           <div class="category-icon">&#129388;</div>
           <div class="category-name">Fruits & Vegetables</div>
         </a>
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Grocery" class="category">
           <div class="category-icon">&#128722;</div>
           <div class="category-name">Grocery & Rashan</div>
         </a>
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Dairy" class="category">
           <div class="category-icon">&#129371;</div>
           <div class="category-name">Dairy & Eggs</div>
         </a>
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Drinks" class="category">
           <div class="category-icon">&#129380;</div>
           <div class="category-name">Drinks</div>
         </a>
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Snacks" class="category">
           <div class="category-icon">&#127850;</div>
           <div class="category-name">Biscuits & Snacks</div>
         </a>
 
-        <a href="shop.html" class="category">
+        <a href="shop.html?cat=Household" class="category">
           <div class="category-icon">&#129529;</div>
           <div class="category-name">Household</div>
         </a>
@@ -995,6 +1004,45 @@
           <p>
             Simple shopping experience ke saath fast checkout.
           </p>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= HOW TO ORDER ================= -->
+
+    <section class="section" id="how-to-order">
+
+      <div class="section-header">
+        <h2 class="section-title">Order Kaise Karein?</h2>
+      </div>
+
+      <div class="why-grid">
+
+        <div class="why-card">
+          <div class="why-icon">&#128269;</div>
+          <h3>1. Product chunein</h3>
+          <p>Shop se apni pasand ki cheez dhoondein ya search karein.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon">&#128722;</div>
+          <h3>2. Cart mein daalein</h3>
+          <p>Quantity select karke cart mein add karein.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon">&#128221;</div>
+          <h3>3. Details bharein</h3>
+          <p>Naam, phone aur address likhein - koi signup nahi.</p>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon">&#127968;</div>
+          <h3>4. Ghar par delivery</h3>
+          <p>Cash on Delivery ya EasyPaisa/JazzCash se payment.</p>
         </div>
 
       </div>
@@ -1104,6 +1152,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
 
 
   <!-- ================= JAVASCRIPT ================= -->
@@ -1111,6 +1160,28 @@
   <script>
 
     let cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+    const esc = window.groEsc;
+
+    let featuredProducts = [];
+
+    function productThumb(p) {
+
+      const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      if (imgs.length) {
+        return '<img src="' + esc(imgs[0]) + '" alt="' + esc(p.name) + '" loading="lazy">';
+      }
+
+      return esc(p.emoji || "");
+    }
+
+    function addToCartById(id) {
+
+      const p = featuredProducts.find(x => x.id === id);
+
+      if (p) addToCart(p.id, p.name, p.price, p.stock);
+    }
 
 
     /* ================= CART COUNT ================= */
@@ -1122,7 +1193,6 @@
         0
       );
 
-      document.getElementById("cartBadge").textContent = count;
       document.getElementById("fabBadge").textContent = count;
     }
 
@@ -1230,7 +1300,7 @@
         .select("*")
         .eq("is_active", true)
         .order("id")
-        .limit(4);
+        .limit(8);
 
       document.getElementById("homeLoading").style.display = "none";
 
@@ -1245,6 +1315,8 @@
 
       container.innerHTML = "";
 
+      featuredProducts = data;
+
       data.forEach(p => {
 
         const outOfStock = p.stock <= 0;
@@ -1253,10 +1325,12 @@
 
         div.className = "product";
 
+        div.onclick = () => { window.location.href = "product.html?id=" + p.id; };
+
         div.innerHTML = `
 
           <div class="product-image">
-            ${p.emoji}
+            ${productThumb(p)}
           </div>
 
           <div class="product-info">
@@ -1266,7 +1340,7 @@
             </div>
 
             <div class="product-name">
-              ${p.name}
+              ${esc(p.name)}
             </div>
 
             <div class="product-bottom">
@@ -1275,7 +1349,7 @@
               <button
                 class="add-btn"
                 ${outOfStock ? "disabled" : ""}
-                onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock})"
+                onclick="event.stopPropagation(); addToCartById(${p.id})"
               >
                 +
               </button>
@@ -1324,6 +1398,8 @@
     updateCartCount();
     loadFeaturedProducts();
     loadHomeSettings();
+    initSearchSuggest("homeSearch");
+    initWhatsAppFloat();
 
   </script>
 
