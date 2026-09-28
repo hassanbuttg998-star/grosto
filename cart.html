@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Your Cart — GROSTO</title>
+  <title>Your Cart &#8212; GROSTO</title>
 
   <style>
     * {
@@ -140,6 +140,13 @@
       align-items: center;
       justify-content: center;
       font-size: 40px;
+      overflow: hidden;
+    }
+
+    .item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .item-name {
@@ -362,7 +369,7 @@
       </a>
 
       <a href="shop.html" class="continue">
-        ← Continue Shopping
+        &#8592; Continue Shopping
       </a>
 
     </div>
@@ -375,7 +382,7 @@
   <main class="container">
 
     <h1 class="title">
-      Your Cart 🛒
+      Your Cart &#128722;
     </h1>
 
     <p class="subtitle">
@@ -388,7 +395,7 @@
     <div class="empty" id="emptyCart">
 
       <div class="empty-icon">
-        🛒
+        &#128722;
       </div>
 
       <h2>
@@ -400,7 +407,7 @@
       </p>
 
       <a href="shop.html" class="shop-btn">
-        Start Shopping →
+        Start Shopping &#8594;
       </a>
 
     </div>
@@ -469,7 +476,7 @@
 
 
         <div class="delivery-note">
-          🚚 Delivery charges will be confirmed at checkout.
+          &#128666; Delivery charges will be confirmed at checkout.
         </div>
 
 
@@ -477,7 +484,7 @@
           class="checkout"
           onclick="goToCheckout()"
         >
-          Proceed to Checkout →
+          Proceed to Checkout &#8594;
         </button>
 
       </aside>
@@ -508,22 +515,22 @@
 
       const icons = {
 
-        "Fresh Apples": "🍎",
-        "Fresh Milk": "🥛",
-        "Premium Rice": "🍚",
-        "Dishwashing Liquid": "🧴",
-        "Fresh Bananas": "🍌",
-        "Farm Fresh Eggs": "🥚",
-        "Premium Tea": "☕",
-        "Orange Juice": "🧃",
-        "Chocolate Biscuits": "🍪",
-        "Potato Chips": "🍟",
-        "Laundry Detergent": "🧺",
-        "Fresh Tomatoes": "🍅"
+        "Fresh Apples": "\u{1f34e}",
+        "Fresh Milk": "\u{1f95b}",
+        "Premium Rice": "\u{1f35a}",
+        "Dishwashing Liquid": "\u{1f9f4}",
+        "Fresh Bananas": "\u{1f34c}",
+        "Farm Fresh Eggs": "\u{1f95a}",
+        "Premium Tea": "\u2615",
+        "Orange Juice": "\u{1f9c3}",
+        "Chocolate Biscuits": "\u{1f36a}",
+        "Potato Chips": "\u{1f35f}",
+        "Laundry Detergent": "\u{1f9fa}",
+        "Fresh Tomatoes": "\u{1f345}"
 
       };
 
-      return icons[name] || "🛒";
+      return icons[name] || "\u{1f6d2}";
     }
 
 
@@ -539,7 +546,7 @@
 
       const { data, error } = await grostoDB
         .from("products")
-        .select("id, stock, emoji")
+        .select("*")
         .in("id", ids);
 
       if (error) {
@@ -602,7 +609,13 @@
 
         const maxStock = stockInfo ? stockInfo.stock : null;
 
-        const icon = stockInfo ? stockInfo.emoji : getProductIcon(item.name);
+        const imgs = stockInfo && Array.isArray(stockInfo.images)
+          ? stockInfo.images.filter(Boolean)
+          : [];
+
+        const icon = imgs.length
+          ? '<img src="' + encodeURI(imgs[0]) + '" alt="">'
+          : (stockInfo ? stockInfo.emoji : getProductIcon(item.name));
 
         const atMax = maxStock !== null && item.quantity >= maxStock;
 
@@ -622,7 +635,7 @@
           <div>
 
             <div class="item-name">
-              ${item.name}
+              <a href="product.html?id=${item.id}">${item.name}</a>
             </div>
 
             <div class="item-price">
@@ -634,7 +647,7 @@
               <button
                 onclick="changeQuantity(${index}, -1)"
               >
-                −
+                \u2212
               </button>
 
               <span>
