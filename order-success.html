@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Order Confirmed â€” GROSTO</title>
+  <title>Order Confirmed - GROSTO</title>
 
   <style>
     * {
@@ -221,11 +221,11 @@
   <div class="success-box">
 
     <div class="success-icon">
-      âœ“
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1EAF59" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 12 10 18 20 6"></polyline></svg>
     </div>
 
     <h1>
-      Order Successfully Placed! ðŸŽ‰
+      Order Successfully Placed!
     </h1>
 
     <p class="message">
@@ -241,7 +241,7 @@
       </small>
 
       <strong id="orderNumber">
-        â€”
+        -
       </strong>
 
     </div>
@@ -256,7 +256,7 @@
         </span>
 
         <strong id="customerName">
-          â€”
+          -
         </strong>
 
       </div>
@@ -269,7 +269,7 @@
         </span>
 
         <strong id="city">
-          â€”
+          -
         </strong>
 
       </div>
@@ -282,7 +282,7 @@
         </span>
 
         <strong id="payment">
-          â€”
+          -
         </strong>
 
       </div>
@@ -333,8 +333,9 @@
         id="whatsappBtn"
         class="button whatsapp-btn"
         target="_blank"
+        style="display:flex;align-items:center;justify-content:center;gap:8px;"
       >
-        ðŸ’¬ Order WhatsApp Par Confirm Karein
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="7 12.5 10.5 16 17 9"></polyline></svg> Confirm Order
       </a>
 
     </div>
@@ -378,7 +379,7 @@
     document.querySelector(".success-box").innerHTML = `
 
       <div class="success-icon">
-        ðŸ›’
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1EAF59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L21 8H6"></path></svg>
       </div>
 
       <h1>
@@ -442,7 +443,7 @@
       div.innerHTML = `
 
         <span>
-          ${item.name} Ã— ${item.quantity}
+          ${item.name} x ${item.quantity}
         </span>
 
         <strong>
@@ -470,7 +471,7 @@
 
       if (!whatsappNumber) return;
 
-      let msg = `Order Confirm â€” GROSTO\n`;
+      let msg = `Order Confirm - GROSTO\n`;
       msg += `Order #: ${order.orderNumber}\n`;
       msg += `Name: ${order.customer.name}\n`;
       msg += `Total: Rs. ${order.total}`;
