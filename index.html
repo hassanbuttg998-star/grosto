@@ -246,31 +246,52 @@
       color: var(--green);
     }
 
-    /* ================= HERO ================= */
+    /* ================= HERO CAROUSEL ================= */
 
-    .hero {
+    .hero-carousel {
       max-width: 1200px;
       margin: 24px auto;
+      position: relative;
+    }
+
+    .hc-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-radius: 22px;
+    }
+
+    .hc-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hc-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+      min-height: 320px;
       padding: 55px 45px;
       border-radius: 22px;
-      background:
-        linear-gradient(
-          120deg,
-          var(--green),
-          #27bd65
-        );
       color: var(--white);
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
     }
 
-    .hero::after {
-      content: "\1f6d2 ";
+    .hc-slide::after {
+      content: "";
       position: absolute;
-      right: 45px;
-      bottom: -25px;
-      font-size: 150px;
-      opacity: 0.12;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.38), rgba(0,0,0,0.05) 65%);
+      pointer-events: none;
+    }
+
+    .hc-slide.no-image::after {
+      display: none;
     }
 
     .hero-content {
@@ -287,21 +308,17 @@
       margin-bottom: 10px;
     }
 
-    .hero h1 {
-      font-size: clamp(38px, 6vw, 68px);
-      line-height: 1;
-      margin-bottom: 18px;
+    .hc-slide h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.1;
+      margin-bottom: 16px;
     }
 
-    .hero h1 span {
-      color: var(--yellow);
-    }
-
-    .hero p {
-      font-size: 18px;
+    .hc-slide p {
+      font-size: 17px;
       color: #f3fff7;
       max-width: 500px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .hero-btn {
@@ -311,6 +328,52 @@
       padding: 14px 24px;
       border-radius: 10px;
       font-weight: 800;
+    }
+
+    .hc-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.85);
+      font-size: 22px;
+      z-index: 3;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hc-arrow.prev { left: 16px; }
+    .hc-arrow.next { right: 16px; }
+
+    .hc-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .hc-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #D8DCDA;
+      transition: 0.2s;
+      border: none;
+      padding: 0;
+    }
+
+    .hc-dot.active {
+      background: var(--green);
+      width: 22px;
+      border-radius: 5px;
+    }
+
+    @media (min-width: 701px) {
+      .hc-arrow { display: flex; }
     }
 
     /* ================= SECTION ================= */
@@ -672,19 +735,22 @@
         gap: 18px;
       }
 
-      .hero {
+      .hero-carousel {
         margin: 15px;
-        padding: 35px 25px;
+      }
+
+      .hc-track {
         border-radius: 18px;
       }
 
-      .hero p {
-        font-size: 15px;
+      .hc-slide {
+        padding: 30px 22px;
+        min-height: 260px;
+        border-radius: 18px;
       }
 
-      .hero::after {
-        right: -10px;
-        font-size: 100px;
+      .hc-slide p {
+        font-size: 14px;
       }
 
       .section {
@@ -851,28 +917,26 @@
 
   <main>
 
-    <section class="hero">
+    <section class="hero-carousel" id="heroCarousel">
 
-      <div class="hero-content">
+      <div class="hc-track" id="hcTrack">
 
-        <div class="hero-small">
-          Your Everyday Store
+        <!-- fallback slide shown instantly; replaced once banners load from DB -->
+        <div class="hc-slide no-image" style="background: linear-gradient(120deg, #1EAF59, #27bd65);">
+          <div class="hero-content">
+            <div class="hero-small">Your Everyday Store</div>
+            <h1>Sub Kuch Milega.</h1>
+            <p>Groceries, household essentials aur rozmarra ki zaroorat ki cheezen - sab ek jagah.</p>
+            <a href="shop.html" class="hero-btn">Shop Now &#8594;</a>
+          </div>
         </div>
 
-        <h1>
-          Sub Kuch <span>Milega.</span>
-        </h1>
-
-        <p>
-          Groceries, household essentials aur rozmarra ki zaroorat ki
-          cheezen &#8212; sab ek jagah.
-        </p>
-
-        <a href="shop.html" class="hero-btn">
-          Shop Now &#8594;
-        </a>
-
       </div>
+
+      <button class="hc-arrow prev" id="hcPrev" aria-label="Previous">&#8249;</button>
+      <button class="hc-arrow next" id="hcNext" aria-label="Next">&#8250;</button>
+
+      <div class="hc-dots" id="hcDots"></div>
 
     </section>
 
@@ -1393,11 +1457,125 @@
     }
 
 
+    /* ================= HERO CAROUSEL ================= */
+
+    let heroTimer = null;
+
+    function heroSlideHtml(b) {
+
+      const style = b.image
+        ? 'background-image:url(\'' + esc(b.image).replace(/'/g, "%27") + '\');'
+        : 'background:' + esc(b.bg_color || "#1EAF59") + ';';
+
+      return '<div class="hc-slide' + (b.image ? '' : ' no-image') + '" style="' + style + '">' +
+          '<div class="hero-content">' +
+            (b.title ? '<h1>' + esc(b.title) + '</h1>' : '') +
+            (b.subtitle ? '<p>' + esc(b.subtitle) + '</p>' : '') +
+            (b.button_text
+              ? '<a href="' + esc(b.button_link || 'shop.html') + '" class="hero-btn">' + esc(b.button_text) + '</a>'
+              : '') +
+          '</div>' +
+        '</div>';
+    }
+
+    function setupCarouselControls(count) {
+
+      const track = document.getElementById("hcTrack");
+      const dotsBox = document.getElementById("hcDots");
+      const prev = document.getElementById("hcPrev");
+      const next = document.getElementById("hcNext");
+
+      if (count <= 1) {
+        dotsBox.innerHTML = "";
+        prev.style.display = "none";
+        next.style.display = "none";
+        return;
+      }
+
+      dotsBox.innerHTML = "";
+
+      for (let i = 0; i < count; i++) {
+
+        const dot = document.createElement("button");
+
+        dot.className = "hc-dot" + (i === 0 ? " active" : "");
+
+        dot.setAttribute("aria-label", "Slide " + (i + 1));
+
+        dot.onclick = () => goToHeroSlide(i);
+
+        dotsBox.appendChild(dot);
+      }
+
+      function activeIndex() {
+        return Math.round(track.scrollLeft / track.clientWidth);
+      }
+
+      track.onscroll = () => {
+
+        const idx = activeIndex();
+
+        document.querySelectorAll(".hc-dot").forEach((d, i) => {
+          d.classList.toggle("active", i === idx);
+        });
+      };
+
+      prev.onclick = () => goToHeroSlide(Math.max(0, activeIndex() - 1));
+      next.onclick = () => goToHeroSlide(Math.min(count - 1, activeIndex() + 1));
+
+      function goToHeroSlide(i) {
+        track.scrollTo({ left: i * track.clientWidth, behavior: "smooth" });
+      }
+
+      window.goToHeroSlide = goToHeroSlide;
+
+      function restartAutoplay() {
+
+        clearInterval(heroTimer);
+
+        heroTimer = setInterval(() => {
+
+          const nextIdx = (activeIndex() + 1) % count;
+
+          goToHeroSlide(nextIdx);
+
+        }, 5000);
+      }
+
+      ["pointerdown", "touchstart"].forEach(evt => {
+        track.addEventListener(evt, () => clearInterval(heroTimer), { passive: true });
+      });
+
+      track.addEventListener("scroll", () => {
+        clearTimeout(heroTimer._resume);
+        heroTimer._resume = setTimeout(restartAutoplay, 3000);
+      });
+
+      restartAutoplay();
+    }
+
+    async function loadHeroBanners() {
+
+      const { data, error } = await grostoDB
+        .from("banners")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
+
+      if (error || !data || !data.length) return; // keep the built-in fallback slide
+
+      document.getElementById("hcTrack").innerHTML = data.map(heroSlideHtml).join("");
+
+      setupCarouselControls(data.length);
+    }
+
+
     /* ================= START ================= */
 
     updateCartCount();
     loadFeaturedProducts();
     loadHomeSettings();
+    loadHeroBanners();
     initSearchSuggest("homeSearch");
     initWhatsAppFloat();
 
