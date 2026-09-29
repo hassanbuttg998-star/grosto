@@ -11,6 +11,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -253,6 +262,16 @@
       font-size: 13px;
     }
 
+    .min-order-warning {
+      margin: 0 0 18px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #FFF3E0;
+      color: #E65100;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .checkout {
       width: 100%;
       border: none;
@@ -262,6 +281,11 @@
       border-radius: 11px;
       font-weight: 900;
       font-size: 16px;
+    }
+
+    .checkout:disabled {
+      background: #ccc;
+      cursor: not-allowed;
     }
 
     .checkout:hover {
@@ -475,13 +499,15 @@
         </div>
 
 
-        <div class="delivery-note">
-          &#128666; Delivery charges will be confirmed at checkout.
+        <div class="delivery-note" id="deliveryNote">
+          &#128666; Delivery charges: Rs. 100
         </div>
 
+        <div class="min-order-warning" id="minOrderWarning" style="display:none;"></div>
 
         <button
           class="checkout"
+          id="checkoutBtn"
           onclick="goToCheckout()"
         >
           Proceed to Checkout &#8594;
@@ -507,6 +533,10 @@
       ) || [];
 
     let stockMap = {};
+
+    let deliveryFee = 100;
+
+    let minOrder = 1000;
 
 
     /* ================= PRODUCT EMOJIS (fallback for old cart items) ================= */
@@ -690,7 +720,7 @@
       });
 
 
-      const delivery = 0;
+      const delivery = subtotal > 0 ? deliveryFee : 0;
 
       const total =
         subtotal + delivery;
@@ -700,12 +730,35 @@
         .textContent = "Rs. " + subtotal;
 
       document.getElementById("delivery")
-        .textContent = delivery === 0
-          ? "Free"
-          : "Rs. " + delivery;
+        .textContent = "Rs. " + delivery;
 
       document.getElementById("total")
         .textContent = "Rs. " + total;
+
+      document.getElementById("deliveryNote").innerHTML =
+        "&#128666; Delivery charges: Rs. " + deliveryFee;
+
+      const warningBox = document.getElementById("minOrderWarning");
+
+      const checkoutBtn = document.getElementById("checkoutBtn");
+
+      if (subtotal < minOrder) {
+
+        const remaining = minOrder - subtotal;
+
+        warningBox.style.display = "block";
+
+        warningBox.textContent =
+          "Minimum order Rs. " + minOrder + " hai. Aapko Rs. " + remaining + " ka aur samaan lena hoga.";
+
+        checkoutBtn.disabled = true;
+
+      } else {
+
+        warningBox.style.display = "none";
+
+        checkoutBtn.disabled = false;
+      }
 
     }
 
@@ -785,6 +838,12 @@
     /* ================= START ================= */
 
     async function init() {
+
+      const settings = await getGrostoSettings();
+
+      deliveryFee = Number(settings.delivery_fee) || 100;
+
+      minOrder = Number(settings.min_order) || 1000;
 
       await loadStock();
 
