@@ -11,6 +11,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -605,6 +614,16 @@
         </div>
 
         <div class="form-field">
+          <label>Delivery Charges (Rs.)</label>
+          <input type="number" id="set_delivery_fee" placeholder="100">
+        </div>
+
+        <div class="form-field">
+          <label>Minimum Order Amount (Rs.)</label>
+          <input type="number" id="set_min_order" placeholder="1000">
+        </div>
+
+        <div class="form-field">
           <label>Store Address</label>
           <input type="text" id="set_store_address" placeholder="Shop address">
         </div>
@@ -649,14 +668,7 @@
 
         <div class="form-field">
           <label>Category</label>
-          <select id="p_category">
-            <option>Fruits & Vegetables</option>
-            <option>Grocery</option>
-            <option>Dairy</option>
-            <option>Drinks</option>
-            <option>Snacks</option>
-            <option>Household</option>
-          </select>
+          <select id="p_category"></select>
         </div>
 
         <div class="form-field">
@@ -796,6 +808,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/categories.js"></script>
 
   <script>
 
@@ -1076,6 +1089,16 @@
         console.error(error);
       }
 
+    }
+
+
+    function populateCategorySelect() {
+
+      const select = document.getElementById("p_category");
+
+      select.innerHTML = (window.GROSTO_CATEGORIES || []).map(c =>
+        '<option value="' + adminEsc(c.value) + '">' + adminEsc(c.label) + '</option>'
+      ).join("");
     }
 
 
@@ -1557,6 +1580,8 @@
       document.getElementById("set_jazzcash_title").value = settings.jazzcash_title || "";
       document.getElementById("set_jazzcash_number").value = settings.jazzcash_number || "";
       document.getElementById("set_discount_banner").value = settings.discount_banner || "";
+      document.getElementById("set_delivery_fee").value = settings.delivery_fee || "100";
+      document.getElementById("set_min_order").value = settings.min_order || "1000";
       document.getElementById("set_store_address").value = settings.store_address || "";
       document.getElementById("set_store_map_link").value = settings.store_map_link || "";
 
@@ -1571,6 +1596,8 @@
         { key: "jazzcash_title", value: document.getElementById("set_jazzcash_title").value.trim() },
         { key: "jazzcash_number", value: document.getElementById("set_jazzcash_number").value.trim() },
         { key: "discount_banner", value: document.getElementById("set_discount_banner").value.trim() },
+        { key: "delivery_fee", value: document.getElementById("set_delivery_fee").value.trim() || "100" },
+        { key: "min_order", value: document.getElementById("set_min_order").value.trim() || "1000" },
         { key: "store_address", value: document.getElementById("set_store_address").value.trim() },
         { key: "store_map_link", value: document.getElementById("set_store_map_link").value.trim() }
       ];
@@ -1602,6 +1629,8 @@
       const ok = await checkAuth();
 
       if (!ok) return;
+
+      populateCategorySelect();
 
       loadProducts();
     }
