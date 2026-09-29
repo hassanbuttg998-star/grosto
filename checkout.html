@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Checkout — GROSTO</title>
+  <title>Checkout &#8212; GROSTO</title>
 
   <style>
     * {
@@ -277,7 +277,6 @@
 
       .summary {
         position: static;
-        order: -1;
       }
     }
   </style>
@@ -294,7 +293,7 @@
     </a>
 
     <a href="cart.html" class="back">
-      ← Back to Cart
+      &#8592; Back to Cart
     </a>
 
   </div>
@@ -320,7 +319,7 @@
 
       <div class="box">
 
-        <h2>📍 Delivery Details</h2>
+        <h2>&#128205; Delivery Details</h2>
 
         <div class="field">
 
@@ -404,7 +403,7 @@
 
           <textarea
             id="instructions"
-            placeholder="Optional — e.g. gate par call karein"
+            placeholder="Optional &#8212; e.g. gate par call karein"
           ></textarea>
 
         </div>
@@ -416,7 +415,7 @@
 
       <div class="box">
 
-        <h2>💳 Payment Method</h2>
+        <h2>&#128179; Payment Method</h2>
 
 
         <label class="payment-option">
@@ -471,12 +470,12 @@
 
           <div class="row">
             <span>Account Title</span>
-            <strong id="epTitle">—</strong>
+            <strong id="epTitle">&#8212;</strong>
           </div>
 
           <div class="row">
             <span>Account Number</span>
-            <strong id="epNumber">—</strong>
+            <strong id="epNumber">&#8212;</strong>
           </div>
 
         </div>
@@ -509,12 +508,12 @@
 
           <div class="row">
             <span>Account Title</span>
-            <strong id="jcTitle">—</strong>
+            <strong id="jcTitle">&#8212;</strong>
           </div>
 
           <div class="row">
             <span>Account Number</span>
-            <strong id="jcNumber">—</strong>
+            <strong id="jcNumber">&#8212;</strong>
           </div>
 
         </div>
@@ -592,12 +591,12 @@
         id="placeOrderBtn"
         onclick="placeOrder()"
       >
-        Place Order →
+        Place Order &#8594;
       </button>
 
 
       <div class="secure">
-        🔒 Your order details are handled securely.
+        &#128274; Your order details are handled securely.
       </div>
 
     </aside>
@@ -648,7 +647,7 @@
       div.innerHTML = `
 
         <span>
-          ${item.name} × ${item.quantity}
+          ${item.name} \u00d7 ${item.quantity}
         </span>
 
         <strong>
@@ -715,7 +714,7 @@
 
   function buildWhatsAppMessage(order) {
 
-    let msg = `*Naya Order — GROSTO*%0A`;
+    let msg = `*Naya Order \u2014 GROSTO*%0A`;
     msg += `Order #: ${order.orderNumber}%0A%0A`;
     msg += `*Customer:* ${order.customer.name}%0A`;
     msg += `*Phone:* ${order.customer.phone}%0A`;
@@ -870,7 +869,7 @@
 
       placeBtn.disabled = false;
 
-      placeBtn.textContent = "Place Order →";
+      placeBtn.textContent = "Place Order \u2192";
 
       return;
     }
