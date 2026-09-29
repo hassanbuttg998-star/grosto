@@ -11,6 +11,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -311,6 +320,16 @@
 
       <div id="itemsList"></div>
 
+      <div class="detail-row" id="subtotalRow" style="display:none;">
+        <span>Subtotal</span>
+        <strong id="orderSubtotal">Rs. 0</strong>
+      </div>
+
+      <div class="detail-row" id="deliveryRow" style="display:none;">
+        <span>Delivery</span>
+        <strong id="orderDelivery">Rs. 0</strong>
+      </div>
+
       <div class="total">
 
         <span>
@@ -460,6 +479,15 @@
     document.getElementById("total")
       .textContent =
         "Rs. " + order.total;
+
+    if (order.subtotal !== undefined && order.deliveryFee !== undefined) {
+
+      document.getElementById("orderSubtotal").textContent = "Rs. " + order.subtotal;
+      document.getElementById("orderDelivery").textContent = "Rs. " + order.deliveryFee;
+
+      document.getElementById("subtotalRow").style.display = "flex";
+      document.getElementById("deliveryRow").style.display = "flex";
+    }
 
 
     // Show a WhatsApp confirm button as a fallback,
