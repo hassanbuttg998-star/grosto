@@ -11,6 +11,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -233,6 +242,17 @@
     .place-order:disabled {
       background: #ccc;
       cursor: not-allowed;
+    }
+
+    .min-order-warning {
+      margin: 16px 0 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: #FFF3E0;
+      color: #E65100;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
     }
 
     .secure {
@@ -566,8 +586,8 @@
           Delivery
         </span>
 
-        <strong>
-          Free
+        <strong id="deliveryFeeDisplay">
+          Rs. 100
         </strong>
 
       </div>
@@ -585,6 +605,7 @@
 
       </div>
 
+      <div class="min-order-warning" id="minOrderWarning" style="display:none;"></div>
 
       <button
         class="place-order"
@@ -619,6 +640,10 @@
     ) || [];
 
   let grostoSettings = {};
+
+  let deliveryFee = 100;
+
+  let minOrder = 1000;
 
 
   function renderSummary() {
@@ -664,8 +689,35 @@
     document.getElementById("subtotal")
       .textContent = "Rs. " + subtotal;
 
+    document.getElementById("deliveryFeeDisplay")
+      .textContent = subtotal > 0 ? "Rs. " + deliveryFee : "Rs. 0";
+
+    const total = subtotal + (subtotal > 0 ? deliveryFee : 0);
+
     document.getElementById("total")
-      .textContent = "Rs. " + subtotal;
+      .textContent = "Rs. " + total;
+
+    const warningBox = document.getElementById("minOrderWarning");
+
+    const placeBtn = document.getElementById("placeOrderBtn");
+
+    if (subtotal > 0 && subtotal < minOrder) {
+
+      const remaining = minOrder - subtotal;
+
+      warningBox.style.display = "block";
+
+      warningBox.textContent =
+        "Minimum order Rs. " + minOrder + " hai. Aapko Rs. " + remaining + " ka aur samaan lena hoga.";
+
+      placeBtn.disabled = true;
+
+    } else {
+
+      warningBox.style.display = "none";
+
+      placeBtn.disabled = false;
+    }
 
   }
 
@@ -707,6 +759,12 @@
     document.getElementById("jcNumber").textContent =
       grostoSettings.jazzcash_number || "Not set yet";
 
+    deliveryFee = Number(grostoSettings.delivery_fee) || 100;
+
+    minOrder = Number(grostoSettings.min_order) || 1000;
+
+    renderSummary();
+
   }
 
 
@@ -731,7 +789,9 @@
       msg += `- ${item.name} x${item.quantity} = Rs. ${item.price * item.quantity}%0A`;
     });
 
-    msg += `%0A*Total: Rs. ${order.total}*%0A`;
+    msg += `%0A*Subtotal: Rs. ${order.subtotal}*%0A`;
+    msg += `*Delivery: Rs. ${order.deliveryFee}*%0A`;
+    msg += `*Total: Rs. ${order.total}*%0A`;
     msg += `*Payment:* ${order.payment.toUpperCase()}`;
 
     if (order.paymentTid) {
@@ -806,11 +866,23 @@
       "GR" +
       Date.now().toString().slice(-8);
 
-    const total = cart.reduce(
+    const subtotal = cart.reduce(
       (sum, item) =>
         sum + (item.price * item.quantity),
       0
     );
+
+    if (subtotal < minOrder) {
+
+      alert(
+        "Minimum order Rs. " + minOrder + " hai. Aapko Rs. " +
+        (minOrder - subtotal) + " ka aur samaan lena hoga."
+      );
+
+      return;
+    }
+
+    const total = subtotal + deliveryFee;
 
     const order = {
 
@@ -828,6 +900,10 @@
       paymentTid: paymentTid || null,
 
       items: cart,
+
+      subtotal: subtotal,
+
+      deliveryFee: deliveryFee,
 
       total: total,
 
