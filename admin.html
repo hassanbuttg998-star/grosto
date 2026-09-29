@@ -448,6 +448,7 @@
     <div class="tabs">
       <button class="tab-btn active" id="tabBtnProducts" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" id="tabBtnOrders" onclick="switchTab('orders')">Orders</button>
+      <button class="tab-btn" id="tabBtnBanners" onclick="switchTab('banners')">Banners</button>
       <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">Settings</button>
     </div>
 
@@ -515,6 +516,44 @@
             </thead>
             <tbody id="ordersTableBody">
               <tr><td colspan="9" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= BANNERS PANEL ================= -->
+
+    <div class="panel" id="panelBanners">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Homepage Banners</h2>
+          <button class="btn" onclick="openBannerForm()">+ Add Banner</button>
+        </div>
+
+        <p class="hint" style="margin-bottom:14px;">
+          Ye banners homepage ke sabse upar ek swipe-able slideshow ki tarah dikhte hain. Jitne chahein utne laga sakte hain, order neeche se change kar sakte hain.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Button</th>
+                <th>Order</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bannersTableBody">
+              <tr><td colspan="6" class="empty-msg">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -683,6 +722,76 @@
   </div>
 
 
+  <!-- ================= ADD / EDIT BANNER FORM ================= -->
+
+  <div class="form-overlay" id="bannerFormOverlay">
+
+    <div class="form-box">
+
+      <h3 id="bannerFormTitle">Add Banner</h3>
+
+      <input type="hidden" id="b_id">
+
+      <div class="form-grid">
+
+        <div class="form-field full">
+          <label>Title</label>
+          <input type="text" id="b_title" placeholder="Sub Kuch Milega.">
+        </div>
+
+        <div class="form-field full">
+          <label>Subtitle</label>
+          <input type="text" id="b_subtitle" placeholder="10% off on your first order!">
+        </div>
+
+        <div class="form-field">
+          <label>Button Text (optional)</label>
+          <input type="text" id="b_button_text" placeholder="Shop Now">
+        </div>
+
+        <div class="form-field">
+          <label>Button Link</label>
+          <input type="text" id="b_button_link" placeholder="shop.html">
+        </div>
+
+        <div class="form-field">
+          <label>Background Color (agar photo na ho)</label>
+          <input type="color" id="b_bg_color" value="#1EAF59">
+        </div>
+
+        <div class="form-field">
+          <label>Order (chhota number pehle aayega)</label>
+          <input type="number" id="b_sort_order" value="1">
+        </div>
+
+        <div class="form-field">
+          <label>Active (homepage par dikhe)</label>
+          <select id="b_is_active">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+
+        <div class="form-field full">
+          <label>Banner Photo (optional - na ho to background color use hoga)</label>
+          <div class="img-grid" id="bannerImgGrid"></div>
+          <input type="file" id="bannerImgInput" accept="image/*" onchange="handleBannerImageFile(this)">
+          <div class="upload-status" id="bannerUploadStatus"></div>
+          <div class="hint">Wide/landscape photo behtar dikhti hai (jaise 1200x500).</div>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary btn" onclick="closeBannerForm()">Cancel</button>
+        <button class="btn" onclick="saveBanner()">Save Banner</button>
+      </div>
+
+    </div>
+
+  </div>
+
+
   <!-- ================= SUPABASE ================= -->
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -723,6 +832,7 @@
       document.getElementById("tabBtn" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
 
       if (tab === "orders") loadOrders();
+      if (tab === "banners") loadBanners();
       if (tab === "settings") loadSettings();
     }
 
@@ -1199,6 +1309,239 @@
         console.error(error);
       }
 
+    }
+
+
+    /* ================= BANNERS ================= */
+
+    let bannersCache = {};
+
+    let bannerImage = null;
+
+    function bannerRowThumb(b) {
+
+      if (b.image) {
+        return '<img class="row-thumb" src="' + encodeURI(b.image) + '" alt="">';
+      }
+
+      return '<span style="display:inline-block;width:44px;height:32px;border-radius:6px;background:' +
+        adminEsc(b.bg_color || "#1EAF59") + ';"></span>';
+    }
+
+    async function loadBanners() {
+
+      const { data, error } = await grostoDB
+        .from("banners")
+        .select("*")
+        .order("sort_order");
+
+      const tbody = document.getElementById("bannersTableBody");
+
+      if (error) {
+
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">Load nahi ho saka.</td></tr>';
+
+        console.error(error);
+
+        return;
+      }
+
+      bannersCache = {};
+
+      if (!data.length) {
+
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">Koi banner nahi. "+ Add Banner" se shuru karein.</td></tr>';
+
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      data.forEach(b => {
+
+        bannersCache[b.id] = b;
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${bannerRowThumb(b)}</td>
+          <td>${adminEsc(b.title || "(no title)")}</td>
+          <td>${adminEsc(b.button_text || "-")}</td>
+          <td>${b.sort_order}</td>
+          <td>
+            <span class="status-pill ${b.is_active ? 'status-active' : 'status-inactive'}">
+              ${b.is_active ? "Active" : "Hidden"}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-secondary btn-small" onclick="editBanner(${b.id})">Edit</button>
+            <button class="btn btn-danger btn-small" onclick="deleteBanner(${b.id})">Delete</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderBannerImageGrid() {
+
+      const grid = document.getElementById("bannerImgGrid");
+
+      if (!bannerImage) {
+        grid.innerHTML = '<div class="hint">Abhi koi photo nahi.</div>';
+        return;
+      }
+
+      grid.innerHTML = '<div class="img-tile"><img src="' + encodeURI(bannerImage) + '" alt="">' +
+        '<button type="button" class="img-x" onclick="removeBannerImage()">&times;</button></div>';
+    }
+
+    function removeBannerImage() {
+      bannerImage = null;
+      renderBannerImageGrid();
+    }
+
+    async function handleBannerImageFile(input) {
+
+      const file = (input.files || [])[0];
+
+      if (!file) return;
+
+      const status = document.getElementById("bannerUploadStatus");
+
+      status.textContent = "Upload ho raha hai...";
+
+      try {
+
+        const blob = await compressImage(file, 1600, 0.82);
+
+        const path = "b" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+
+        const up = await grostoDB.storage
+          .from("banner-images")
+          .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+
+        if (up.error) throw up.error;
+
+        const pub = grostoDB.storage.from("banner-images").getPublicUrl(path);
+
+        bannerImage = pub.data.publicUrl;
+
+        renderBannerImageGrid();
+
+      } catch (err) {
+
+        console.error(err);
+
+        alert("Photo upload fail: " + (err.message || err) + "\n\n(Agar 'bucket not found' aaye to migration_banners.sql Supabase mein run karein.)");
+      }
+
+      status.textContent = "";
+
+      input.value = "";
+    }
+
+    function openBannerForm() {
+
+      document.getElementById("bannerFormTitle").textContent = "Add Banner";
+
+      document.getElementById("b_id").value = "";
+      document.getElementById("b_title").value = "";
+      document.getElementById("b_subtitle").value = "";
+      document.getElementById("b_button_text").value = "Shop Now";
+      document.getElementById("b_button_link").value = "shop.html";
+      document.getElementById("b_bg_color").value = "#1EAF59";
+      document.getElementById("b_sort_order").value = (Object.keys(bannersCache).length + 1);
+      document.getElementById("b_is_active").value = "true";
+
+      bannerImage = null;
+
+      renderBannerImageGrid();
+
+      document.getElementById("bannerFormOverlay").classList.add("show");
+    }
+
+    function editBanner(id) {
+
+      const b = bannersCache[id];
+
+      if (!b) return;
+
+      document.getElementById("bannerFormTitle").textContent = "Edit Banner";
+
+      document.getElementById("b_id").value = b.id;
+      document.getElementById("b_title").value = b.title || "";
+      document.getElementById("b_subtitle").value = b.subtitle || "";
+      document.getElementById("b_button_text").value = b.button_text || "";
+      document.getElementById("b_button_link").value = b.button_link || "";
+      document.getElementById("b_bg_color").value = b.bg_color || "#1EAF59";
+      document.getElementById("b_sort_order").value = b.sort_order;
+      document.getElementById("b_is_active").value = String(b.is_active);
+
+      bannerImage = b.image || null;
+
+      renderBannerImageGrid();
+
+      document.getElementById("bannerFormOverlay").classList.add("show");
+    }
+
+    function closeBannerForm() {
+      document.getElementById("bannerFormOverlay").classList.remove("show");
+    }
+
+    async function saveBanner() {
+
+      const id = document.getElementById("b_id").value;
+
+      const payload = {
+        title: document.getElementById("b_title").value.trim() || null,
+        subtitle: document.getElementById("b_subtitle").value.trim() || null,
+        button_text: document.getElementById("b_button_text").value.trim() || null,
+        button_link: document.getElementById("b_button_link").value.trim() || null,
+        bg_color: document.getElementById("b_bg_color").value || "#1EAF59",
+        sort_order: Number(document.getElementById("b_sort_order").value) || 0,
+        is_active: document.getElementById("b_is_active").value === "true",
+        image: bannerImage
+      };
+
+      let error;
+
+      if (id) {
+        ({ error } = await grostoDB.from("banners").update(payload).eq("id", id));
+      } else {
+        ({ error } = await grostoDB.from("banners").insert(payload));
+      }
+
+      if (error) {
+
+        alert("Save nahi ho saka: " + error.message + "\n\n(Agar 'banners' table ka error hai to migration_banners.sql Supabase mein run karein.)");
+
+        console.error(error);
+
+        return;
+      }
+
+      closeBannerForm();
+
+      loadBanners();
+    }
+
+    async function deleteBanner(id) {
+
+      if (!confirm("Kya aap is banner ko delete karna chahte hain?")) return;
+
+      const { error } = await grostoDB.from("banners").delete().eq("id", id);
+
+      if (error) {
+
+        alert("Delete nahi ho saka.");
+
+        console.error(error);
+
+        return;
+      }
+
+      loadBanners();
     }
 
 
