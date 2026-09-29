@@ -16,6 +16,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -701,7 +710,7 @@
       <div class="mobile-menu" id="mobileMenu">
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
+        <a href="categories.html">Categories</a>
         <a href="index.html#deals">Deals</a>
         <a href="index.html#why-grosto">Why GROSTO</a>
         <a href="cart.html">My Cart</a>
@@ -743,52 +752,13 @@
 
         <button
           class="category-btn active"
+          data-cat="All"
           onclick="filterCategory('All', this)"
         >
           All
         </button>
 
-        <button
-          class="category-btn"
-          onclick="filterCategory('Fruits & Vegetables', this)"
-        >
-          &#129388; Fruits & Vegetables
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('Grocery', this)"
-        >
-          &#128722; Grocery & Rashan
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('Dairy', this)"
-        >
-          &#129371; Dairy & Eggs
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('Drinks', this)"
-        >
-          &#129380; Drinks
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('Snacks', this)"
-        >
-          &#127850; Biscuits & Snacks
-        </button>
-
-        <button
-          class="category-btn"
-          onclick="filterCategory('Household', this)"
-        >
-          &#129529; Household
-        </button>
+        <!-- baaki categories JS se yahan add hoti hain (js/categories.js) -->
 
       </div>
 
@@ -840,19 +810,19 @@
       <div class="products" id="products" style="display:none;"></div>
 
 
-      <!-- EMPTY SEARCH -->
+      <!-- EMPTY SEARCH / COMING SOON -->
 
       <div class="empty" id="empty">
 
-        <div class="empty-icon">
+        <div class="empty-icon" id="emptyIcon">
           &#128269;
         </div>
 
-        <h2>
+        <h2 id="emptyTitle">
           Product nahi mila
         </h2>
 
-        <p>
+        <p id="emptyText">
           Search ko change karke dobara try karein.
         </p>
 
@@ -929,6 +899,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/site-extras.js"></script>
+  <script src="js/categories.js"></script>
 
 
   <!-- ================= JAVASCRIPT ================= -->
@@ -1235,12 +1206,53 @@
       document.getElementById("resultCount").textContent =
         visible;
 
-      document.getElementById("empty").style.display =
-        visible === 0 ? "block" : "none";
+      const emptyBox = document.getElementById("empty");
+
+      if (visible === 0) {
+
+        emptyBox.style.display = "block";
+
+        if (!query && currentCategory !== "All") {
+
+          // category has zero products at all - not a search problem
+          document.getElementById("emptyIcon").textContent = "\u{1F6CD}\uFE0F";
+          document.getElementById("emptyTitle").textContent = "Coming Soon";
+          document.getElementById("emptyText").textContent =
+            "Ye category jald hi add ki jayegi. Tab tak baaki categories browse karein.";
+
+        } else {
+
+          document.getElementById("emptyIcon").textContent = "\u{1F50D}";
+          document.getElementById("emptyTitle").textContent = "Product nahi mila";
+          document.getElementById("emptyText").textContent =
+            "Search ko change karke dobara try karein.";
+        }
+
+      } else {
+
+        emptyBox.style.display = "none";
+      }
     }
 
 
     /* ================= CATEGORY FILTER ================= */
+
+    function renderCategoryButtons() {
+
+      const container = document.getElementById("categories");
+
+      (window.GROSTO_CATEGORIES || []).forEach(c => {
+
+        const btn = document.createElement("button");
+
+        btn.className = "category-btn";
+        btn.dataset.cat = c.value;
+        btn.innerHTML = c.icon + " " + c.label;
+        btn.onclick = () => filterCategory(c.value, btn);
+
+        container.appendChild(btn);
+      });
+    }
 
     function filterCategory(category, button) {
 
@@ -1309,6 +1321,8 @@
     /* ================= START ================= */
 
     // ?q=search text  and  ?cat=Category  (from homepage / product page)
+    renderCategoryButtons();
+
     (function readUrlFilters() {
 
       const params = new URLSearchParams(window.location.search);
@@ -1322,7 +1336,7 @@
       if (catParam) {
 
         const btn = Array.from(document.querySelectorAll(".category-btn"))
-          .find(b => (b.getAttribute("onclick") || "").includes("'" + catParam + "'"));
+          .find(b => b.dataset.cat === catParam);
 
         if (btn) {
 
