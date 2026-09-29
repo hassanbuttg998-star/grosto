@@ -15,6 +15,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
     }
 
     :root {
@@ -895,7 +904,7 @@
       <div class="mobile-menu" id="mobileMenu">
         <a href="index.html">Home</a>
         <a href="shop.html">Shop</a>
-        <a href="#categories" onclick="closeMobileMenu()">Categories</a>
+        <a href="categories.html">Categories</a>
         <a href="#deals" onclick="closeMobileMenu()">Deals</a>
         <a href="#why-grosto" onclick="closeMobileMenu()">Why GROSTO</a>
         <a href="cart.html">My Cart</a>
@@ -904,7 +913,7 @@
     </div>
 
     <nav class="nav">
-      <a href="#categories">Categories</a>
+      <a href="categories.html">Categories</a>
       <a href="shop.html">Shop</a>
       <a href="#deals">Deals</a>
       <a href="#why-grosto">Why GROSTO</a>
@@ -947,42 +956,10 @@
 
       <div class="section-header">
         <h2 class="section-title">Shop by Category</h2>
-        <a href="shop.html" class="view-all">View All &#8594;</a>
+        <a href="categories.html" class="view-all">View All &#8594;</a>
       </div>
 
-      <div class="categories">
-
-        <a href="shop.html?cat=Fruits%20%26%20Vegetables" class="category">
-          <div class="category-icon">&#129388;</div>
-          <div class="category-name">Fruits & Vegetables</div>
-        </a>
-
-        <a href="shop.html?cat=Grocery" class="category">
-          <div class="category-icon">&#128722;</div>
-          <div class="category-name">Grocery & Rashan</div>
-        </a>
-
-        <a href="shop.html?cat=Dairy" class="category">
-          <div class="category-icon">&#129371;</div>
-          <div class="category-name">Dairy & Eggs</div>
-        </a>
-
-        <a href="shop.html?cat=Drinks" class="category">
-          <div class="category-icon">&#129380;</div>
-          <div class="category-name">Drinks</div>
-        </a>
-
-        <a href="shop.html?cat=Snacks" class="category">
-          <div class="category-icon">&#127850;</div>
-          <div class="category-name">Biscuits & Snacks</div>
-        </a>
-
-        <a href="shop.html?cat=Household" class="category">
-          <div class="category-icon">&#129529;</div>
-          <div class="category-name">Household</div>
-        </a>
-
-      </div>
+      <div class="categories" id="homeCategories"></div>
 
     </section>
 
@@ -1217,6 +1194,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/site-extras.js"></script>
+  <script src="js/categories.js"></script>
 
 
   <!-- ================= JAVASCRIPT ================= -->
@@ -1570,12 +1548,34 @@
     }
 
 
+    /* ================= HOME CATEGORIES ================= */
+
+    function renderHomeCategories() {
+
+      const list = (window.GROSTO_CATEGORIES || []).slice(0, 7);
+
+      const container = document.getElementById("homeCategories");
+
+      container.innerHTML = list.map(c =>
+        '<a href="shop.html?cat=' + encodeURIComponent(c.value) + '" class="category">' +
+          '<div class="category-icon">' + c.icon + '</div>' +
+          '<div class="category-name">' + esc(c.label) + '</div>' +
+        '</a>'
+      ).join("") +
+      '<a href="categories.html" class="category">' +
+        '<div class="category-icon">&#128065;</div>' +
+        '<div class="category-name">View All</div>' +
+      '</a>';
+    }
+
+
     /* ================= START ================= */
 
     updateCartCount();
     loadFeaturedProducts();
     loadHomeSettings();
     loadHeroBanners();
+    renderHomeCategories();
     initSearchSuggest("homeSearch");
     initWhatsAppFloat();
 
