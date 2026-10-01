@@ -388,7 +388,7 @@
 
 <script>
 
-  applySiteLogo();
+  if (typeof applySiteLogo === "function") applySiteLogo();
 
   const order =
     JSON.parse(
