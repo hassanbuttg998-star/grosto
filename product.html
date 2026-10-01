@@ -1545,10 +1545,10 @@
 
       updateCartCount();
 
-      initSearchSuggest("searchInput");
+      if (typeof initSearchSuggest === "function") initSearchSuggest("searchInput");
 
-      initWhatsAppFloat();
-    applySiteLogo();
+      if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
+    if (typeof applySiteLogo === "function") applySiteLogo();
 
       if (!productId) {
         showNotFound();
