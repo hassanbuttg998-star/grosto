@@ -1116,7 +1116,7 @@
 
   /* ================= START ================= */
 
-  applySiteLogo();
+  if (typeof applySiteLogo === "function") applySiteLogo();
   renderSummary();
   loadSettings();
   updatePaymentView();
