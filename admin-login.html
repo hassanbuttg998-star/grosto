@@ -217,7 +217,7 @@
       if (e.key === "Enter") doLogin();
     });
 
-    applySiteLogo();
+    if (typeof applySiteLogo === "function") applySiteLogo();
 
     checkExistingSession();
 
