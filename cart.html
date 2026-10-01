@@ -840,7 +840,7 @@
 
     async function init() {
 
-      applySiteLogo();
+      if (typeof applySiteLogo === "function") applySiteLogo();
 
       const settings = await getGrostoSettings();
 
