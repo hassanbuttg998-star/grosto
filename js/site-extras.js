@@ -196,41 +196,48 @@
 
     getGrostoSettings().then(function (s) {
 
-      if (!s.site_logo) return;
+      if (s.site_logo) {
 
-      var url = s.site_logo;
+        var logoUrl = s.site_logo;
 
-      document.querySelectorAll(".logo").forEach(function (el) {
+        document.querySelectorAll(".logo").forEach(function (el) {
 
-        var label = el.querySelector(".logo-label");
+          var label = el.querySelector(".logo-label");
 
-        el.innerHTML = "";
+          el.innerHTML = "";
 
-        el.style.display = "flex";
-        el.style.alignItems = "center";
-        el.style.gap = "10px";
+          el.style.display = "flex";
+          el.style.alignItems = "center";
+          el.style.gap = "10px";
 
-        var img = document.createElement("img");
+          var img = document.createElement("img");
 
-        img.src = url;
-        img.alt = "GROSTO";
-        img.style.height = "38px";
-        img.style.display = "block";
+          img.src = logoUrl;
+          img.alt = "GROSTO";
+          img.style.height = "38px";
+          img.style.display = "block";
 
-        el.appendChild(img);
+          el.appendChild(img);
 
-        if (label) el.appendChild(label);
-      });
-
-      var link = document.querySelector('link[rel="icon"]');
-
-      if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.head.appendChild(link);
+          if (label) el.appendChild(label);
+        });
       }
 
-      link.href = url;
+      var faviconUrl = s.site_favicon || s.site_logo;
+
+      if (faviconUrl) {
+
+        var link = document.querySelector('link[rel="icon"]');
+
+        if (!link) {
+          link = document.createElement("link");
+          link.rel = "icon";
+          document.head.appendChild(link);
+        }
+
+        // cache-bust so browsers/tabs pick up a newly uploaded favicon
+        link.href = faviconUrl + (faviconUrl.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now();
+      }
     });
   };
 
