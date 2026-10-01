@@ -97,34 +97,74 @@
 
     /* ================= DROPDOWN MENU ================= */
 
-    .mobile-menu {
+    .menu-overlay {
       display: none;
-      position: absolute;
-      top: 100%;
-      right: 12px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      padding: 8px;
-      min-width: 200px;
-      z-index: 1001;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 2000;
+    }
+
+    .menu-overlay.show {
+      display: block;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 78%;
+      max-width: 300px;
+      background: var(--white);
+      z-index: 2001;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      box-shadow: -8px 0 30px rgba(0,0,0,0.18);
+      padding: 18px 0;
+      overflow-y: auto;
     }
 
     .mobile-menu.show {
-      display: block;
+      transform: translateX(0);
+    }
+
+    .mobile-menu-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px 16px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-menu-head span {
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .mobile-menu-close {
+      border: none;
+      background: var(--light-gray);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 18px;
+      line-height: 1;
     }
 
     .mobile-menu a {
-      display: block;
-      padding: 11px 12px;
-      border-radius: 8px;
-      color: #333;
-      font-weight: 600;
-      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      color: #222;
+      font-weight: 700;
+      font-size: 15px;
     }
 
-    .mobile-menu a:hover {
+    .mobile-menu a:hover,
+    .mobile-menu a:active {
       background: var(--light-green);
       color: var(--green);
     }
@@ -708,13 +748,19 @@
       </button>
 
       <div class="mobile-menu" id="mobileMenu">
-        <a href="index.html">Home</a>
-        <a href="shop.html">Shop</a>
-        <a href="categories.html">Categories</a>
-        <a href="index.html#deals">Deals</a>
-        <a href="index.html#why-grosto">Why GROSTO</a>
-        <a href="cart.html">My Cart</a>
+        <div class="mobile-menu-head">
+        <span>Menu</span>
+        <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close">&times;</button>
+        </div>
+        <a href="index.html">&#127968; Home</a>
+        <a href="shop.html">&#128717;&#65039; Shop</a>
+        <a href="categories.html">&#128193; Categories</a>
+        <a href="index.html#deals">&#128293; Deals</a>
+        <a href="index.html#why-grosto">&#11088; Why GROSTO</a>
+        <a href="cart.html">&#128722; My Cart</a>
       </div>
+
+      <div class="menu-overlay" id="menuOverlay" onclick="closeMobileMenu()"></div>
 
     </div>
 
@@ -950,10 +996,12 @@
 
     function toggleMobileMenu() {
       document.getElementById("mobileMenu").classList.toggle("show");
+      document.getElementById("menuOverlay").classList.toggle("show");
     }
 
     function closeMobileMenu() {
       document.getElementById("mobileMenu").classList.remove("show");
+      document.getElementById("menuOverlay").classList.remove("show");
     }
 
     document.addEventListener("click", function (e) {
@@ -1237,9 +1285,11 @@
 
     /* ================= CATEGORY FILTER ================= */
 
-    function renderCategoryButtons() {
+    async function renderCategoryButtons() {
 
       const container = document.getElementById("categories");
+
+      const imageMap = await window.loadCategoryImages();
 
       (window.GROSTO_CATEGORIES || []).forEach(c => {
 
@@ -1247,7 +1297,7 @@
 
         btn.className = "category-btn";
         btn.dataset.cat = c.value;
-        btn.innerHTML = c.icon + " " + c.label;
+        btn.innerHTML = window.categoryIconHtml(c, imageMap) + " " + c.label;
         btn.onclick = () => filterCategory(c.value, btn);
 
         container.appendChild(btn);
@@ -1320,10 +1370,10 @@
 
     /* ================= START ================= */
 
-    // ?q=search text  and  ?cat=Category  (from homepage / product page)
-    renderCategoryButtons();
+    async function startShopPage() {
 
-    (function readUrlFilters() {
+      // ?q=search text  and  ?cat=Category  (from homepage / product page)
+      await renderCategoryButtons();
 
       const params = new URLSearchParams(window.location.search);
 
@@ -1347,12 +1397,15 @@
           btn.classList.add("active");
         }
       }
-    })();
 
-    updateCartCount();
-    loadProducts();
-    initSearchSuggest("searchInput");
-    initWhatsAppFloat();
+      updateCartCount();
+      loadProducts();
+      initSearchSuggest("searchInput");
+      initWhatsAppFloat();
+    applySiteLogo();
+    }
+
+    startShopPage();
 
   </script>
 
