@@ -255,6 +255,27 @@
       text-align: center;
     }
 
+    .delivery-area-note {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .delivery-area-note.ok {
+      display: block;
+      background: var(--light-green);
+      color: #178e48;
+    }
+
+    .delivery-area-note.blocked {
+      display: block;
+      background: #FDECEC;
+      color: var(--red);
+    }
+
     .secure {
       margin-top: 15px;
       padding: 12px;
@@ -379,24 +400,11 @@
             City <span class="required">*</span>
           </label>
 
-          <select id="city">
-
-            <option value="">
-              Select City
-            </option>
-
-            <option>Lahore</option>
-            <option>Islamabad</option>
-            <option>Rawalpindi</option>
-            <option>Karachi</option>
-            <option>Faisalabad</option>
-            <option>Multan</option>
-            <option>Gujranwala</option>
-            <option>Sialkot</option>
-            <option>Peshawar</option>
-            <option>Other</option>
-
+          <select id="city" onchange="checkDeliveryCity()">
+            <option value="">Select City</option>
           </select>
+
+          <div class="delivery-area-note" id="deliveryAreaNote"></div>
 
         </div>
 
@@ -631,6 +639,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="js/site-extras.js"></script>
 
 <script>
 
@@ -699,8 +708,6 @@
 
     const warningBox = document.getElementById("minOrderWarning");
 
-    const placeBtn = document.getElementById("placeOrderBtn");
-
     if (subtotal > 0 && subtotal < minOrder) {
 
       const remaining = minOrder - subtotal;
@@ -710,14 +717,16 @@
       warningBox.textContent =
         "Minimum order Rs. " + minOrder + " hai. Aapko Rs. " + remaining + " ka aur samaan lena hoga.";
 
-      placeBtn.disabled = true;
+      minOrderOk = false;
 
     } else {
 
       warningBox.style.display = "none";
 
-      placeBtn.disabled = false;
+      minOrderOk = true;
     }
+
+    updatePlaceButtonState();
 
   }
 
@@ -763,8 +772,99 @@
 
     minOrder = Number(grostoSettings.min_order) || 1000;
 
+    deliverableCities = (grostoSettings.delivery_city || "Gujrat")
+      .split(",")
+      .map(c => c.trim())
+      .filter(Boolean);
+
+    populateCitySelect();
+
     renderSummary();
 
+  }
+
+  const ALL_PAKISTAN_CITIES = [
+    "Gujrat", "Lahore", "Karachi", "Islamabad", "Rawalpindi",
+    "Faisalabad", "Multan", "Gujranwala", "Sialkot", "Peshawar",
+    "Sargodha", "Jhelum", "Sheikhupura", "Other"
+  ];
+
+  let deliverableCities = ["Gujrat"];
+
+  function populateCitySelect() {
+
+    const select = document.getElementById("city");
+
+    const currentValue = select.value;
+
+    // deliverable cities first, then the rest (shown but not selectable)
+    const rest = ALL_PAKISTAN_CITIES.filter(c => !deliverableCities.includes(c));
+
+    const options = ['<option value="">Select City</option>'];
+
+    deliverableCities.forEach(c => {
+      options.push('<option value="' + c + '">' + c + '</option>');
+    });
+
+    rest.forEach(c => {
+      options.push('<option value="' + c + '">' + c + ' (Jald Available)</option>');
+    });
+
+    select.innerHTML = options.join("");
+
+    if (currentValue) select.value = currentValue;
+
+    checkDeliveryCity();
+  }
+
+  let minOrderOk = true;
+
+  let cityOk = false;
+
+  function updatePlaceButtonState() {
+
+    document.getElementById("placeOrderBtn").disabled = !(minOrderOk && cityOk);
+  }
+
+  function checkDeliveryCity() {
+
+    const city = document.getElementById("city").value;
+
+    const note = document.getElementById("deliveryAreaNote");
+
+    if (!city) {
+
+      note.className = "delivery-area-note";
+
+      note.textContent = "";
+
+      cityOk = false;
+
+      updatePlaceButtonState();
+
+      return;
+    }
+
+    if (deliverableCities.includes(city)) {
+
+      note.className = "delivery-area-note ok";
+
+      note.textContent = "Delivery available hai " + city + " mein.";
+
+      cityOk = true;
+
+    } else {
+
+      note.className = "delivery-area-note blocked";
+
+      note.textContent =
+        "Maazrat, abhi sirf " + deliverableCities.join(", ") +
+        " mein delivery available hai. " + city + " jald add hoga.";
+
+      cityOk = false;
+    }
+
+    updatePlaceButtonState();
   }
 
 
@@ -840,6 +940,15 @@
 
       alert(
         "Please apni required delivery details complete karein."
+      );
+
+      return;
+    }
+
+    if (!deliverableCities.includes(city)) {
+
+      alert(
+        "Maazrat, abhi sirf " + deliverableCities.join(", ") + " mein delivery available hai."
       );
 
       return;
@@ -1007,6 +1116,7 @@
 
   /* ================= START ================= */
 
+  applySiteLogo();
   renderSummary();
   loadSettings();
   updatePaymentView();
