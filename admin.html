@@ -649,11 +649,19 @@
         </div>
 
         <div class="form-field">
-          <label>Site Logo (favicon ke liye bhi yahi use hoga)</label>
+          <label>Site Logo (header mein dikhega)</label>
           <div class="img-grid" id="logoImgGrid"></div>
           <input type="file" id="logoImgInput" accept="image/*" onchange="handleLogoImageFile(this)">
           <div class="upload-status" id="logoUploadStatus"></div>
-          <div class="hint">Square ya thori chaurhi (wide) photo behtar dikhti hai. Background transparent (PNG) ho to aur acha.</div>
+          <div class="hint">Yeh header mein dikhega. Thori chaurhi (wide) photo behtar lagti hai.</div>
+        </div>
+
+        <div class="form-field">
+          <label>Favicon (browser tab ka chhota icon)</label>
+          <div class="img-grid" id="faviconImgGrid"></div>
+          <input type="file" id="faviconImgInput" accept="image/*" onchange="handleFaviconImageFile(this)">
+          <div class="upload-status" id="faviconUploadStatus"></div>
+          <div class="hint">Chhoti, square (1:1) photo behtar hai, jaise sirf aapke logo ka icon/symbol bina text ke. Agar yahan kuch na lagayen to Site Logo wali hi photo favicon ke liye use ho jayegi.</div>
         </div>
 
         <div class="form-field">
@@ -1425,6 +1433,8 @@
 
     let logoImage = null;
 
+    let faviconImage = null;
+
     function renderLogoImageGrid() {
 
       const grid = document.getElementById("logoImgGrid");
@@ -1441,6 +1451,64 @@
     function removeLogoImage() {
       logoImage = null;
       renderLogoImageGrid();
+    }
+
+    function renderFaviconImageGrid() {
+
+      const grid = document.getElementById("faviconImgGrid");
+
+      if (!faviconImage) {
+        grid.innerHTML = '<div class="hint">Abhi koi favicon nahi. Site Logo hi favicon ke liye use hoga.</div>';
+        return;
+      }
+
+      grid.innerHTML = '<div class="img-tile"><img src="' + encodeURI(faviconImage) + '" alt="">' +
+        '<button type="button" class="img-x" onclick="removeFaviconImage()">&times;</button></div>';
+    }
+
+    function removeFaviconImage() {
+      faviconImage = null;
+      renderFaviconImageGrid();
+    }
+
+    async function handleFaviconImageFile(input) {
+
+      const file = (input.files || [])[0];
+
+      if (!file) return;
+
+      const status = document.getElementById("faviconUploadStatus");
+
+      status.textContent = "Upload ho raha hai...";
+
+      try {
+
+        const blob = await compressImage(file, 256, 0.9);
+
+        const path = "favicon" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+
+        const up = await grostoDB.storage
+          .from("banner-images")
+          .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+
+        if (up.error) throw up.error;
+
+        const pub = grostoDB.storage.from("banner-images").getPublicUrl(path);
+
+        faviconImage = pub.data.publicUrl;
+
+        renderFaviconImageGrid();
+
+      } catch (err) {
+
+        console.error(err);
+
+        alert("Favicon upload fail: " + (err.message || err));
+      }
+
+      status.textContent = "";
+
+      input.value = "";
     }
 
     async function handleLogoImageFile(input) {
@@ -1718,9 +1786,18 @@
 
       grid.innerHTML = '<div class="empty-msg">Loading...</div>';
 
-      const imageMap = await window.loadCategoryImages();
+      const imageMap = (typeof window.loadCategoryImages === "function") ? await window.loadCategoryImages() : {};
 
-      grid.innerHTML = window.GROSTO_CATEGORIES.map(c => {
+      const categoryList = window.GROSTO_CATEGORIES || [];
+
+      if (!categoryList.length) {
+
+        grid.innerHTML = '<div class="empty-msg">Categories load nahi ho sakin (js/categories.js check karein).</div>';
+
+        return;
+      }
+
+      grid.innerHTML = categoryList.map(c => {
 
         const url = imageMap[c.value];
 
@@ -1802,6 +1879,10 @@
 
       renderLogoImageGrid();
 
+      faviconImage = settings.site_favicon || null;
+
+      renderFaviconImageGrid();
+
     }
 
     async function saveSettings() {
@@ -1818,7 +1899,8 @@
         { key: "store_address", value: document.getElementById("set_store_address").value.trim() },
         { key: "store_map_link", value: document.getElementById("set_store_map_link").value.trim() },
         { key: "delivery_city", value: document.getElementById("set_delivery_city").value.trim() || "Gujrat" },
-        { key: "site_logo", value: logoImage || "" }
+        { key: "site_logo", value: logoImage || "" },
+        { key: "site_favicon", value: faviconImage || "" }
       ];
 
       const { error } = await grostoDB.from("settings").upsert(rows);
@@ -1849,7 +1931,7 @@
 
       if (!ok) return;
 
-      applySiteLogo();
+      if (typeof applySiteLogo === "function") applySiteLogo();
 
       populateCategorySelect();
 
