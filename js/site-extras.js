@@ -189,4 +189,49 @@
     });
   };
 
+
+  /* ---------- 3) SITE LOGO + FAVICON (admin-uploaded) ---------- */
+
+  window.applySiteLogo = function () {
+
+    getGrostoSettings().then(function (s) {
+
+      if (!s.site_logo) return;
+
+      var url = s.site_logo;
+
+      document.querySelectorAll(".logo").forEach(function (el) {
+
+        var label = el.querySelector(".logo-label");
+
+        el.innerHTML = "";
+
+        el.style.display = "flex";
+        el.style.alignItems = "center";
+        el.style.gap = "10px";
+
+        var img = document.createElement("img");
+
+        img.src = url;
+        img.alt = "GROSTO";
+        img.style.height = "38px";
+        img.style.display = "block";
+
+        el.appendChild(img);
+
+        if (label) el.appendChild(label);
+      });
+
+      var link = document.querySelector('link[rel="icon"]');
+
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.head.appendChild(link);
+      }
+
+      link.href = url;
+    });
+  };
+
 })();
