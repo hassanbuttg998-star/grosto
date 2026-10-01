@@ -1609,13 +1609,13 @@
 
       const list = (window.GROSTO_CATEGORIES || []).slice(0, 7);
 
-      const imageMap = await window.loadCategoryImages();
+      const imageMap = (typeof window.loadCategoryImages === "function") ? await window.loadCategoryImages() : {};
 
       const container = document.getElementById("homeCategories");
 
       container.innerHTML = list.map(c =>
         '<a href="shop.html?cat=' + encodeURIComponent(c.value) + '" class="category">' +
-          '<div class="category-icon">' + window.categoryIconHtml(c, imageMap) + '</div>' +
+          '<div class="category-icon">' + (typeof window.categoryIconHtml === "function" ? window.categoryIconHtml(c, imageMap) : c.icon) + '</div>' +
           '<div class="category-name">' + esc(c.label) + '</div>' +
         '</a>'
       ).join("") +
@@ -1633,9 +1633,9 @@
     loadHomeSettings();
     loadHeroBanners();
     renderHomeCategories();
-    initSearchSuggest("homeSearch");
-    initWhatsAppFloat();
-    applySiteLogo();
+    if (typeof initSearchSuggest === "function") initSearchSuggest("homeSearch");
+    if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
+    if (typeof applySiteLogo === "function") applySiteLogo();
 
   </script>
 
