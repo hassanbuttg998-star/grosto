@@ -438,17 +438,26 @@
         console.error(e);
       }
 
-      var imageMap = await window.loadCategoryImages();
+      var imageMap = (typeof window.loadCategoryImages === "function") ? await window.loadCategoryImages() : {};
 
       var grid = document.getElementById("catGrid");
 
-      grid.innerHTML = window.GROSTO_CATEGORIES.map(function (c) {
+      var categoryList = window.GROSTO_CATEGORIES || [];
+
+      if (!categoryList.length) {
+
+        grid.innerHTML = '<div class="hint">Categories load nahi ho sakin. Page ko refresh karein.</div>';
+
+        return;
+      }
+
+      grid.innerHTML = categoryList.map(function (c) {
 
         var count = counts[c.value] || 0;
 
         return '<a class="cat-card" href="shop.html?cat=' + encodeURIComponent(c.value) + '">' +
           (count === 0 ? '<span class="cat-soon">Coming Soon</span>' : '') +
-          '<div class="cat-icon">' + window.categoryIconHtml(c, imageMap) + '</div>' +
+          '<div class="cat-icon">' + (typeof window.categoryIconHtml === "function" ? window.categoryIconHtml(c, imageMap) : c.icon) + '</div>' +
           '<div class="cat-name">' + c.label + '</div>' +
           '<div class="cat-count">' + (count === 0 ? "Jald aa raha hai" : (count + " product" + (count > 1 ? "s" : ""))) + '</div>' +
         '</a>';
@@ -456,9 +465,9 @@
       }).join("");
     }
 
-    initSearchSuggest("searchInput");
-    initWhatsAppFloat();
-    applySiteLogo();
+    if (typeof initSearchSuggest === "function") initSearchSuggest("searchInput");
+    if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
+    if (typeof applySiteLogo === "function") applySiteLogo();
     loadCategoryCounts();
 
   </script>
