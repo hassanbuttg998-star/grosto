@@ -1289,7 +1289,7 @@
 
       const container = document.getElementById("categories");
 
-      const imageMap = await window.loadCategoryImages();
+      const imageMap = (typeof window.loadCategoryImages === "function") ? await window.loadCategoryImages() : {};
 
       (window.GROSTO_CATEGORIES || []).forEach(c => {
 
@@ -1297,7 +1297,7 @@
 
         btn.className = "category-btn";
         btn.dataset.cat = c.value;
-        btn.innerHTML = window.categoryIconHtml(c, imageMap) + " " + c.label;
+        btn.innerHTML = (typeof window.categoryIconHtml === "function" ? window.categoryIconHtml(c, imageMap) : c.icon) + " " + c.label;
         btn.onclick = () => filterCategory(c.value, btn);
 
         container.appendChild(btn);
@@ -1400,9 +1400,9 @@
 
       updateCartCount();
       loadProducts();
-      initSearchSuggest("searchInput");
-      initWhatsAppFloat();
-    applySiteLogo();
+      if (typeof initSearchSuggest === "function") initSearchSuggest("searchInput");
+      if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
+    if (typeof applySiteLogo === "function") applySiteLogo();
     }
 
     startShopPage();
