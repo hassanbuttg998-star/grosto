@@ -1587,7 +1587,32 @@
       restartAutoplay();
     }
 
+    const BANNER_CACHE_KEY = "grostoBannerCache";
+
+    function paintBanners(data) {
+
+      if (!data || !data.length) return false;
+
+      document.getElementById("hcTrack").innerHTML = data.map(heroSlideHtml).join("");
+
+      setupCarouselControls(data.length);
+
+      return true;
+    }
+
     async function loadHeroBanners() {
+
+      // Instant paint from last-known banners (no flash of the default slide
+      // on repeat visits), then refresh from the database in the background.
+      let paintedFromCache = false;
+
+      try {
+
+        const cached = JSON.parse(localStorage.getItem(BANNER_CACHE_KEY) || "null");
+
+        paintedFromCache = paintBanners(cached);
+
+      } catch (e) {}
 
       const { data, error } = await grostoDB
         .from("banners")
@@ -1595,11 +1620,13 @@
         .eq("is_active", true)
         .order("sort_order");
 
-      if (error || !data || !data.length) return; // keep the built-in fallback slide
+      if (error || !data || !data.length) return; // keep whatever is already shown
 
-      document.getElementById("hcTrack").innerHTML = data.map(heroSlideHtml).join("");
+      paintBanners(data);
 
-      setupCarouselControls(data.length);
+      try {
+        localStorage.setItem(BANNER_CACHE_KEY, JSON.stringify(data));
+      } catch (e) {}
     }
 
 
