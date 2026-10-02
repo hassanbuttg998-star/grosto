@@ -192,52 +192,88 @@
 
   /* ---------- 3) SITE LOGO + FAVICON (admin-uploaded) ---------- */
 
+  var LOGO_CACHE_KEY = "grostoBrandingCache";
+
+  function paintLogo(logoUrl) {
+
+    if (!logoUrl) return;
+
+    document.querySelectorAll(".logo, .footer-logo").forEach(function (el) {
+
+      // already showing this exact logo? skip (avoids a pointless re-flash)
+      var existingImg = el.querySelector("img");
+
+      if (existingImg && existingImg.src === logoUrl) return;
+
+      var label = el.querySelector(".logo-label");
+
+      el.innerHTML = "";
+
+      el.style.display = "flex";
+      el.style.alignItems = "center";
+      el.style.gap = "10px";
+
+      var img = document.createElement("img");
+
+      img.src = logoUrl;
+      img.alt = "GROSTO";
+      img.style.height = "38px";
+      img.style.display = "block";
+
+      el.appendChild(img);
+
+      if (label) el.appendChild(label);
+    });
+  }
+
+  function paintFavicon(faviconUrl, bust) {
+
+    if (!faviconUrl) return;
+
+    var link = document.querySelector('link[rel="icon"]');
+
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
+
+    // cache-bust only when we have a fresh value, not on the instant cached paint
+    link.href = bust
+      ? faviconUrl + (faviconUrl.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now()
+      : faviconUrl;
+  }
+
+  // Paint instantly from last-known values (no network wait) so repeat visits
+  // don't flash the default text logo / old banner before the real one loads.
+  try {
+
+    var cached = JSON.parse(localStorage.getItem(LOGO_CACHE_KEY) || "null");
+
+    if (cached) {
+
+      paintLogo(cached.logo);
+      paintFavicon(cached.favicon || cached.logo, false);
+    }
+
+  } catch (e) {}
+
   window.applySiteLogo = function () {
 
     getGrostoSettings().then(function (s) {
 
-      if (s.site_logo) {
+      paintLogo(s.site_logo);
 
-        var logoUrl = s.site_logo;
+      paintFavicon(s.site_favicon || s.site_logo, true);
 
-        document.querySelectorAll(".logo").forEach(function (el) {
+      try {
 
-          var label = el.querySelector(".logo-label");
+        localStorage.setItem(LOGO_CACHE_KEY, JSON.stringify({
+          logo: s.site_logo || null,
+          favicon: s.site_favicon || null
+        }));
 
-          el.innerHTML = "";
-
-          el.style.display = "flex";
-          el.style.alignItems = "center";
-          el.style.gap = "10px";
-
-          var img = document.createElement("img");
-
-          img.src = logoUrl;
-          img.alt = "GROSTO";
-          img.style.height = "38px";
-          img.style.display = "block";
-
-          el.appendChild(img);
-
-          if (label) el.appendChild(label);
-        });
-      }
-
-      var faviconUrl = s.site_favicon || s.site_logo;
-
-      if (faviconUrl) {
-
-        var link = document.querySelector('link[rel="icon"]');
-
-        if (!link) {
-          link = document.createElement("link");
-          link.rel = "icon";
-          document.head.appendChild(link);
-        }
-
-        // cache-bust so browsers/tabs pick up a newly uploaded favicon
-        link.href = faviconUrl + (faviconUrl.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now();
-      }
+      } catch (e) {}
     });
   };
 
