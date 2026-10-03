@@ -91,7 +91,6 @@
       width: 42px;
       height: 42px;
       border-radius: 10px;
-      font-size: 19px;
       flex-shrink: 0;
     }
 
@@ -210,13 +209,15 @@
 
     .cart-button {
       position: relative;
-      border: none;
-      background: var(--green);
-      color: white;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #000;
       width: 42px;
       height: 42px;
       border-radius: 10px;
-      font-size: 19px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
@@ -235,31 +236,6 @@
       align-items: center;
       justify-content: center;
       padding: 0 3px;
-    }
-
-    /* ================= CART FAB ================= */
-
-    .cart-fab {
-      display: flex;
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      z-index: 999;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--green);
-      color: white;
-      font-size: 24px;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      border: none;
-    }
-
-    .cart-fab .cart-badge {
-      top: -4px;
-      right: -4px;
     }
 
     /* ================= TOAST ================= */
@@ -626,10 +602,6 @@
         flex-basis: 100%;
       }
 
-      .cart-button {
-        padding: 10px 13px;
-      }
-
       .nav {
         padding: 0 14px 10px;
         gap: 19px;
@@ -694,10 +666,6 @@
       .nav {
         display: none;
       }
-
-      .cart-fab {
-        display: flex;
-      }
     }
 
     @media (max-width: 420px) {
@@ -708,11 +676,6 @@
 
       .product-image {
         height: 140px;
-      }
-
-      .cart-fab {
-        right: 12px;
-        bottom: 12px;
       }
     }
   </style>
@@ -743,8 +706,20 @@
 
       </div>
 
+      <button class="cart-button" onclick="openCart()" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 7h12l1.2 13.1a1 1 0 0 1-1 1.1H5.8a1 1 0 0 1-1-1.1L6 7z"></path>
+          <path d="M9 10V6a3 3 0 0 1 6 0v4"></path>
+        </svg>
+        <span class="cart-badge" id="headerCartBadge">0</span>
+      </button>
+
       <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
-        &#9776;
+        <svg width="20" height="15" viewBox="0 0 20 15" fill="none">
+          <rect x="0" y="0" width="20" height="2.2" rx="1.1" fill="currentColor"></rect>
+          <rect x="0" y="6.4" width="14" height="2.2" rx="1.1" fill="currentColor"></rect>
+          <rect x="0" y="12.8" width="8" height="2.2" rx="1.1" fill="currentColor"></rect>
+        </svg>
       </button>
 
       <div class="mobile-menu" id="mobileMenu">
@@ -879,13 +854,6 @@
   </main>
 
 
-  <!-- ================= CART FAB ================= -->
-
-  <button class="cart-fab" id="cartFab" onclick="openCart()">
-    &#128722;
-    <span class="cart-badge" id="cartCount">0</span>
-  </button>
-
   <!-- ================= TOAST ================= -->
 
   <div class="toast" id="toast"></div>
@@ -988,7 +956,7 @@
         0
       );
 
-      document.getElementById("cartCount").textContent = count;
+      document.getElementById("headerCartBadge").textContent = count;
     }
 
 
