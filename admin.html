@@ -1014,6 +1014,56 @@
       });
     }
 
+    // Same as compressImage, but keeps transparency (no white fill, exports PNG).
+    // Used for Logo and Favicon uploads so a transparent-background logo
+    // doesn't end up with an ugly white box behind it.
+    function compressImageKeepTransparency(file, maxSize) {
+
+      return new Promise(function (resolve, reject) {
+
+        const img = new Image();
+
+        const url = URL.createObjectURL(file);
+
+        img.onload = function () {
+
+          let w = img.width;
+          let h = img.height;
+
+          const scale = Math.min(1, maxSize / Math.max(w, h));
+
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+
+          const canvas = document.createElement("canvas");
+
+          canvas.width = w;
+          canvas.height = h;
+
+          const ctx = canvas.getContext("2d");
+
+          // no fillRect here - keeps the background transparent
+          ctx.drawImage(img, 0, 0, w, h);
+
+          canvas.toBlob(function (blob) {
+
+            URL.revokeObjectURL(url);
+
+            if (blob) resolve(blob);
+            else reject(new Error("Photo compress nahi ho saki"));
+
+          }, "image/png");
+        };
+
+        img.onerror = function () {
+          URL.revokeObjectURL(url);
+          reject(new Error("Photo read nahi ho saki"));
+        };
+
+        img.src = url;
+      });
+    }
+
     async function handleImageFiles(input) {
 
       const files = Array.from(input.files || []);
@@ -1483,13 +1533,13 @@
 
       try {
 
-        const blob = await compressImage(file, 256, 0.9);
+        const blob = await compressImageKeepTransparency(file, 256);
 
-        const path = "favicon" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+        const path = "favicon" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".png";
 
         const up = await grostoDB.storage
           .from("banner-images")
-          .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+          .upload(path, blob, { contentType: "image/png", cacheControl: "31536000" });
 
         if (up.error) throw up.error;
 
@@ -1523,13 +1573,13 @@
 
       try {
 
-        const blob = await compressImage(file, 600, 0.9);
+        const blob = await compressImageKeepTransparency(file, 600);
 
-        const path = "logo" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+        const path = "logo" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".png";
 
         const up = await grostoDB.storage
           .from("banner-images")
-          .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+          .upload(path, blob, { contentType: "image/png", cacheControl: "31536000" });
 
         if (up.error) throw up.error;
 
