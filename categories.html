@@ -102,6 +102,19 @@
 
     .menu-btn {
       display: none;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--white);
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-cart-btn {
+      position: relative;
+      display: flex;
       margin-left: auto;
       align-items: center;
       justify-content: center;
@@ -110,8 +123,25 @@
       width: 42px;
       height: 42px;
       border-radius: 10px;
-      font-size: 19px;
+      color: #000;
       flex-shrink: 0;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--yellow);
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
     }
 
     .menu-overlay {
@@ -348,7 +378,21 @@
         <span class="search-icon">&#128270;</span>
       </div>
 
-      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">&#9776;</button>
+      <button class="header-cart-btn" onclick="openCart()" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 7h12l1.2 13.1a1 1 0 0 1-1 1.1H5.8a1 1 0 0 1-1-1.1L6 7z"></path>
+          <path d="M9 10V6a3 3 0 0 1 6 0v4"></path>
+        </svg>
+        <span class="cart-badge" id="headerCartBadge">0</span>
+      </button>
+
+      <button class="menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+        <svg width="20" height="15" viewBox="0 0 20 15" fill="none">
+          <rect x="0" y="0" width="20" height="2.2" rx="1.1" fill="currentColor"></rect>
+          <rect x="0" y="6.4" width="14" height="2.2" rx="1.1" fill="currentColor"></rect>
+          <rect x="0" y="12.8" width="8" height="2.2" rx="1.1" fill="currentColor"></rect>
+        </svg>
+      </button>
 
       <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-head">
@@ -394,6 +438,27 @@
   <script src="js/categories.js"></script>
 
   <script>
+
+    var cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+    function updateCartCount() {
+
+      var count = cart.reduce(function (t, i) { return t + i.quantity; }, 0);
+
+      document.getElementById("headerCartBadge").textContent = count;
+    }
+
+    function openCart() {
+
+      cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
+
+      if (cart.length === 0) {
+        alert("Aapka cart abhi empty hai.");
+        return;
+      }
+
+      window.location.href = "cart.html";
+    }
 
     function toggleMobileMenu() {
       document.getElementById("mobileMenu").classList.toggle("show");
@@ -465,6 +530,7 @@
       }).join("");
     }
 
+    updateCartCount();
     if (typeof initSearchSuggest === "function") initSearchSuggest("searchInput");
     if (typeof initWhatsAppFloat === "function") initWhatsAppFloat();
     if (typeof applySiteLogo === "function") applySiteLogo();
