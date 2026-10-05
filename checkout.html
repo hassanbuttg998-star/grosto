@@ -868,42 +868,6 @@
   }
 
 
-  /* ================= BUILD WHATSAPP MESSAGE ================= */
-
-  function buildWhatsAppMessage(order) {
-
-    let msg = `*Naya Order \u2014 GROSTO*%0A`;
-    msg += `Order #: ${order.orderNumber}%0A%0A`;
-    msg += `*Customer:* ${order.customer.name}%0A`;
-    msg += `*Phone:* ${order.customer.phone}%0A`;
-    msg += `*City:* ${order.customer.city}%0A`;
-    msg += `*Address:* ${order.customer.address}%0A`;
-
-    if (order.customer.instructions) {
-      msg += `*Instructions:* ${order.customer.instructions}%0A`;
-    }
-
-    msg += `%0A*Items:*%0A`;
-
-    order.items.forEach(item => {
-      msg += `- ${item.name} x${item.quantity} = Rs. ${item.price * item.quantity}%0A`;
-    });
-
-    msg += `%0A*Subtotal: Rs. ${order.subtotal}*%0A`;
-    msg += `*Delivery: Rs. ${order.deliveryFee}*%0A`;
-    msg += `*Total: Rs. ${order.total}*%0A`;
-    msg += `*Payment:* ${order.payment.toUpperCase()}`;
-
-    if (order.paymentTid) {
-      msg += ` (TID: ${order.paymentTid})`;
-    }
-
-    return encodeURIComponent(
-      decodeURIComponent(msg.replace(/%0A/g, "\n"))
-    );
-  }
-
-
   /* ================= PLACE ORDER ================= */
 
   async function placeOrder() {
@@ -1092,22 +1056,9 @@
     localStorage.removeItem("grostoCart");
 
 
-    // 4. Open WhatsApp with order details
-    const whatsappNumber =
-      (grostoSettings.whatsapp_number || "").replace(/\D/g, "");
-
-    if (whatsappNumber) {
-
-      const waMessage = buildWhatsAppMessage(order);
-
-      window.open(
-        `https://wa.me/${whatsappNumber}?text=${waMessage}`,
-        "_blank"
-      );
-    }
-
-
-    // 5. Redirect to success page
+    // 4. Redirect to success page
+    // (Order is already saved to the database / Admin Panel above.
+    //  WhatsApp is offered only as an optional support button on that page.)
     window.location.href =
       "order-success.html";
 
