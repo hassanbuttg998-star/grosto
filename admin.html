@@ -105,6 +105,7 @@
     }
 
     .tab-btn {
+      position: relative;
       border: none;
       background: none;
       padding: 12px 6px;
@@ -112,6 +113,22 @@
       color: var(--gray);
       border-bottom: 3px solid transparent;
       margin-right: 18px;
+    }
+
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: var(--red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      margin-left: 5px;
+      vertical-align: middle;
     }
 
     .tab-btn.active {
@@ -500,7 +517,10 @@
 
     <div class="tabs">
       <button class="tab-btn active" id="tabBtnProducts" onclick="switchTab('products')">Products</button>
-      <button class="tab-btn" id="tabBtnOrders" onclick="switchTab('orders')">Orders</button>
+      <button class="tab-btn" id="tabBtnOrders" onclick="switchTab('orders')">
+        Orders
+        <span class="tab-badge" id="ordersBadge" style="display:none;">0</span>
+      </button>
       <button class="tab-btn" id="tabBtnBanners" onclick="switchTab('banners')">Banners</button>
       <button class="tab-btn" id="tabBtnCategories" onclick="switchTab('categories')">Categories</button>
       <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">Settings</button>
@@ -1975,6 +1995,81 @@
 
     /* ================= START ================= */
 
+    /* ================= LIVE PENDING-ORDER ALERTS ================= */
+
+    const BASE_TAB_TITLE = "GROSTO Admin";
+
+    let lastKnownPendingCount = null;
+
+    function playNewOrderBeep() {
+
+      try {
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const osc = ctx.createOscillator();
+
+        const gain = ctx.createGain();
+
+        osc.frequency.value = 880;
+
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+        osc.connect(gain);
+
+        gain.connect(ctx.destination);
+
+        osc.start();
+
+        osc.stop(ctx.currentTime + 0.4);
+
+      } catch (e) {}
+    }
+
+    async function refreshPendingBadge() {
+
+      const { count, error } = await grostoDB
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "Pending");
+
+      if (error) return;
+
+      const badge = document.getElementById("ordersBadge");
+
+      if (count > 0) {
+
+        badge.textContent = count;
+
+        badge.style.display = "inline-flex";
+
+        document.title = "(" + count + ") " + BASE_TAB_TITLE;
+
+      } else {
+
+        badge.style.display = "none";
+
+        document.title = BASE_TAB_TITLE;
+      }
+
+      // Beep only when the count goes UP compared to the last check
+      // (not on the very first load, and not when orders are cleared/updated).
+      if (lastKnownPendingCount !== null && count > lastKnownPendingCount) {
+
+        playNewOrderBeep();
+
+        // if we're already looking at the Orders tab, refresh it immediately
+        if (document.getElementById("panelOrders").classList.contains("active")) {
+          loadOrders();
+        }
+      }
+
+      lastKnownPendingCount = count;
+    }
+
+
     async function init() {
 
       const ok = await checkAuth();
@@ -1986,6 +2081,10 @@
       populateCategorySelect();
 
       loadProducts();
+
+      refreshPendingBadge();
+
+      setInterval(refreshPendingBadge, 20000);
     }
 
     init();
