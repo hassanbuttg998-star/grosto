@@ -184,11 +184,6 @@
       background: #fff;
     }
 
-    .whatsapp-btn {
-      background: #25D366;
-      color: #fff;
-    }
-
     @media (max-width: 550px) {
 
       .container {
@@ -345,20 +340,6 @@
     </div>
 
 
-    <div class="buttons" id="whatsappRow" style="display:none; margin-bottom: 10px;">
-
-      <a
-        href="#"
-        id="whatsappBtn"
-        class="button whatsapp-btn"
-        target="_blank"
-        style="display:flex;align-items:center;justify-content:center;gap:8px;"
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="7 12.5 10.5 16 17 9"></polyline></svg> Order Ke Baare Mein Poochein
-      </a>
-
-    </div>
-
     <div class="buttons">
 
       <a
@@ -491,32 +472,6 @@
       document.getElementById("subtotalRow").style.display = "flex";
       document.getElementById("deliveryRow").style.display = "flex";
     }
-
-
-    // Optional support contact - the order itself is already saved and
-    // visible in the Admin Panel, this is just a convenience for the
-    // customer if they want to ask something about their order.
-    getGrostoSettings().then(settings => {
-
-      const whatsappNumber =
-        (settings.whatsapp_number || "").replace(/\D/g, "");
-
-      if (!whatsappNumber) return;
-
-      let msg = `Assalam o Alaikum, mera order #${order.orderNumber} ke baare mein poochna tha.\n`;
-      msg += `Name: ${order.customer.name}\n`;
-      msg += `Total: Rs. ${order.total}`;
-
-      const link =
-        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
-
-      const btn = document.getElementById("whatsappBtn");
-
-      btn.href = link;
-
-      document.getElementById("whatsappRow").style.display = "flex";
-
-    });
 
   }
 
