@@ -340,11 +340,23 @@
     </div>
 
 
+    <div class="buttons" style="margin-bottom: 10px;">
+
+      <a
+        href="#"
+        id="trackOrderLink"
+        class="button primary"
+      >
+        Track Your Order
+      </a>
+
+    </div>
+
     <div class="buttons">
 
       <a
         href="shop.html"
-        class="button primary"
+        class="button secondary"
       >
         Continue Shopping
       </a>
@@ -463,6 +475,10 @@
     document.getElementById("total")
       .textContent =
         "Rs. " + order.total;
+
+    document.getElementById("trackOrderLink").href =
+      "track-order.html?order=" + encodeURIComponent(order.orderNumber) +
+      "&phone=" + encodeURIComponent(order.customer.phone);
 
     if (order.subtotal !== undefined && order.deliveryFee !== undefined) {
 
