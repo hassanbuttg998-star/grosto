@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Track Your Order - GROSTO</title>
+  <meta name="description" content="Apne GROSTO order ka live status check karein.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --border: #E3E6E4;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+      --red: #E53935;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      line-height: 1.5;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font: inherit; cursor: pointer; }
+    input { font: inherit; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header {
+      max-width: 700px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .logo span { color: var(--yellow); }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 30px 20px 60px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      color: var(--gray);
+      margin-bottom: 26px;
+    }
+
+    .lookup-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #D8DCDA;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus { border-color: var(--green); }
+
+    .track-btn {
+      width: 100%;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      padding: 14px;
+      border-radius: 11px;
+      font-weight: 900;
+      font-size: 15px;
+      margin-top: 4px;
+    }
+
+    .track-btn:hover { background: #178e48; }
+
+    .track-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .error-box {
+      display: none;
+      background: #FDECEC;
+      color: var(--red);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    /* ================= RESULT ================= */
+
+    .result {
+      display: none;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .result-head h2 {
+      font-size: 20px;
+    }
+
+    .result-head small {
+      color: var(--gray);
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 900;
+      font-size: 13px;
+      background: var(--light-green);
+      color: #178e48;
+    }
+
+    .status-pill.cancelled {
+      background: #FDECEC;
+      color: var(--red);
+    }
+
+    .cancelled-banner {
+      display: none;
+      background: #FDECEC;
+      color: var(--red);
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* ================= STEPPER ================= */
+
+    .stepper {
+      margin-bottom: 30px;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      position: relative;
+      padding-bottom: 28px;
+    }
+
+    .step:last-child {
+      padding-bottom: 0;
+    }
+
+    .step-line {
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step.done .step-line {
+      background: var(--green);
+    }
+
+    .step:last-child .step-line {
+      display: none;
+    }
+
+    .step-dot {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .step.done .step-dot {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .step.current .step-dot {
+      background: var(--yellow);
+      border-color: var(--yellow);
+      color: #000;
+    }
+
+    .step-body {
+      padding-top: 4px;
+    }
+
+    .step-title {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--gray);
+    }
+
+    .step.done .step-title,
+    .step.current .step-title {
+      color: #000;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--gray);
+      margin-top: 2px;
+    }
+
+    /* ================= ORDER DETAILS ================= */
+
+    .details-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .details-box h3 {
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      font-size: 14px;
+    }
+
+    .summary-row.total {
+      border-top: 1px solid var(--border);
+      margin-top: 6px;
+      padding-top: 14px;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .addr-box {
+      margin-top: 16px;
+      padding: 14px;
+      background: var(--light-gray);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .addr-box div {
+      margin-bottom: 4px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: var(--green);
+      font-weight: 800;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header">
+      <a href="index.html" class="logo">GROST<span>O</span></a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1>Track Your Order</h1>
+    <p class="intro">Apna order number aur phone number daal kar live status dekhein.</p>
+
+    <div class="lookup-box">
+
+      <div class="field">
+        <label>Order Number</label>
+        <input type="text" id="orderNumberInput" placeholder="GR12345678">
+      </div>
+
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" id="phoneInput" placeholder="03XX XXXXXXX">
+      </div>
+
+      <button class="track-btn" id="trackBtn" onclick="trackOrder()">Track Order</button>
+
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="result" id="resultBox">
+
+      <div class="result-head">
+        <div>
+          <h2 id="resultOrderNumber"></h2>
+          <small id="resultDate"></small>
+        </div>
+        <span class="status-pill" id="statusPill"></span>
+      </div>
+
+      <div class="cancelled-banner" id="cancelledBanner">
+        Ye order cancel kar diya gaya hai. Sawal ke liye hamein rabta karein.
+      </div>
+
+      <div class="stepper" id="stepper"></div>
+
+      <div class="details-box">
+
+        <h3>Order Items</h3>
+
+        <div id="itemsList"></div>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong id="resultSubtotal"></strong>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery</span>
+          <strong id="resultDelivery"></strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="resultTotal"></span>
+        </div>
+
+        <div class="addr-box">
+          <div><strong>City:</strong> <span id="resultCity"></span></div>
+          <div><strong>Address:</strong> <span id="resultAddress"></span></div>
+          <div><strong>Payment:</strong> <span id="resultPayment"></span></div>
+        </div>
+
+      </div>
+
+      <a href="shop.html" class="back-link">&#8592; Continue Shopping</a>
+
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
+
+  <script>
+
+    const STEPS = [
+      { key: "Pending", title: "Order Received", desc: "Aapka order mil gaya hai." },
+      { key: "Confirmed", title: "Confirmed", desc: "Order confirm ho gaya hai." },
+      { key: "On The Way", title: "On The Way", desc: "Order delivery ke liye nikal gaya hai." },
+      { key: "Delivered", title: "Delivered", desc: "Order deliver ho chuka hai." }
+    ];
+
+    function renderStepper(status) {
+
+      const stepper = document.getElementById("stepper");
+
+      if (status === "Cancelled") {
+
+        stepper.innerHTML = "";
+
+        document.getElementById("cancelledBanner").style.display = "block";
+
+        return;
+      }
+
+      document.getElementById("cancelledBanner").style.display = "none";
+
+      const currentIndex = STEPS.findIndex(s => s.key === status);
+
+      const safeIndex = currentIndex === -1 ? 0 : currentIndex;
+
+      stepper.innerHTML = STEPS.map((s, i) => {
+
+        const state = i < safeIndex ? "done" : (i === safeIndex ? "current" : "");
+
+        const icon = i < safeIndex
+          ? "&#10003;"
+          : (i + 1);
+
+        return '<div class="step ' + state + '">' +
+          '<div class="step-line"></div>' +
+          '<div class="step-dot">' + icon + '</div>' +
+          '<div class="step-body">' +
+            '<div class="step-title">' + s.title + '</div>' +
+            '<div class="step-desc">' + s.desc + '</div>' +
+          '</div>' +
+        '</div>';
+
+      }).join("");
+    }
+
+    function renderOrder(order) {
+
+      document.getElementById("resultOrderNumber").textContent = "Order #" + order.order_number;
+
+      document.getElementById("resultDate").textContent =
+        new Date(order.created_at).toLocaleString();
+
+      const pill = document.getElementById("statusPill");
+
+      pill.textContent = order.status;
+
+      pill.className = "status-pill" + (order.status === "Cancelled" ? " cancelled" : "");
+
+      renderStepper(order.status);
+
+      const itemsList = document.getElementById("itemsList");
+
+      itemsList.innerHTML = (order.items || []).map(item =>
+        '<div class="item-row"><span>' + item.name + ' &times; ' + item.quantity + '</span>' +
+        '<strong>Rs. ' + (item.price * item.quantity) + '</strong></div>'
+      ).join("");
+
+      const subtotal = order.subtotal != null ? order.subtotal : order.total;
+
+      const delivery = order.delivery_fee != null ? order.delivery_fee : 0;
+
+      document.getElementById("resultSubtotal").textContent = "Rs. " + subtotal;
+      document.getElementById("resultDelivery").textContent = "Rs. " + delivery;
+      document.getElementById("resultTotal").textContent = "Rs. " + order.total;
+
+      document.getElementById("resultCity").textContent = order.city;
+      document.getElementById("resultAddress").textContent = order.address;
+      document.getElementById("resultPayment").textContent = (order.payment_method || "").toUpperCase();
+
+      document.getElementById("resultBox").style.display = "block";
+    }
+
+    async function trackOrder() {
+
+      const orderNumber = document.getElementById("orderNumberInput").value.trim();
+
+      const phone = document.getElementById("phoneInput").value.trim();
+
+      const errorBox = document.getElementById("errorBox");
+
+      const resultBox = document.getElementById("resultBox");
+
+      errorBox.style.display = "none";
+
+      resultBox.style.display = "none";
+
+      if (!orderNumber || !phone) {
+
+        errorBox.textContent = "Order number aur phone number dono likhein.";
+
+        errorBox.style.display = "block";
+
+        return;
+      }
+
+      const btn = document.getElementById("trackBtn");
+
+      btn.disabled = true;
+
+      btn.textContent = "Dhoond rahe hain...";
+
+      const { data, error } = await grostoDB.rpc("track_order", {
+        p_order_number: orderNumber,
+        p_phone: phone
+      });
+
+      btn.disabled = false;
+
+      btn.textContent = "Track Order";
+
+      if (error || !data || !data.length) {
+
+        errorBox.textContent = "Order nahi mila. Order number aur phone number dobara check karein.";
+
+        errorBox.style.display = "block";
+
+        return;
+      }
+
+      renderOrder(data[0]);
+    }
+
+    /* ================= PREFILL FROM URL (after placing an order) ================= */
+
+    (function prefillFromUrl() {
+
+      const params = new URLSearchParams(window.location.search);
+
+      const orderParam = params.get("order");
+
+      const phoneParam = params.get("phone");
+
+      if (orderParam) document.getElementById("orderNumberInput").value = orderParam;
+
+      if (phoneParam) document.getElementById("phoneInput").value = phoneParam;
+
+      if (orderParam && phoneParam) trackOrder();
+
+    })();
+
+    if (typeof applySiteLogo === "function") applySiteLogo();
+
+  </script>
+
+</body>
+</html>
