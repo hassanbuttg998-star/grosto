@@ -154,6 +154,38 @@
       margin-bottom: 20px;
     }
 
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .dash-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .dash-label {
+      color: var(--gray);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .dash-value {
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 700px) {
+      .dash-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     .card-header {
       display: flex;
       justify-content: space-between;
@@ -516,7 +548,8 @@
     <!-- ================= TABS ================= -->
 
     <div class="tabs">
-      <button class="tab-btn active" id="tabBtnProducts" onclick="switchTab('products')">Products</button>
+      <button class="tab-btn active" id="tabBtnDashboard" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" id="tabBtnProducts" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" id="tabBtnOrders" onclick="switchTab('orders')">
         Orders
         <span class="tab-badge" id="ordersBadge" style="display:none;">0</span>
@@ -527,9 +560,91 @@
     </div>
 
 
+    <!-- ================= DASHBOARD PANEL ================= -->
+
+    <div class="panel active" id="panelDashboard">
+
+      <div class="dash-grid">
+
+        <div class="dash-card">
+          <div class="dash-label">Today's Orders</div>
+          <div class="dash-value" id="dashTodayOrders">-</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-label">Today's Revenue</div>
+          <div class="dash-value" id="dashTodayRevenue">-</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-label">Pending Orders</div>
+          <div class="dash-value" id="dashPendingOrders">-</div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dash-label">Low / Out of Stock</div>
+          <div class="dash-value" id="dashLowStock">-</div>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Recent Orders</h2>
+          <button class="btn btn-secondary" onclick="switchTab('orders')">View All &#8594;</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="dashRecentOrdersBody">
+              <tr><td colspan="5" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Low Stock Products</h2>
+          <button class="btn btn-secondary" onclick="switchTab('products')">Manage Products &#8594;</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Stock Left</th>
+              </tr>
+            </thead>
+            <tbody id="dashLowStockBody">
+              <tr><td colspan="4" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+
     <!-- ================= PRODUCTS PANEL ================= -->
 
-    <div class="panel active" id="panelProducts">
+    <div class="panel" id="panelProducts">
 
       <div class="card">
 
@@ -953,10 +1068,103 @@
       document.getElementById("panel" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
       document.getElementById("tabBtn" + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add("active");
 
+      if (tab === "dashboard") loadDashboard();
+      if (tab === "products") loadProducts();
       if (tab === "orders") loadOrders();
       if (tab === "banners") loadBanners();
       if (tab === "categories") loadCategoryPhotos();
       if (tab === "settings") loadSettings();
+    }
+
+
+    /* ================= DASHBOARD ================= */
+
+    async function loadDashboard() {
+
+      const startOfToday = new Date();
+
+      startOfToday.setHours(0, 0, 0, 0);
+
+      // ---- Today's orders + revenue ----
+      const { data: todayOrders, error: todayErr } = await grostoDB
+        .from("orders")
+        .select("total")
+        .gte("created_at", startOfToday.toISOString());
+
+      if (!todayErr && todayOrders) {
+
+        document.getElementById("dashTodayOrders").textContent = todayOrders.length;
+
+        const revenue = todayOrders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+
+        document.getElementById("dashTodayRevenue").textContent = "Rs. " + revenue;
+      }
+
+      // ---- Pending orders ----
+      const { count: pendingCount } = await grostoDB
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "Pending");
+
+      document.getElementById("dashPendingOrders").textContent = pendingCount != null ? pendingCount : "-";
+
+      // ---- Low / out of stock products ----
+      const { data: lowStockProducts } = await grostoDB
+        .from("products")
+        .select("*")
+        .eq("is_active", true)
+        .lte("stock", 5)
+        .order("stock");
+
+      const lowBody = document.getElementById("dashLowStockBody");
+
+      if (lowStockProducts && lowStockProducts.length) {
+
+        document.getElementById("dashLowStock").textContent = lowStockProducts.length;
+
+        lowBody.innerHTML = lowStockProducts.map(p => `
+          <tr>
+            <td>${rowThumb(p)}</td>
+            <td>${adminEsc(p.name)}</td>
+            <td>${adminEsc(p.category)}</td>
+            <td style="color:${p.stock === 0 ? 'var(--red)' : 'var(--gray)'}; font-weight:800;">
+              ${p.stock === 0 ? "Out of stock" : p.stock}
+            </td>
+          </tr>
+        `).join("");
+
+      } else {
+
+        document.getElementById("dashLowStock").textContent = "0";
+
+        lowBody.innerHTML = '<tr><td colspan="4" class="empty-msg">Sab products ka stock theek hai.</td></tr>';
+      }
+
+      // ---- Recent orders ----
+      const { data: recentOrders } = await grostoDB
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      const recentBody = document.getElementById("dashRecentOrdersBody");
+
+      if (recentOrders && recentOrders.length) {
+
+        recentBody.innerHTML = recentOrders.map(o => `
+          <tr>
+            <td>${o.order_number}</td>
+            <td>${adminEsc(o.customer_name)}</td>
+            <td>Rs. ${o.total}</td>
+            <td><span class="status-pill ${o.status === 'Delivered' ? 'status-active' : 'status-inactive'}">${o.status}</span></td>
+            <td>${new Date(o.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join("");
+
+      } else {
+
+        recentBody.innerHTML = '<tr><td colspan="5" class="empty-msg">Abhi tak koi order nahi aaya.</td></tr>';
+      }
     }
 
 
@@ -1430,7 +1638,7 @@
           <td>${o.payment_method.toUpperCase()}</td>
           <td>
             <select class="status-select" onchange="updateOrderStatus(${o.id}, this.value)">
-              ${["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"].map(s =>
+              ${["Pending", "Confirmed", "On The Way", "Delivered", "Cancelled"].map(s =>
                 `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`
               ).join("")}
             </select>
@@ -2080,7 +2288,7 @@
 
       populateCategorySelect();
 
-      loadProducts();
+      loadDashboard();
 
       refreshPendingBadge();
 
