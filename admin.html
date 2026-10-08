@@ -372,6 +372,87 @@
       margin-bottom: 10px;
     }
 
+    .variant-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .variant-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 72px;
+    }
+
+    .variant-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray);
+      text-align: center;
+    }
+
+    .variant-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .variant-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 4px;
+      max-width: 72px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .variant-x {
+      position: absolute;
+      top: -6px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .variant-add-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .variant-add-row input[type="text"] {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .variant-add-row input[type="file"] {
+      flex: 1;
+      min-width: 140px;
+    }
+
     .cat-photo-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -945,6 +1026,21 @@
           <div class="hint">Phone se seedha photo le sakte hain ya gallery se chunein. Photos khud chhoti (compress) ho kar upload hongi.</div>
         </div>
 
+        <div class="form-field full">
+          <label>Variants (optional - jaise Color ya Size)</label>
+          <input type="text" id="p_variant_label" placeholder="Group ka naam, jaise: Color ya Size" style="margin-bottom:10px;">
+
+          <div class="variant-grid" id="variantGrid"></div>
+
+          <div class="variant-add-row">
+            <input type="text" id="variantNameInput" placeholder="Jaise: White, Black, Large...">
+            <input type="file" id="variantImgInput" accept="image/*">
+            <button type="button" class="btn btn-secondary btn-small" onclick="addVariant()">+ Add</button>
+          </div>
+          <div class="upload-status" id="variantUploadStatus"></div>
+          <div class="hint">Customer product page par inme se ek choose karega. Photo optional hai - lagayenge to usi option ki photo dikhegi.</div>
+        </div>
+
       </div>
 
       <div class="form-actions">
@@ -1173,6 +1269,96 @@
     let productsCache = {};
 
     let formImages = [];
+
+    let formVariants = [];
+
+    function variantTileHtml(v, i) {
+
+      const thumb = v.image
+        ? '<img src="' + encodeURI(v.image) + '" alt="">'
+        : adminEsc((v.name || "?").slice(0, 2).toUpperCase());
+
+      return '<div class="variant-tile">' +
+        '<div class="variant-thumb">' + thumb + '</div>' +
+        '<div class="variant-name">' + adminEsc(v.name) + '</div>' +
+        '<button type="button" class="variant-x" onclick="removeVariant(' + i + ')">&times;</button>' +
+      '</div>';
+    }
+
+    function renderVariantGrid() {
+
+      const grid = document.getElementById("variantGrid");
+
+      if (!formVariants.length) {
+        grid.innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = formVariants.map(variantTileHtml).join("");
+    }
+
+    function removeVariant(i) {
+      formVariants.splice(i, 1);
+      renderVariantGrid();
+    }
+
+    async function addVariant() {
+
+      const nameInput = document.getElementById("variantNameInput");
+
+      const fileInput = document.getElementById("variantImgInput");
+
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        alert("Variant ka naam likhein, jaise White ya Black.");
+        return;
+      }
+
+      const variant = { name: name, image: null };
+
+      const file = (fileInput.files || [])[0];
+
+      if (file) {
+
+        const status = document.getElementById("variantUploadStatus");
+
+        status.textContent = "Upload ho raha hai...";
+
+        try {
+
+          const blob = await compressImage(file, 800, 0.82);
+
+          const path = "v" + Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+
+          const up = await grostoDB.storage
+            .from("product-images")
+            .upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+
+          if (up.error) throw up.error;
+
+          const pub = grostoDB.storage.from("product-images").getPublicUrl(path);
+
+          variant.image = pub.data.publicUrl;
+
+        } catch (err) {
+
+          console.error(err);
+
+          alert("Photo upload fail: " + (err.message || err) + " (variant phir bhi bina photo ke add ho jayega)");
+        }
+
+        status.textContent = "";
+      }
+
+      formVariants.push(variant);
+
+      renderVariantGrid();
+
+      nameInput.value = "";
+
+      fileInput.value = "";
+    }
 
     function adminEsc(str) {
       return String(str == null ? "" : str).replace(/[&<>"']/g, function (c) {
@@ -1486,10 +1672,15 @@
       document.getElementById("p_stock").value = "0";
       document.getElementById("p_is_active").value = "true";
       document.getElementById("p_description").value = "";
+      document.getElementById("p_variant_label").value = "";
 
       formImages = [];
 
+      formVariants = [];
+
       renderImageGrid();
+
+      renderVariantGrid();
 
       document.getElementById("productFormOverlay").classList.add("show");
     }
@@ -1514,10 +1705,15 @@
       document.getElementById("p_stock").value = p.stock;
       document.getElementById("p_is_active").value = String(p.is_active);
       document.getElementById("p_description").value = p.description || "";
+      document.getElementById("p_variant_label").value = p.variant_label || "";
 
       formImages = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
 
+      formVariants = Array.isArray(p.variants) ? p.variants : [];
+
       renderImageGrid();
+
+      renderVariantGrid();
 
       document.getElementById("productFormOverlay").classList.add("show");
     }
@@ -1542,7 +1738,9 @@
         stock: Number(document.getElementById("p_stock").value) || 0,
         is_active: document.getElementById("p_is_active").value === "true",
         description: document.getElementById("p_description").value.trim() || null,
-        images: formImages
+        images: formImages,
+        variant_label: document.getElementById("p_variant_label").value.trim() || null,
+        variants: formVariants
       };
 
       if (!payload.name) {
@@ -1659,7 +1857,7 @@
 
         detailTr.id = "orderDetails" + o.id;
 
-        const itemsHtml = o.items.map(i => `${i.name} \u00d7 ${i.quantity} = Rs. ${i.price * i.quantity}`).join("<br>");
+        const itemsHtml = o.items.map(i => `${i.name}${i.variant ? " (" + i.variant + ")" : ""} \u00d7 ${i.quantity} = Rs. ${i.price * i.quantity}`).join("<br>");
 
         detailTr.innerHTML = `
           <td colspan="9">
