@@ -159,6 +159,12 @@
       margin-bottom: 5px;
     }
 
+    .item-variant {
+      color: var(--gray);
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
     .item-price {
       color: var(--green);
       font-weight: 800;
@@ -655,6 +661,8 @@
             <div class="item-name">
               <a href="product.html?id=${item.id}">${item.name}</a>
             </div>
+
+            ${item.variant ? `<div class="item-variant">${item.variant}</div>` : ""}
 
             <div class="item-price">
               Rs. ${item.price}
