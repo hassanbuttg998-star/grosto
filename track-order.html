@@ -479,7 +479,7 @@
       const itemsList = document.getElementById("itemsList");
 
       itemsList.innerHTML = (order.items || []).map(item =>
-        '<div class="item-row"><span>' + item.name + ' &times; ' + item.quantity + '</span>' +
+        '<div class="item-row"><span>' + item.name + (item.variant ? ' (' + item.variant + ')' : '') + ' &times; ' + item.quantity + '</span>' +
         '<strong>Rs. ' + (item.price * item.quantity) + '</strong></div>'
       ).join("");
 
