@@ -668,7 +668,7 @@
       div.innerHTML = `
 
         <span>
-          ${item.name} \u00d7 ${item.quantity}
+          ${item.name}${item.variant ? " (" + item.variant + ")" : ""} \u00d7 ${item.quantity}
         </span>
 
         <strong>
