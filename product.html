@@ -427,6 +427,73 @@
     .p-stock.low { color: var(--orange); }
     .p-stock.out { color: var(--red); }
 
+    .variant-section {
+      margin-bottom: 18px;
+    }
+
+    .variant-label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .variant-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .variant-opt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 64px;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+
+    .variant-opt-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gray);
+    }
+
+    .variant-opt-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .variant-opt.selected .variant-opt-thumb {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px var(--light-green);
+    }
+
+    .variant-opt-name {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 5px;
+      text-align: center;
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .variant-opt.selected .variant-opt-name {
+      color: var(--green);
+    }
+
     .qty-row {
       display: flex;
       align-items: center;
@@ -947,6 +1014,11 @@
 
           <div class="p-stock" id="pStock"></div>
 
+          <div class="variant-section" id="variantSection" style="display:none;">
+            <label class="variant-label" id="variantLabel">Option</label>
+            <div class="variant-options" id="variantOptions"></div>
+          </div>
+
           <div class="qty-row">
             <label>Quantity</label>
             <div class="qty">
@@ -1030,6 +1102,8 @@
     var product = null;
 
     var qty = 1;
+
+    var selectedVariant = null;
 
     var productId = Number(new URLSearchParams(window.location.search).get("id"));
 
@@ -1117,14 +1191,18 @@
 
     /* ================= CART LOGIC ================= */
 
-    // returns "ok", "max" (already max in cart) or "out"
-    function addToCartData(p, amount) {
+    // returns "ok", "max" (already max in cart), "out", or "need-variant"
+    function addToCartData(p, amount, variant) {
 
       if (p.stock <= 0) return "out";
 
+      if (Array.isArray(p.variants) && p.variants.length && !variant) return "need-variant";
+
       cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
 
-      var existing = cart.find(function (i) { return i.id === p.id; });
+      var existing = cart.find(function (i) {
+        return i.id === p.id && (i.variant || null) === (variant || null);
+      });
 
       var current = existing ? existing.quantity : 0;
 
@@ -1133,7 +1211,7 @@
       if (existing) {
         existing.quantity += amount;
       } else {
-        cart.push({ id: p.id, name: p.name, price: p.price, quantity: amount });
+        cart.push({ id: p.id, name: p.name, price: p.price, quantity: amount, variant: variant || null });
       }
 
       localStorage.setItem("grostoCart", JSON.stringify(cart));
@@ -1145,21 +1223,25 @@
 
     function handleAdd() {
 
-      var result = addToCartData(product, qty);
+      var result = addToCartData(product, qty, selectedVariant);
 
       if (result === "ok") {
-        showToast(product.name + " cart mein add ho gaya!");
+        showToast(product.name + (selectedVariant ? " (" + selectedVariant + ")" : "") + " cart mein add ho gaya!");
       } else if (result === "max") {
         showToast("Is waqt sirf " + product.stock + " pieces available hain.");
+      } else if (result === "need-variant") {
+        showToast("Pehle " + (product.variant_label || "option") + " select karein.");
       }
     }
 
     function handleBuy() {
 
-      var result = addToCartData(product, qty);
+      var result = addToCartData(product, qty, selectedVariant);
 
       if (result === "ok" || result === "max") {
         window.location.href = "cart.html";
+      } else if (result === "need-variant") {
+        showToast("Pehle " + (product.variant_label || "option") + " select karein.");
       }
     }
 
@@ -1261,6 +1343,99 @@
       } else {
         document.getElementById("descBox").style.display = "none";
       }
+
+      renderGallery();
+
+      renderVariants();
+    }
+
+
+    /* ================= VARIANTS ================= */
+
+    function renderVariants() {
+
+      var p = product;
+
+      var section = document.getElementById("variantSection");
+
+      if (!Array.isArray(p.variants) || !p.variants.length) {
+        section.style.display = "none";
+        return;
+      }
+
+      selectedVariant = null;
+
+      document.getElementById("variantLabel").textContent = p.variant_label || "Option";
+
+      var optionsBox = document.getElementById("variantOptions");
+
+      optionsBox.innerHTML = p.variants.map(function (v, i) {
+
+        var thumb = v.image
+          ? '<img src="' + esc(v.image) + '" alt="">'
+          : esc((v.name || "?").slice(0, 2).toUpperCase());
+
+        return '<button type="button" class="variant-opt" data-i="' + i + '">' +
+          '<span class="variant-opt-thumb">' + thumb + '</span>' +
+          '<span class="variant-opt-name">' + esc(v.name) + '</span>' +
+        '</button>';
+
+      }).join("");
+
+      optionsBox.querySelectorAll(".variant-opt").forEach(function (btn) {
+
+        btn.onclick = function () {
+          selectVariant(Number(btn.getAttribute("data-i")));
+        };
+      });
+
+      section.style.display = "block";
+    }
+
+    function selectVariant(index) {
+
+      var v = product.variants[index];
+
+      if (!v) return;
+
+      selectedVariant = v.name;
+
+      document.querySelectorAll(".variant-opt").forEach(function (btn, i) {
+        btn.classList.toggle("selected", i === index);
+      });
+
+      if (v.image) {
+        showVariantImage(v.image);
+      }
+
+      updateWhatsAppLink();
+    }
+
+    function showVariantImage(url) {
+
+      var slides = document.getElementById("slides");
+
+      var existing = Array.from(slides.querySelectorAll("img")).find(function (img) {
+        return img.getAttribute("src") === url;
+      });
+
+      if (existing) {
+
+        var slide = existing.closest(".slide");
+
+        var index = Array.from(slides.children).indexOf(slide);
+
+        goToSlide(index);
+
+        return;
+      }
+
+      // Variant has a photo that isn't already in the gallery - show it as the first slide.
+      var imgs = (Array.isArray(product.images) ? product.images.filter(Boolean) : []).slice();
+
+      imgs = [url].concat(imgs.filter(function (u) { return u !== url; }));
+
+      product.images = imgs;
 
       renderGallery();
     }
@@ -1400,8 +1575,10 @@
 
       if (!waNumber || !product) return;
 
+      var variantText = selectedVariant ? " - " + selectedVariant : "";
+
       var msg = "Assalam o Alaikum, mujhe ye product order karna hai:\n" +
-        product.name + " (" + product.unit + ") x" + qty + "\n" +
+        product.name + variantText + " (" + product.unit + ") x" + qty + "\n" +
         "Price: Rs. " + (product.price * qty) + "\n" +
         window.location.href;
 
@@ -1467,6 +1644,7 @@
 
         if (result === "ok") showToast(p.name + " cart mein add ho gaya!");
         else if (result === "max") showToast("Is waqt sirf " + p.stock + " pieces available hain.");
+        else if (result === "need-variant") window.location.href = "product.html?id=" + p.id;
       });
     }
 
