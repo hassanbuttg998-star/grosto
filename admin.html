@@ -2273,7 +2273,7 @@
         return;
       }
 
-      grid.innerHTML = categoryList.map(c => {
+      grid.innerHTML = categoryList.map((c, i) => {
 
         const url = imageMap[c.value];
 
@@ -2282,21 +2282,37 @@
           : c.icon;
 
         return '<div class="cat-photo-card">' +
-          '<div class="cat-photo-thumb" id="catThumb-' + adminEsc(c.value) + '">' + thumb + '</div>' +
+          '<div class="cat-photo-thumb" id="catThumb-' + i + '">' + thumb + '</div>' +
           '<div class="cat-photo-name">' + adminEsc(c.label) + '</div>' +
-          '<input type="file" accept="image/*" onchange="handleCategoryPhoto(this, ' + JSON.stringify(c.value) + ')">' +
+          '<input type="file" accept="image/*" data-cat-index="' + i + '">' +
         '</div>';
 
       }).join("");
+
+      // Ek hi delegated listener - category ke naam mein & jaisa koi bhi character ho,
+      // ab koi HTML/JS escaping issue nahi aayega (pehle onchange attribute seedha
+      // JSON.stringify se banta tha jo "&" wali categories ke liye attribute hi tod deta tha).
+      grid.onchange = function (e) {
+
+        const input = e.target.closest('input[type="file"]');
+
+        if (!input) return;
+
+        const idx = Number(input.getAttribute("data-cat-index"));
+
+        const cat = categoryList[idx];
+
+        if (!cat) return;
+
+        handleCategoryPhoto(input, cat.value, "catThumb-" + idx);
+      };
     }
 
-    async function handleCategoryPhoto(input, categoryValue) {
+    async function handleCategoryPhoto(input, categoryValue, thumbId) {
 
       const file = (input.files || [])[0];
 
       if (!file) return;
-
-      const thumbId = "catThumb-" + categoryValue;
 
       try {
 
@@ -2321,6 +2337,8 @@
         const thumbEl = document.getElementById(thumbId);
 
         if (thumbEl) thumbEl.innerHTML = '<img src="' + pub.data.publicUrl.replace(/"/g, "%22") + '" alt="">';
+
+        if (typeof window.invalidateCategoryImagesCache === "function") window.invalidateCategoryImagesCache();
 
       } catch (err) {
 
