@@ -637,8 +637,12 @@
           ? stockInfo.images.filter(Boolean)
           : [];
 
-        const icon = imgs.length
-          ? '<img src="' + encodeURI(imgs[0]) + '" alt="">'
+        // Agar is cart item ka apna variant photo save hai (add-to-cart ke waqt select kiya gaya
+        // color/size), wahi dikhao - warna product ki pehli general photo.
+        const displayImg = item.image || (imgs.length ? imgs[0] : null);
+
+        const icon = displayImg
+          ? '<img src="' + encodeURI(displayImg) + '" alt="">'
           : (stockInfo ? stockInfo.emoji : getProductIcon(item.name));
 
         const atMax = maxStock !== null && item.quantity >= maxStock;
