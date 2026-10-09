@@ -61,6 +61,13 @@ window.loadCategoryImages = function () {
     });
 };
 
+/* Admin panel ek photo upload karne ke baad isko call karta hai, taake agli
+   baar Categories tab khulte waqt purani (cached) list ke bajaye turant
+   dobara Supabase se fresh list mangwai jaaye. */
+window.invalidateCategoryImagesCache = function () {
+  _categoryImagesCache = null;
+};
+
 
 /* ================= SHARED TILE HTML (photo if set, warna emoji) ================= */
 
