@@ -1178,14 +1178,8 @@
 
     function openCart() {
 
-      if (cart.length === 0) {
-
-        alert("Aapka cart abhi empty hai.");
-
-        return;
-      }
-
-      // Cart page open karein
+      // Bari apps/sites ki tarah hamesha cart page khulta hai - khali ho to
+      // wahan suggestions dikhte hain, blocking message nahi.
       window.location.href = "cart.html";
     }
 
