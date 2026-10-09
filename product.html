@@ -1105,6 +1105,12 @@
 
     var selectedVariant = null;
 
+    var selectedVariantImage = null;
+
+    var selectedVariantIndex = null;
+
+    var originalImages = [];
+
     var productId = Number(new URLSearchParams(window.location.search).get("id"));
 
     var productMap = {};
@@ -1191,12 +1197,11 @@
 
     /* ================= CART LOGIC ================= */
 
-    // returns "ok", "max" (already max in cart), "out", or "need-variant"
-    function addToCartData(p, amount, variant) {
+    // returns "ok", "max" (already max in cart), or "out"
+    // variant is optional - jab koi variant select nahi kiya hota to base product add hota hai
+    function addToCartData(p, amount, variant, variantImage) {
 
       if (p.stock <= 0) return "out";
-
-      if (Array.isArray(p.variants) && p.variants.length && !variant) return "need-variant";
 
       cart = JSON.parse(localStorage.getItem("grostoCart")) || [];
 
@@ -1211,7 +1216,9 @@
       if (existing) {
         existing.quantity += amount;
       } else {
-        cart.push({ id: p.id, name: p.name, price: p.price, quantity: amount, variant: variant || null });
+        var item = { id: p.id, name: p.name, price: p.price, quantity: amount, variant: variant || null };
+        if (variantImage) item.image = variantImage;
+        cart.push(item);
       }
 
       localStorage.setItem("grostoCart", JSON.stringify(cart));
@@ -1223,25 +1230,21 @@
 
     function handleAdd() {
 
-      var result = addToCartData(product, qty, selectedVariant);
+      var result = addToCartData(product, qty, selectedVariant, selectedVariantImage);
 
       if (result === "ok") {
         showToast(product.name + (selectedVariant ? " (" + selectedVariant + ")" : "") + " cart mein add ho gaya!");
       } else if (result === "max") {
         showToast("Is waqt sirf " + product.stock + " pieces available hain.");
-      } else if (result === "need-variant") {
-        showToast("Pehle " + (product.variant_label || "option") + " select karein.");
       }
     }
 
     function handleBuy() {
 
-      var result = addToCartData(product, qty, selectedVariant);
+      var result = addToCartData(product, qty, selectedVariant, selectedVariantImage);
 
       if (result === "ok" || result === "max") {
         window.location.href = "cart.html";
-      } else if (result === "need-variant") {
-        showToast("Pehle " + (product.variant_label || "option") + " select karein.");
       }
     }
 
@@ -1281,6 +1284,8 @@
       document.getElementById("productView").style.display = "block";
 
       var p = product;
+
+      originalImages = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
 
       document.title = p.name + " - GROSTO";
 
@@ -1365,6 +1370,10 @@
 
       selectedVariant = null;
 
+      selectedVariantImage = null;
+
+      selectedVariantIndex = null;
+
       document.getElementById("variantLabel").textContent = p.variant_label || "Option";
 
       var optionsBox = document.getElementById("variantOptions");
@@ -1394,11 +1403,35 @@
 
     function selectVariant(index) {
 
+      // Same swatch tap again - deselect, wapas base product (koi variant nahi) wali state par.
+      if (selectedVariantIndex === index) {
+
+        selectedVariant = null;
+
+        selectedVariantImage = null;
+
+        selectedVariantIndex = null;
+
+        document.querySelectorAll(".variant-opt").forEach(function (btn) {
+          btn.classList.remove("selected");
+        });
+
+        restoreOriginalGallery();
+
+        updateWhatsAppLink();
+
+        return;
+      }
+
       var v = product.variants[index];
 
       if (!v) return;
 
       selectedVariant = v.name;
+
+      selectedVariantImage = v.image || null;
+
+      selectedVariantIndex = index;
 
       document.querySelectorAll(".variant-opt").forEach(function (btn, i) {
         btn.classList.toggle("selected", i === index);
@@ -1406,9 +1439,18 @@
 
       if (v.image) {
         showVariantImage(v.image);
+      } else {
+        restoreOriginalGallery();
       }
 
       updateWhatsAppLink();
+    }
+
+    function restoreOriginalGallery() {
+
+      product.images = originalImages.slice();
+
+      renderGallery();
     }
 
     function showVariantImage(url) {
@@ -1430,8 +1472,9 @@
         return;
       }
 
-      // Variant has a photo that isn't already in the gallery - show it as the first slide.
-      var imgs = (Array.isArray(product.images) ? product.images.filter(Boolean) : []).slice();
+      // Variant has a photo that isn't already in the gallery - show it as the first slide,
+      // hamesha ORIGINAL image list se rebuild karke, taake variant switch karne par photos kabhi na khoyein.
+      var imgs = originalImages.slice();
 
       imgs = [url].concat(imgs.filter(function (u) { return u !== url; }));
 
@@ -1640,11 +1683,15 @@
 
         var p = productMap[btn.getAttribute("data-id")];
 
+        if (Array.isArray(p.variants) && p.variants.length) {
+          window.location.href = "product.html?id=" + p.id;
+          return;
+        }
+
         var result = addToCartData(p, 1);
 
         if (result === "ok") showToast(p.name + " cart mein add ho gaya!");
         else if (result === "max") showToast("Is waqt sirf " + p.stock + " pieces available hain.");
-        else if (result === "need-variant") window.location.href = "product.html?id=" + p.id;
       });
     }
 
