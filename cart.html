@@ -324,6 +324,86 @@
       font-weight: 800;
     }
 
+    /* SUGGESTED PRODUCTS (empty cart ke neeche) */
+
+    .suggest-sec {
+      max-width: 1000px;
+      margin: 10px auto 0;
+      padding: 0 20px 10px;
+      text-align: left;
+    }
+
+    .suggest-sec h3 {
+      font-size: 19px;
+      margin-bottom: 14px;
+    }
+
+    .suggest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .suggest-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      display: block;
+    }
+
+    .suggest-img {
+      height: 130px;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      overflow: hidden;
+    }
+
+    .suggest-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .suggest-body {
+      padding: 10px 12px;
+    }
+
+    .suggest-name {
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .suggest-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .suggest-price {
+      color: var(--green);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .suggest-add {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: var(--green);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
     /* MOBILE */
 
     @media (max-width: 750px) {
@@ -428,6 +508,13 @@
       </a>
 
     </div>
+
+    <!-- SUGGESTED PRODUCTS (sirf tab dikhta hai jab cart khali ho) -->
+
+    <section class="suggest-sec" id="suggestSec" style="display:none;">
+      <h3 id="suggestTitle">Aapko ye pasand aa sakta hai</h3>
+      <div class="suggest-grid" id="suggestGrid"></div>
+    </section>
 
 
     <!-- CART CONTENT -->
@@ -607,6 +694,8 @@
 
         empty.style.display = "block";
 
+        if (!suggestionsLoaded) loadSuggestions();
+
         return;
       }
 
@@ -614,6 +703,8 @@
       content.style.display = "grid";
 
       empty.style.display = "none";
+
+      document.getElementById("suggestSec").style.display = "none";
 
 
       container.innerHTML = "";
@@ -832,6 +923,138 @@
       window.location.href =
         "checkout.html";
 
+    }
+
+
+    /* ================= START ================= */
+
+    /* ================= SUGGESTED PRODUCTS (cart khali hone par) ================= */
+
+    let suggestMap = {};
+
+    let suggestionsLoaded = false;
+
+    function suggestThumb(p) {
+
+      const imgs = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+
+      if (imgs.length) {
+        return '<img src="' + encodeURI(imgs[0]) + '" alt="">';
+      }
+
+      return p.emoji || getProductIcon(p.name);
+    }
+
+    function suggestCard(p) {
+
+      suggestMap[p.id] = p;
+
+      const out = p.stock <= 0;
+
+      return '<a class="suggest-card" href="product.html?id=' + p.id + '">' +
+        '<div class="suggest-img">' + suggestThumb(p) + '</div>' +
+        '<div class="suggest-body">' +
+          '<div class="suggest-name">' + p.name + '</div>' +
+          '<div class="suggest-row">' +
+            '<span class="suggest-price">Rs. ' + p.price + '</span>' +
+            (out ? '' : '<button type="button" class="suggest-add" data-id="' + p.id + '" aria-label="Add">+</button>') +
+          '</div>' +
+        '</div>' +
+      '</a>';
+    }
+
+    function addSuggestToCart(p) {
+
+      if (!p || p.stock <= 0) return;
+
+      const existing = cart.find(i => i.id === p.id && !i.variant);
+
+      const current = existing ? existing.quantity : 0;
+
+      if (current + 1 > p.stock) return;
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ id: p.id, name: p.name, price: p.price, quantity: 1, variant: null });
+      }
+
+      saveCart();
+
+      renderCart();
+    }
+
+    async function loadSuggestions() {
+
+      suggestionsLoaded = true;
+
+      const grid = document.getElementById("suggestGrid");
+
+      const sec = document.getElementById("suggestSec");
+
+      // Pehle user ke "recently viewed" products (uski apni pasand ke hisab se) try karte hain -
+      // product.html har product visit par inko grostoRecent mein save karta hai.
+      let recentIds = [];
+
+      try { recentIds = JSON.parse(localStorage.getItem("grostoRecent")) || []; } catch (e) {}
+
+      let list = [];
+
+      if (recentIds.length) {
+
+        const { data } = await grostoDB
+          .from("products")
+          .select("*")
+          .eq("is_active", true)
+          .in("id", recentIds.slice(0, 8));
+
+        list = data || [];
+
+        list.sort((a, b) => recentIds.indexOf(a.id) - recentIds.indexOf(b.id));
+      }
+
+      // Recently viewed na hon (naya visitor) to popular/featured products dikha dein.
+      if (list.length < 4) {
+
+        const excludeIds = list.map(p => p.id);
+
+        let query = grostoDB
+          .from("products")
+          .select("*")
+          .eq("is_active", true)
+          .gt("stock", 0)
+          .order("id")
+          .limit(8 - list.length);
+
+        if (excludeIds.length) query = query.not("id", "in", "(" + excludeIds.join(",") + ")");
+
+        const more = await query;
+
+        list = list.concat(more.data || []);
+
+      } else {
+
+        document.getElementById("suggestTitle").textContent = "Aapki pasand ke hisab se";
+      }
+
+      if (!list.length) return;
+
+      grid.innerHTML = list.map(suggestCard).join("");
+
+      grid.addEventListener("click", function (e) {
+
+        const btn = e.target.closest(".suggest-add");
+
+        if (!btn) return;
+
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        addSuggestToCart(suggestMap[btn.getAttribute("data-id")]);
+      });
+
+      sec.style.display = "block";
     }
 
 
