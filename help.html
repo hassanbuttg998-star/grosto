@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Delivery, Payment & Contact - GROSTO</title>
+  <meta name="description" content="GROSTO delivery area, payment methods aur contact details.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --border: #E3E6E4;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font: inherit; cursor: pointer; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 10;
+    }
+
+    .header {
+      max-width: 800px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .logo span { color: var(--yellow); }
+
+    .back-link {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray);
+    }
+
+    .back-link:hover { color: var(--green); }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px 70px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 30px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 26px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      border: none;
+      background: none;
+      padding: 10px 6px;
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--gray);
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    .sec {
+      scroll-margin-top: 80px;
+      margin-bottom: 44px;
+    }
+
+    .sec h2 {
+      font-size: 21px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card {
+      background: var(--light-gray);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .row:last-child { border-bottom: none; }
+
+    .row .label { color: var(--gray); font-size: 14px; }
+    .row .value { font-weight: 800; }
+
+    .pay-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .pay-box h3 {
+      font-size: 14px;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .contact-btn:hover { border-color: var(--green); }
+
+    .contact-btn .ico { font-size: 22px; }
+
+    .loading {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    footer {
+      background: #111;
+      color: #bbb;
+      text-align: center;
+      padding: 22px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header">
+      <a href="index.html" class="logo">GROST<span>O</span></a>
+      <a href="index.html" class="back-link">&#8592; Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1>Delivery, Payment &amp; Contact</h1>
+
+    <div class="tabs">
+      <a class="tab" href="#delivery">Delivery</a>
+      <a class="tab" href="#payment">Payment</a>
+      <a class="tab" href="#contact">Contact</a>
+    </div>
+
+    <section class="sec" id="delivery">
+      <h2>&#128666; Delivery Info</h2>
+      <div class="card" id="deliveryBox">
+        <div class="loading">Loading...</div>
+      </div>
+    </section>
+
+    <section class="sec" id="payment">
+      <h2>&#128176; Payment Methods</h2>
+      <div id="paymentBox">
+        <div class="pay-box">
+          <h3>Cash on Delivery (COD)</h3>
+          <div>Order mile tab rider ko cash dein - sabse aasan tareeqa.</div>
+        </div>
+        <div class="loading">Loading...</div>
+      </div>
+    </section>
+
+    <section class="sec" id="contact">
+      <h2>&#128222; Contact Us</h2>
+      <div id="contactBox">
+        <div class="loading">Loading...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>&#169; 2026 GROSTO. All rights reserved.</footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
+  <script>
+
+    async function loadHelpInfo() {
+
+      var s = await getGrostoSettings();
+
+      /* ---- DELIVERY ---- */
+
+      var cities = (s.delivery_city || "Gujrat")
+        .split(",")
+        .map(function (c) { return c.trim(); })
+        .filter(Boolean)
+        .join(", ");
+
+      var deliveryFee = s.delivery_fee || "100";
+
+      var minOrder = s.min_order || "1000";
+
+      document.getElementById("deliveryBox").innerHTML =
+        '<div class="row"><span class="label">Delivery Area</span><span class="value">' + cities + '</span></div>' +
+        '<div class="row"><span class="label">Delivery Charges</span><span class="value">Rs. ' + deliveryFee + '</span></div>' +
+        '<div class="row"><span class="label">Minimum Order</span><span class="value">Rs. ' + minOrder + '</span></div>';
+
+      /* ---- PAYMENT ---- */
+
+      var payHtml = '<div class="pay-box">' +
+          '<h3>Cash on Delivery (COD)</h3>' +
+          '<div>Order mile tab rider ko cash dein - sabse aasan tareeqa.</div>' +
+        '</div>';
+
+      if (s.easypaisa_number && s.easypaisa_number !== "Not set yet") {
+
+        payHtml += '<div class="pay-box">' +
+            '<h3>EasyPaisa</h3>' +
+            '<div class="row"><span class="label">Account Title</span><span class="value">' + (s.easypaisa_title || "") + '</span></div>' +
+            '<div class="row"><span class="label">Number</span><span class="value">' + s.easypaisa_number + '</span></div>' +
+          '</div>';
+      }
+
+      if (s.jazzcash_number && s.jazzcash_number !== "Not set yet") {
+
+        payHtml += '<div class="pay-box">' +
+            '<h3>JazzCash</h3>' +
+            '<div class="row"><span class="label">Account Title</span><span class="value">' + (s.jazzcash_title || "") + '</span></div>' +
+            '<div class="row"><span class="label">Number</span><span class="value">' + s.jazzcash_number + '</span></div>' +
+          '</div>';
+      }
+
+      document.getElementById("paymentBox").innerHTML = payHtml;
+
+      /* ---- CONTACT ---- */
+
+      var contactHtml = "";
+
+      var waNumber = (s.whatsapp_number || "").replace(/\D/g, "");
+
+      if (/^\d{11,15}$/.test(waNumber)) {
+
+        contactHtml += '<a class="contact-btn" href="https://wa.me/' + waNumber + '" target="_blank" rel="noopener">' +
+          '<span class="ico">&#128172;</span><span>WhatsApp: ' + s.whatsapp_number + '</span>' +
+        '</a>';
+      }
+
+      if (s.store_address && s.store_address.indexOf("Not set yet") === -1) {
+
+        var mapLink = s.store_map_link ? '<a href="' + s.store_map_link + '" target="_blank" rel="noopener" style="color:var(--green); font-weight:700;">(Map par dekhein)</a>' : "";
+
+        contactHtml += '<div class="contact-btn" style="font-weight:400;">' +
+          '<span class="ico">&#128205;</span><span>' + s.store_address + ' ' + mapLink + '</span>' +
+        '</div>';
+      }
+
+      if (!contactHtml) {
+        contactHtml = '<div class="card">Contact details jald update hongi. Tab tak apna order <a href="track-order.html" style="color:var(--green); font-weight:700;">Track Order</a> page se check karein.</div>';
+      }
+
+      document.getElementById("contactBox").innerHTML = contactHtml;
+    }
+
+    loadHelpInfo();
+
+  </script>
+
+</body>
+</html>
