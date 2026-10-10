@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FAQ - GROSTO</title>
+  <meta name="description" content="GROSTO ke baare mein aam sawalat aur jawabat.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus, a:focus {
+      outline: none;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --border: #E3E6E4;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+      --red: #E53935;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font: inherit; cursor: pointer; }
+    textarea, input { font: inherit; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 10;
+    }
+
+    .header {
+      max-width: 800px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .logo span { color: var(--yellow); }
+
+    .back-link {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray);
+    }
+
+    .back-link:hover { color: var(--green); }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px 70px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      color: var(--gray);
+      margin-bottom: 30px;
+    }
+
+    /* ================= ACCORDION ================= */
+
+    .faq-list {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 44px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      background: #fff;
+      border: none;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .faq-q:hover {
+      background: var(--light-gray);
+    }
+
+    .faq-q .chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      transition: transform 0.2s ease;
+      color: var(--green);
+    }
+
+    .faq-item.open .faq-q .chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+      background: var(--light-gray);
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 400px;
+    }
+
+    .faq-a-inner {
+      padding: 2px 20px 18px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .faq-a-inner a {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    /* ================= SUGGEST A PRODUCT ================= */
+
+    .suggest-box {
+      background: var(--light-green);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    .suggest-box h2 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .suggest-box .sub {
+      color: #25613c;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .suggest-box textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      resize: vertical;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .suggest-box textarea:focus {
+      border-color: var(--green);
+    }
+
+    .suggest-box input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      outline: none;
+      margin-bottom: 14px;
+    }
+
+    .suggest-box input:focus {
+      border-color: var(--green);
+    }
+
+    .suggest-send {
+      border: none;
+      background: var(--green);
+      color: #fff;
+      font-weight: 800;
+      padding: 13px 24px;
+      border-radius: 10px;
+    }
+
+    .suggest-send:hover { background: #178e48; }
+
+    .suggest-send:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .suggest-msg {
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      display: none;
+    }
+
+    .suggest-msg.ok { color: var(--green); }
+    .suggest-msg.err { color: var(--red); }
+
+    footer {
+      background: #111;
+      color: #bbb;
+      text-align: center;
+      padding: 22px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header">
+      <a href="index.html" class="logo">GROST<span>O</span></a>
+      <a href="index.html" class="back-link">&#8592; Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <h1>Frequently Asked Questions</h1>
+    <p class="intro">GROSTO ke baare mein jo bhi poochna ho, zyada tar sawalon ke jawab yahan mil jayenge.</p>
+
+    <div class="faq-list" id="faqList">
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Kya GROSTO par order karne ke liye account banana padta hai?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Nahi, GROSTO par koi sign-up ya account banane ki zaroorat nahi. Sirf apna naam, phone number aur address daal kar seedha order place kar sakte hain.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>GROSTO kahan kahan delivery karta hai?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner" id="ansDeliveryArea">
+            Is waqt hum <span id="deliveryCities">Gujrat</span> ke andar delivery karte hain.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Delivery charges aur minimum order kitna hai?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner" id="ansDeliveryFee">
+            Delivery charges Rs. <span id="deliveryFeeVal">100</span> hain, aur minimum order amount Rs. <span id="minOrderVal">1000</span> hai.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Payment ke kaunse tareeqe available hain?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Cash on Delivery (order milte hi rider ko cash dein), EasyPaisa aur JazzCash - teeno available hain. Poori details <a href="help.html#payment">Payment page</a> par mil jayengi.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Apna order kaise track karein?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            <a href="track-order.html">Track Order</a> page par apna order number aur phone number daal kar live status dekh sakte hain - Pending, Confirmed, On The Way ya Delivered.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Kya main apna order cancel ya change karwa sakta hoon?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Order "Confirmed" status par jaane se pehle pehle cancel ya change ho sakta hai. Jaldi se jaldi <a href="help.html#contact">Contact</a> page se hamse rabta karein.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Agar koi product "Out of Stock" dikhe to?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Stock har waqt update hoti rehti hai, thodi der baad dobara check karein. Agar order place karne ke baad koi item khatam nikle, to hum rabta karke replacement ya refund ka intezam karte hain.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button type="button" class="faq-q">
+          <span>Mujhe woh product nahi mila jo main dhoond raha hoon, ab kya karun?</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">
+            Niche "Product Suggest Karein" box mein likh dein - hum nayi cheezein add karte rehte hain aapki suggestions ke hisab se.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ================= SUGGEST A PRODUCT ================= -->
+
+    <div class="suggest-box">
+      <h2>&#128161; Koi Product Suggest Karein</h2>
+      <div class="sub">Koi cheez hai jo aap chahte hain GROSTO par milni shuru ho? Hamein batayein - seedha humare paas pahunch jayega.</div>
+
+      <textarea id="suggestMsg" placeholder="Jaise: Aap log Lays ke bade packet bhi rakhein..." maxlength="500"></textarea>
+
+      <input type="text" id="suggestContact" placeholder="Apna naam ya phone number (optional)" maxlength="100">
+
+      <button type="button" class="suggest-send" id="suggestSendBtn" onclick="sendSuggestion()">Bhej Dein &#8594;</button>
+
+      <div class="suggest-msg" id="suggestMsgStatus"></div>
+    </div>
+
+  </main>
+
+  <footer>&#169; 2026 GROSTO. All rights reserved.</footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-client.js"></script>
+
+  <script>
+
+    /* ================= ACCORDION ================= */
+
+    document.getElementById("faqList").addEventListener("click", function (e) {
+
+      var btn = e.target.closest(".faq-q");
+
+      if (!btn) return;
+
+      var item = btn.closest(".faq-item");
+
+      var wasOpen = item.classList.contains("open");
+
+      document.querySelectorAll(".faq-item.open").forEach(function (el) {
+        el.classList.remove("open");
+      });
+
+      if (!wasOpen) item.classList.add("open");
+    });
+
+
+    /* ================= LIVE SETTINGS IN ANSWERS ================= */
+
+    async function loadLiveAnswers() {
+
+      var s = await getGrostoSettings();
+
+      var cities = (s.delivery_city || "Gujrat")
+        .split(",")
+        .map(function (c) { return c.trim(); })
+        .filter(Boolean)
+        .join(", ");
+
+      document.getElementById("deliveryCities").textContent = cities;
+
+      document.getElementById("deliveryFeeVal").textContent = s.delivery_fee || "100";
+
+      document.getElementById("minOrderVal").textContent = s.min_order || "1000";
+    }
+
+    loadLiveAnswers();
+
+
+    /* ================= SUGGEST A PRODUCT ================= */
+
+    async function sendSuggestion() {
+
+      var msgBox = document.getElementById("suggestMsg");
+
+      var contactBox = document.getElementById("suggestContact");
+
+      var statusEl = document.getElementById("suggestMsgStatus");
+
+      var btn = document.getElementById("suggestSendBtn");
+
+      var message = msgBox.value.trim();
+
+      if (!message) {
+        statusEl.textContent = "Pehle apna message likhein.";
+        statusEl.className = "suggest-msg err";
+        statusEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+
+      btn.textContent = "Bhej rahe hain...";
+
+      var { error } = await grostoDB
+        .from("product_suggestions")
+        .insert({ message: message, contact: contactBox.value.trim() || null });
+
+      btn.disabled = false;
+
+      btn.textContent = "Bhej Dein \u2192";
+
+      if (error) {
+
+        console.error(error);
+
+        statusEl.textContent = "Maazrat, kuch masla aa gaya. Dobara koshish karein.";
+        statusEl.className = "suggest-msg err";
+        statusEl.style.display = "block";
+
+        return;
+      }
+
+      msgBox.value = "";
+
+      contactBox.value = "";
+
+      statusEl.textContent = "Shukriya! Aapka suggestion humein mil gaya hai.";
+      statusEl.className = "suggest-msg ok";
+      statusEl.style.display = "block";
+    }
+
+  </script>
+
+</body>
+</html>
