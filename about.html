@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>About Us - GROSTO</title>
+  <meta name="description" content="GROSTO ke baare mein jaanein - Gujrat, Punjab ka zero-signup online grocery store.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, a, input {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+      --border: #E3E6E4;
+      --light-green: #E8F5EC;
+      --light-gray: #F7F8F7;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 10;
+    }
+
+    .header {
+      max-width: 800px;
+      margin: auto;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .logo span { color: var(--yellow); }
+
+    .back-link {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray);
+    }
+
+    .back-link:hover { color: var(--green); }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 20px 70px;
+    }
+
+    .big-icon {
+      font-size: 54px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      color: var(--green);
+      font-weight: 800;
+      margin-bottom: 26px;
+      font-size: 16px;
+    }
+
+    p {
+      margin-bottom: 18px;
+      color: #333;
+    }
+
+    .highlights {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 30px 0;
+    }
+
+    .highlight {
+      background: var(--light-gray);
+      border-radius: 14px;
+      padding: 18px 14px;
+      text-align: center;
+    }
+
+    .highlight .ico {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .highlight .t {
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .highlight .d {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 30px 0 10px;
+    }
+
+    .cta {
+      margin-top: 30px;
+      background: var(--light-green);
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .cta a {
+      display: inline-block;
+      background: var(--green);
+      color: #fff;
+      font-weight: 800;
+      padding: 13px 26px;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    footer {
+      background: #111;
+      color: #bbb;
+      text-align: center;
+      padding: 22px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .highlights { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header">
+      <a href="index.html" class="logo">GROST<span>O</span></a>
+      <a href="index.html" class="back-link">&#8592; Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div class="big-icon">&#128722;</div>
+
+    <h1>About GROSTO</h1>
+    <div class="tagline">Sub Kuch Milega.</div>
+
+    <p>
+      GROSTO Gujrat, Punjab ke logon ke liye banaya gaya ek online grocery store hai.
+      Hamara maqsad simple hai: aapko apne ghar baithe, bina kisi sign-up ya app install
+      ke, apni roz marra ki zaroorat ki cheezein mangwane ka sabse aasan tareeqa dena.
+    </p>
+
+    <p>
+      Sirf kuch taps mein order place karein - naam, phone number aur address daalein, aur
+      hum baaki sambhal lete hain. Cash on Delivery ya EasyPaisa/JazzCash se payment karein,
+      aur aapka order seedha aapke ghar tak pohanch jayega.
+    </p>
+
+    <div class="highlights">
+      <div class="highlight">
+        <div class="ico">&#9889;</div>
+        <div class="t">30 Second Order</div>
+        <div class="d">Koi account banane ki zaroorat nahi</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128230;</div>
+        <div class="t">Ghar Tak Delivery</div>
+        <div class="d">Gujrat ke andar seedha aapke darwaze tak</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128176;</div>
+        <div class="t">Aasan Payment</div>
+        <div class="d">Cash on Delivery, EasyPaisa ya JazzCash</div>
+      </div>
+    </div>
+
+    <h2>Hamara Maqsad</h2>
+    <p>
+      Hum chahte hain ke online grocery shopping Gujrat mein har kisi ke liye aasan,
+      bharosemand aur tezi se ho sake - bina kisi mushkil registration process ke.
+      Jaise jaise hum badhte hain, naye products aur categories add karte rehte hain
+      taake aapki har zaroorat ek hi jagah se poori ho sake.
+    </p>
+
+    <div class="cta">
+      <div style="font-weight:800; font-size:17px;">Order karne ke liye tayyar hain?</div>
+      <a href="shop.html">Shopping Shuru Karein &#8594;</a>
+    </div>
+
+  </main>
+
+  <footer>&#169; 2026 GROSTO. All rights reserved.</footer>
+
+</body>
+</html>
