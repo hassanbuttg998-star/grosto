@@ -134,6 +134,26 @@
       margin: 30px 0 10px;
     }
 
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 18px 0 30px;
+    }
+
+    .grid4 .highlight .ico {
+      font-size: 30px;
+    }
+
+    .grid4 .highlight .t {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .grid4 .highlight .d {
+      font-size: 13px;
+    }
+
     .cta {
       margin-top: 30px;
       background: var(--light-green);
@@ -162,6 +182,7 @@
 
     @media (max-width: 600px) {
       .highlights { grid-template-columns: 1fr; }
+      .grid4 { grid-template-columns: 1fr 1fr; }
       h1 { font-size: 26px; }
     }
   </style>
@@ -210,6 +231,54 @@
         <div class="ico">&#128176;</div>
         <div class="t">Aasan Payment</div>
         <div class="d">Cash on Delivery, EasyPaisa ya JazzCash</div>
+      </div>
+    </div>
+
+    <h2>Why GROSTO?</h2>
+    <div class="grid4">
+      <div class="highlight">
+        <div class="ico">&#128717;&#65039;</div>
+        <div class="t">Sub Kuch Ek Jagah</div>
+        <div class="d">Everyday shopping ki zaroorat ki cheezen ek hi store mein.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128666;</div>
+        <div class="t">Easy Delivery</div>
+        <div class="d">Ghar baithe apni shopping order karein.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128176;</div>
+        <div class="t">Great Value</div>
+        <div class="d">Daily-use products par competitive prices.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#9889;</div>
+        <div class="t">Quick Ordering</div>
+        <div class="d">Simple shopping experience ke saath fast checkout.</div>
+      </div>
+    </div>
+
+    <h2>Order Kaise Karein?</h2>
+    <div class="grid4">
+      <div class="highlight">
+        <div class="ico">&#128269;</div>
+        <div class="t">1. Product chunein</div>
+        <div class="d">Shop se apni pasand ki cheez dhoondein ya search karein.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128722;</div>
+        <div class="t">2. Cart mein daalein</div>
+        <div class="d">Quantity select karke cart mein add karein.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#128221;</div>
+        <div class="t">3. Details bharein</div>
+        <div class="d">Naam, phone aur address likhein - koi signup nahi.</div>
+      </div>
+      <div class="highlight">
+        <div class="ico">&#127968;</div>
+        <div class="t">4. Ghar par delivery</div>
+        <div class="d">Cash on Delivery ya EasyPaisa/JazzCash se payment.</div>
       </div>
     </div>
 
