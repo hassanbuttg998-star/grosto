@@ -637,6 +637,10 @@
       </button>
       <button class="tab-btn" id="tabBtnBanners" onclick="switchTab('banners')">Banners</button>
       <button class="tab-btn" id="tabBtnCategories" onclick="switchTab('categories')">Categories</button>
+      <button class="tab-btn" id="tabBtnSuggestions" onclick="switchTab('suggestions')">
+        Suggestions
+        <span class="tab-badge" id="suggestionsBadge" style="display:none;">0</span>
+      </button>
       <button class="tab-btn" id="tabBtnSettings" onclick="switchTab('settings')">Settings</button>
     </div>
 
@@ -848,6 +852,43 @@
         </p>
 
         <div class="cat-photo-grid" id="catPhotoGrid"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= SUGGESTIONS PANEL ================= -->
+
+    <div class="panel" id="panelSuggestions">
+
+      <div class="card">
+
+        <div class="card-header">
+          <h2>Product Suggestions</h2>
+          <button class="btn btn-secondary" onclick="loadSuggestions()">&#8635; Refresh</button>
+        </div>
+
+        <p class="hint" style="margin-bottom:14px;">
+          Ye wo suggestions hain jo customers ne FAQ page ke "Product Suggest Karein" box se bheji hain.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Message</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="suggestionsTableBody">
+              <tr><td colspan="5" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
 
       </div>
 
@@ -1169,6 +1210,7 @@
       if (tab === "orders") loadOrders();
       if (tab === "banners") loadBanners();
       if (tab === "categories") loadCategoryPhotos();
+      if (tab === "suggestions") loadSuggestions();
       if (tab === "settings") loadSettings();
     }
 
@@ -2351,6 +2393,89 @@
     }
 
 
+    /* ================= PRODUCT SUGGESTIONS ================= */
+
+    async function loadSuggestions() {
+
+      const tbody = document.getElementById("suggestionsTableBody");
+
+      const { data, error } = await grostoDB
+        .from("product_suggestions")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Load nahi ho saka. (Agar table nahi bani to migration_suggestions.sql Supabase mein run karein.)</td></tr>`;
+
+        console.error(error);
+
+        return;
+      }
+
+      if (!data.length) {
+
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Abhi tak koi suggestion nahi aayi.</td></tr>`;
+
+        return;
+      }
+
+      tbody.innerHTML = data.map(s => {
+
+        const date = new Date(s.created_at).toLocaleString();
+
+        return `
+          <tr>
+            <td style="white-space:nowrap;">${date}</td>
+            <td style="max-width:320px;">${adminEsc(s.message)}</td>
+            <td>${s.contact ? adminEsc(s.contact) : "-"}</td>
+            <td><span class="status-pill ${s.status === "New" ? "status-active" : "status-inactive"}">${s.status}</span></td>
+            <td>
+              ${s.status === "New" ? `<button class="btn btn-secondary btn-small" onclick="markSuggestionReviewed(${s.id})">Mark Reviewed</button>` : ""}
+              <button class="btn btn-secondary btn-small" onclick="deleteSuggestion(${s.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function markSuggestionReviewed(id) {
+
+      const { error } = await grostoDB
+        .from("product_suggestions")
+        .update({ status: "Reviewed" })
+        .eq("id", id);
+
+      if (error) {
+        alert("Update fail: " + error.message);
+        return;
+      }
+
+      loadSuggestions();
+
+      refreshPendingBadge();
+    }
+
+    async function deleteSuggestion(id) {
+
+      if (!confirm("Ye suggestion delete kar dein?")) return;
+
+      const { error } = await grostoDB
+        .from("product_suggestions")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("Delete fail: " + error.message);
+        return;
+      }
+
+      loadSuggestions();
+
+      refreshPendingBadge();
+    }
+
+
     /* ================= SETTINGS ================= */
 
     async function loadSettings() {
@@ -2425,6 +2550,8 @@
 
     let lastKnownPendingCount = null;
 
+    let lastKnownSuggestionCount = null;
+
     function playNewOrderBeep() {
 
       try {
@@ -2454,43 +2581,69 @@
 
     async function refreshPendingBadge() {
 
-      const { count, error } = await grostoDB
-        .from("orders")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "Pending");
+      const [ordersRes, suggestionsRes] = await Promise.all([
+        grostoDB.from("orders").select("id", { count: "exact", head: true }).eq("status", "Pending"),
+        grostoDB.from("product_suggestions").select("id", { count: "exact", head: true }).eq("status", "New")
+      ]);
 
-      if (error) return;
+      if (!ordersRes.error) {
 
-      const badge = document.getElementById("ordersBadge");
+        const count = ordersRes.count;
 
-      if (count > 0) {
+        const badge = document.getElementById("ordersBadge");
 
-        badge.textContent = count;
-
-        badge.style.display = "inline-flex";
-
-        document.title = "(" + count + ") " + BASE_TAB_TITLE;
-
-      } else {
-
-        badge.style.display = "none";
-
-        document.title = BASE_TAB_TITLE;
-      }
-
-      // Beep only when the count goes UP compared to the last check
-      // (not on the very first load, and not when orders are cleared/updated).
-      if (lastKnownPendingCount !== null && count > lastKnownPendingCount) {
-
-        playNewOrderBeep();
-
-        // if we're already looking at the Orders tab, refresh it immediately
-        if (document.getElementById("panelOrders").classList.contains("active")) {
-          loadOrders();
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = "inline-flex";
+        } else {
+          badge.style.display = "none";
         }
+
+        // Beep only when the count goes UP compared to the last check
+        // (not on the very first load, and not when orders are cleared/updated).
+        if (lastKnownPendingCount !== null && count > lastKnownPendingCount) {
+
+          playNewOrderBeep();
+
+          // if we're already looking at the Orders tab, refresh it immediately
+          if (document.getElementById("panelOrders").classList.contains("active")) {
+            loadOrders();
+          }
+        }
+
+        lastKnownPendingCount = count;
       }
 
-      lastKnownPendingCount = count;
+      // product_suggestions table ho sakta hai migration abhi na chali ho -
+      // is case mein error aayega, badge bas chup chaap 0 dikhayega.
+      if (!suggestionsRes.error) {
+
+        const count = suggestionsRes.count;
+
+        const badge = document.getElementById("suggestionsBadge");
+
+        if (count > 0) {
+          badge.textContent = count;
+          badge.style.display = "inline-flex";
+        } else {
+          badge.style.display = "none";
+        }
+
+        if (lastKnownSuggestionCount !== null && count > lastKnownSuggestionCount) {
+
+          playNewOrderBeep();
+
+          if (document.getElementById("panelSuggestions").classList.contains("active")) {
+            loadSuggestions();
+          }
+        }
+
+        lastKnownSuggestionCount = count;
+      }
+
+      const totalNew = (lastKnownPendingCount || 0) + (lastKnownSuggestionCount || 0);
+
+      document.title = totalNew > 0 ? "(" + totalNew + ") " + BASE_TAB_TITLE : BASE_TAB_TITLE;
     }
 
 
