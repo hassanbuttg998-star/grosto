@@ -251,7 +251,6 @@
   <header>
     <div class="header">
       <a href="index.html" class="logo">GROST<span>O</span></a>
-      <a href="index.html" class="back-link">&#8592; Home</a>
     </div>
   </header>
 
@@ -383,8 +382,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
 
   <script>
+
+    if (typeof applySiteLogo === "function") applySiteLogo();
 
     /* ================= ACCORDION ================= */
 
