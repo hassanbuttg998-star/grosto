@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1EAF59">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
   <title>Delivery, Payment & Contact - GROSTO</title>
   <meta name="description" content="GROSTO delivery area, payment methods aur contact details.">
 
@@ -187,7 +193,6 @@
   <header>
     <div class="header">
       <a href="index.html" class="logo">GROST<span>O</span></a>
-      <a href="index.html" class="back-link">&#8592; Home</a>
     </div>
   </header>
 
@@ -233,8 +238,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/site-extras.js"></script>
 
   <script>
+
+    if (typeof applySiteLogo === "function") applySiteLogo();
 
     async function loadHelpInfo() {
 
