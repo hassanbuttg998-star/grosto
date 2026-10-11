@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - GROSTO</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #1EAF59;
+      --yellow: #FFB300;
+      --gray: #666;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      text-align: center;
+      background: #fff;
+      color: #000;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: var(--green);
+      margin-bottom: 18px;
+    }
+
+    .logo span {
+      color: var(--yellow);
+    }
+
+    .icon {
+      font-size: 54px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--gray);
+      font-size: 14px;
+      margin-bottom: 26px;
+      max-width: 320px;
+    }
+
+    button {
+      border: none;
+      background: var(--green);
+      color: #fff;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 13px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    button:hover {
+      background: #178e48;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div>
+    <div class="logo">GROST<span>O</span></div>
+    <div class="icon">&#128246;</div>
+    <h1>Internet Connection Check Karein</h1>
+    <p>
+      Lagta hai is waqt internet connection nahi hai. Connection
+      wapas aane par ye page khud reload ho jayega.
+    </p>
+    <button onclick="window.location.reload()">Dobara Try Karein</button>
+  </div>
+
+  <script>
+    window.addEventListener("online", function () {
+      window.location.reload();
+    });
+  </script>
+
+</body>
+</html>
