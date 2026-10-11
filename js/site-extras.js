@@ -277,4 +277,67 @@
     });
   };
 
+
+  /* ---------- 4) PWA: SERVICE WORKER (offline support) ---------- */
+
+  if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", function () {
+
+      // admin pages always need live data - skip offline caching there
+      if (/admin/i.test(window.location.pathname)) return;
+
+      navigator.serviceWorker.register("/sw.js").catch(function (err) {
+        console.warn("GROSTO service worker registration failed:", err);
+      });
+    });
+  }
+
+
+  /* ---------- 5) BACK BUTTON: close mobile menu instead of leaving page ---------- */
+
+  (function () {
+
+    var menu = document.getElementById("mobileMenu");
+    var overlay = document.getElementById("menuOverlay");
+
+    if (!menu || typeof MutationObserver === "undefined") return;
+
+    var pushedState = false;
+
+    var observer = new MutationObserver(function () {
+
+      var isOpen = menu.classList.contains("show");
+
+      if (isOpen && !pushedState) {
+
+        history.pushState({ grostoMenuOpen: true }, "");
+        pushedState = true;
+
+      } else if (!isOpen && pushedState) {
+
+        pushedState = false;
+
+        if (history.state && history.state.grostoMenuOpen) {
+          history.back();
+        }
+      }
+    });
+
+    observer.observe(menu, { attributes: true, attributeFilter: ["class"] });
+
+    window.addEventListener("popstate", function () {
+
+      if (pushedState) {
+
+        pushedState = false;
+
+        menu.classList.remove("show");
+
+        if (overlay) overlay.classList.remove("show");
+      }
+    });
+
+  })();
+
 })();
