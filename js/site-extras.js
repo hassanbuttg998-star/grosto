@@ -340,4 +340,109 @@
 
   })();
 
+
+  /* ---------- 6) BACK BUTTON: restore scroll position on this page ---------- */
+
+  (function () {
+
+    if (!window.sessionStorage) return;
+
+    var scrollKey = "grostoScroll:" + location.pathname + location.search;
+    var saveTimer;
+
+    function saveScroll() {
+      try { sessionStorage.setItem(scrollKey, String(window.scrollY)); } catch (e) {}
+    }
+
+    window.addEventListener("scroll", function () {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveScroll, 200);
+    }, { passive: true });
+
+    window.addEventListener("pagehide", saveScroll);
+
+    window.addEventListener("pageshow", function (e) {
+
+      // bfcache restore already has the right scroll position - nothing to do
+      if (e.persisted) return;
+
+      var saved = sessionStorage.getItem(scrollKey);
+
+      if (!saved) return;
+
+      var target = parseInt(saved, 10);
+
+      if (!target) return;
+
+      // product/category lists load from Supabase after the page paints, so
+      // we keep nudging the scroll position for a little while as it renders
+      var tries = 0;
+
+      var interval = setInterval(function () {
+
+        window.scrollTo(0, target);
+
+        tries++;
+
+        if (tries >= 10) clearInterval(interval);
+
+      }, 150);
+    });
+
+  })();
+
+
+  /* ---------- 7) BACK BUTTON ON HOME: "press again to exit" (installed app only) ---------- */
+
+  (function () {
+
+    var isStandalone = window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches;
+
+    var isHome = /(^\/$)|(\/index\.html$)/.test(location.pathname);
+
+    if (!isStandalone || !isHome) return;
+
+    var armed = false;
+    var disarmTimer;
+
+    function showExitToast() {
+
+      var el = document.createElement("div");
+
+      el.textContent = "Exit karne ke liye dobara back dabayen";
+
+      el.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);" +
+        "background:#111;color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;" +
+        "font-weight:700;z-index:3000;box-shadow:0 8px 24px rgba(0,0,0,.25);white-space:nowrap;";
+
+      document.body.appendChild(el);
+
+      setTimeout(function () { el.remove(); }, 2000);
+    }
+
+    history.pushState({ grostoExitGuard: true }, "");
+
+    window.addEventListener("popstate", function () {
+
+      if (!armed) {
+
+        armed = true;
+
+        showExitToast();
+
+        history.pushState({ grostoExitGuard: true }, "");
+
+        clearTimeout(disarmTimer);
+
+        disarmTimer = setTimeout(function () { armed = false; }, 2000);
+
+      } else {
+
+        window.close();
+      }
+    });
+
+  })();
+
 })();
