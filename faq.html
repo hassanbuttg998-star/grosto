@@ -13,6 +13,23 @@
   <title>FAQ - GROSTO</title>
   <meta name="description" content="GROSTO ke baare mein aam sawalat aur jawabat.">
 
+  <link rel="canonical" href="https://grosto.shop/faq.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://grosto.shop/faq.html">
+  <meta property="og:site_name" content="GROSTO">
+  <meta property="og:locale" content="en_PK">
+  <meta property="og:title" content="FAQ - GROSTO">
+  <meta property="og:description" content="GROSTO ke baare mein aam sawalat aur jawabat.">
+  <meta property="og:image" content="https://grosto.shop/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FAQ - GROSTO">
+  <meta name="twitter:description" content="GROSTO ke baare mein aam sawalat aur jawabat.">
+  <meta name="twitter:image" content="https://grosto.shop/icons/og-image.png">
+
   <style>
     * {
       margin: 0;
@@ -433,7 +450,47 @@
       document.getElementById("minOrderVal").textContent = s.min_order || "1000";
     }
 
-    loadLiveAnswers();
+
+    /* ================= FAQ STRUCTURED DATA ================= */
+
+    function buildFaqJsonLd() {
+
+      var items = document.querySelectorAll("#faqList .faq-item");
+
+      var entities = [];
+
+      items.forEach(function (item) {
+
+        var qEl = item.querySelector(".faq-q span");
+        var aEl = item.querySelector(".faq-a-inner");
+
+        if (!qEl || !aEl) return;
+
+        entities.push({
+          "@type": "Question",
+          "name": qEl.textContent.trim(),
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": aEl.textContent.trim().replace(/\s+/g, " ")
+          }
+        });
+      });
+
+      var jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": entities
+      };
+
+      var script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.id = "faqJsonLd";
+      script.textContent = JSON.stringify(jsonLd);
+      document.head.appendChild(script);
+    }
+
+
+    loadLiveAnswers().then(buildFaqJsonLd).catch(buildFaqJsonLd);
 
 
     /* ================= SUGGEST A PRODUCT ================= */
