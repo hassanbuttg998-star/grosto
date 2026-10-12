@@ -13,6 +13,25 @@
   <title>Product - GROSTO</title>
   <meta name="description" id="metaDesc" content="GROSTO - Sub Kuch Milega.">
 
+  <link rel="canonical" id="metaCanonical" href="https://grosto.shop/product.html">
+
+  <meta property="og:type" content="product">
+  <meta property="og:url" id="metaOgUrl" content="https://grosto.shop/product.html">
+  <meta property="og:site_name" content="GROSTO">
+  <meta property="og:locale" content="en_PK">
+  <meta property="og:title" id="metaOgTitle" content="Product - GROSTO">
+  <meta property="og:description" id="metaOgDesc" content="GROSTO - Sub Kuch Milega.">
+  <meta property="og:image" id="metaOgImage" content="https://grosto.shop/icons/og-image.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="metaTwTitle" content="Product - GROSTO">
+  <meta name="twitter:description" id="metaTwDesc" content="GROSTO - Sub Kuch Milega.">
+  <meta name="twitter:image" id="metaTwImage" content="https://grosto.shop/icons/og-image.png">
+
+  <script type="application/ld+json" id="productJsonLd">
+  {}
+  </script>
+
   <style>
     * {
       margin: 0;
@@ -1279,6 +1298,46 @@
 
     var slideCount = 0;
 
+    function updateProductSeo(p) {
+
+      var pageUrl = "https://grosto.shop/product.html?id=" + encodeURIComponent(p.id);
+      var ogTitle = p.name + " - GROSTO";
+      var ogDesc = p.name + " - Rs. " + p.price + " - GROSTO se order karein.";
+      var img = (Array.isArray(p.images) && p.images[0]) ? p.images[0] : "https://grosto.shop/icons/og-image.png";
+
+      document.getElementById("metaCanonical").setAttribute("href", pageUrl);
+      document.getElementById("metaOgUrl").setAttribute("content", pageUrl);
+      document.getElementById("metaOgTitle").setAttribute("content", ogTitle);
+      document.getElementById("metaOgDesc").setAttribute("content", ogDesc);
+      document.getElementById("metaOgImage").setAttribute("content", img);
+      document.getElementById("metaTwTitle").setAttribute("content", ogTitle);
+      document.getElementById("metaTwDesc").setAttribute("content", ogDesc);
+      document.getElementById("metaTwImage").setAttribute("content", img);
+
+      var availability = (Number(p.stock) > 0)
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock";
+
+      var jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": p.name,
+        "image": img,
+        "description": ogDesc,
+        "sku": String(p.id),
+        "category": p.category,
+        "offers": {
+          "@type": "Offer",
+          "url": pageUrl,
+          "priceCurrency": "PKR",
+          "price": String(p.price),
+          "availability": availability
+        }
+      };
+
+      document.getElementById("productJsonLd").textContent = JSON.stringify(jsonLd);
+    }
+
     function renderProduct() {
 
       document.getElementById("skeleton").style.display = "none";
@@ -1294,6 +1353,8 @@
         "content",
         p.name + " - Rs. " + p.price + " - GROSTO se order karein."
       );
+
+      updateProductSeo(p);
 
       document.getElementById("crumbs").innerHTML =
         '<a href="index.html">Home</a> <span>&#8250;</span> ' +
