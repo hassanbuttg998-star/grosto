@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin-login.html
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /order-success.html
+Disallow: /track-order.html
+
+Sitemap: https://grosto.shop/sitemap.xml
