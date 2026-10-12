@@ -16,6 +16,23 @@
     content="GROSTO &#8212; Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door."
   >
 
+  <link rel="canonical" href="https://grosto.shop/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://grosto.shop/">
+  <meta property="og:site_name" content="GROSTO">
+  <meta property="og:locale" content="en_PK">
+  <meta property="og:title" content="GROSTO &#8212; Sub Kuch Milega">
+  <meta property="og:description" content="GROSTO &#8212; Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door.">
+  <meta property="og:image" content="https://grosto.shop/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GROSTO &#8212; Sub Kuch Milega">
+  <meta name="twitter:description" content="GROSTO &#8212; Sub Kuch Milega. Groceries, household essentials and everyday products delivered to your door.">
+  <meta name="twitter:image" content="https://grosto.shop/icons/og-image.png">
+
   <style>
     * {
       margin: 0;
@@ -322,8 +339,8 @@
     .hc-slide {
       flex: 0 0 100%;
       scroll-snap-align: center;
-      min-height: 320px;
-      padding: 55px 45px;
+      aspect-ratio: 2.4 / 1;
+      padding: clamp(18px, 5vw, 55px) clamp(16px, 4.5vw, 45px);
       border-radius: 22px;
       color: var(--white);
       position: relative;
@@ -458,30 +475,34 @@
     /* ================= CATEGORIES ================= */
 
     .categories {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 14px;
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 2px 8px;
+    }
+
+    .categories::-webkit-scrollbar {
+      display: none;
     }
 
     .category {
-      background: var(--light-green);
-      border-radius: 15px;
-      padding: 20px 10px;
+      flex: 0 0 auto;
+      width: 76px;
       text-align: center;
       transition: 0.2s;
-      border: 1px solid transparent;
     }
 
     .category:hover {
       transform: translateY(-3px);
-      border-color: var(--green);
     }
 
     .category-icon {
-      width: 58px;
-      height: 58px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
-      background: var(--white);
+      background: var(--light-green);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -756,10 +777,6 @@
 
     @media (max-width: 900px) {
 
-      .categories {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
       .products {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -809,8 +826,6 @@
       }
 
       .hc-slide {
-        padding: 30px 22px;
-        min-height: 260px;
         border-radius: 18px;
       }
 
@@ -828,17 +843,16 @@
       }
 
       .categories {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 9px;
+        gap: 14px;
       }
 
       .category {
-        padding: 14px 5px;
+        width: 64px;
       }
 
       .category-icon {
-        width: 48px;
-        height: 48px;
+        width: 54px;
+        height: 54px;
         font-size: 25px;
       }
 
@@ -924,6 +938,26 @@
       }
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "name": "GROSTO",
+    "url": "https://grosto.shop/",
+    "logo": "https://grosto.shop/icons/icon-512.png",
+    "image": "https://grosto.shop/icons/og-image.png",
+    "description": "GROSTO is a zero-signup online grocery store delivering groceries, household essentials and everyday products in Gujrat, Punjab, Pakistan.",
+    "email": "grosto.shop.support@gmail.com",
+    "sameAs": [
+      "https://www.instagram.com/grosto.shop"
+    ],
+    "areaServed": {
+      "@type": "City",
+      "name": "Gujrat, Punjab, Pakistan"
+    }
+  }
+  </script>
 </head>
 
 <body>
