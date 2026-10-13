@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "shop.grosto.twa",
+        "sha256_cert_fingerprints": ["76:7D:78:32:53:05:D5:22:2F:9D:45:9F:75:D1:AD:A2:59:C2:1F:6D:EE:1B:A2:13:BA:07:CF:E9:DA:C6:72:76"]
+      }
+    }]
