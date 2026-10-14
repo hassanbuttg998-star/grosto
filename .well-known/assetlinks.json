@@ -1,8 +1,13 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "shop.grosto.twa",
-        "sha256_cert_fingerprints": ["76:7D:78:32:53:05:D5:22:2F:9D:45:9F:75:D1:AD:A2:59:C2:1F:6D:EE:1B:A2:13:BA:07:CF:E9:DA:C6:72:76"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "shop.grosto.twa",
+      "sha256_cert_fingerprints": [
+        "76:7D:78:32:53:05:D5:22:2F:9D:45:9F:75:D1:AD:A2:59:C2:1F:6D:EE:1B:A2:13:BA:07:CF:E9:DA:C6:72:76",
+        "AE:80:69:3E:A3:0A:27:09:DA:4E:2F:A3:80:6A:AB:7E:11:33:F6:0E:F9:E7:56:74:B1:3C:59:2F:A5:5B:A1:56"
+      ]
+    }
+  }
+]
