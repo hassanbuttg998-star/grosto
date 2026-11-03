@@ -1,11 +1,33 @@
 {
   "headers": [
     {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Link",
+          "value": "<https://cdn.jsdelivr.net>; rel=preconnect, <https://bmumxeroxckgcfvbmfld.supabase.co>; rel=preconnect; crossorigin"
+        }
+      ]
+    },
+    {
       "source": "/(.*)\\.html",
       "headers": [
         {
           "key": "Content-Type",
           "value": "text/html; charset=utf-8"
+        },
+        {
+          "key": "Link",
+          "value": "<https://cdn.jsdelivr.net>; rel=preconnect, <https://bmumxeroxckgcfvbmfld.supabase.co>; rel=preconnect; crossorigin"
+        }
+      ]
+    },
+    {
+      "source": "/icons/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
         }
       ]
     }
